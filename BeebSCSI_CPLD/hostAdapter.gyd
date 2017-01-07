@@ -1,0 +1,67 @@
+Pin Freeze File:  version P.20131013
+
+9572XL64 XC9572XL-7-VQ64
+bbc_1MHZE S:PIN15
+bbc_ADDRESS<0> S:PIN64
+bbc_ADDRESS<1> S:PIN63
+bbc_ADDRESS<2> S:PIN62
+bbc_ADDRESS<3> S:PIN61
+bbc_ADDRESS<4> S:PIN60
+bbc_ADDRESS<5> S:PIN59
+bbc_ADDRESS<6> S:PIN58
+bbc_ADDRESS<7> S:PIN57
+bbc_RnW S:PIN16
+bbc_nPGFC S:PIN12
+scsi_CnD S:PIN44
+bbc_INTnEXT S:PIN1
+scsi_InO S:PIN45
+scsi_nBSY S:PIN47
+scsi_nMSG S:PIN48
+scsi_nREQ S:PIN46
+bbc_nRST S:PIN11
+bbc_nIRQ S:PIN13
+bbc_DATA<0> S:PIN10
+bbc_DATA<1> S:PIN9
+bbc_DATA<2> S:PIN8
+bbc_DATA<3> S:PIN7
+bbc_DATA<4> S:PIN6
+bbc_DATA<5> S:PIN5
+bbc_DATA<6> S:PIN4
+bbc_DATA<7> S:PIN2
+scsi_INTnEXT S:PIN43
+scsi_nACK S:PIN40
+scsi_nCONF S:PIN50
+scsi_nDATA<0> S:PIN31
+scsi_nDATA<1> S:PIN32
+scsi_nDATA<2> S:PIN33
+scsi_nDATA<3> S:PIN34
+scsi_nDATA<4> S:PIN35
+scsi_nDATA<5> S:PIN36
+scsi_nDATA<6> S:PIN38
+scsi_nDATA<7> S:PIN39
+scsi_nRST S:PIN49
+scsi_nSEL S:PIN42
+
+
+;The remaining section of the .gyd file is for documentation purposes only.
+;It shows where your internal equations were placed in the last successful fit.
+
+PARTITION FB1_1 EXP6_ bbc_DATA_out<2> EXP7_ N0
+		 bbc_DATA_out<1> bbc_DATA_out<0> EXP8_
+PARTITION FB1_9 scsi_nSEL_OBUF/scsi_nSEL_OBUF_SETF__$INT status_out<6> status_out<2> status_out<1>
+		 status_out<0> scsi_nSEL_OBUF/scsi_nSEL_OBUF_CLKF__$INT scsi_nACK_OBUF/scsi_nACK_OBUF_CLKF__$INT irqFirstStageQ/irqFirstStageQ_CLKF__$INT
+		 $OpTx$$OpTx$FX_DC$11_INV$69 status_out<4>
+PARTITION FB2_10 EXP9_ bbc_DATA_out<7> bbc_DATA_out<6> EXP10_
+		 bbc_DATA_out<5> bbc_DATA_out<4> EXP11_ bbc_DATA_out<3>
+		
+
+PARTITION FB3_1 status_out<7> status_out<5> scsi_nDATA_out<0> scsi_nDATA_out<1>
+		 dataInLatchQ<5> scsi_nDATA_out<3> dataInLatchQ<4> dataInLatchQ<3>
+		 dataInLatchQ<2> scsi_nDATA_out<7> scsi_nDATA_out<2> scsi_nACK_OBUF
+		 dataInLatchQ<1> scsi_nDATA_out<4> scsi_nDATA_out<5> scsi_nSEL_OBUF
+		 scsi_nDATA_out<6> dataInLatchQ<0>
+PARTITION FB4_2 scsi_INTnEXT_OBUF$BUF0
+PARTITION FB4_6 scsi_nRST_OBUF$BUF0
+PARTITION FB4_13 dataInLatchQ<7> scsi_nCONF_OBUF dataInLatchQ<6> cleanPGFC
+		 IRQ irqFirstStageQ
+

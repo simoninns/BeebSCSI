@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE ibis [
+<!ELEMENT ibis (part, pin+)>
+<!ELEMENT part EMPTY>
+<!ELEMENT pin EMPTY>
+<!ATTLIST part
+  arch   CDATA #REQUIRED
+  device CDATA #REQUIRED
+  spg    CDATA #REQUIRED
+  pkg    CDATA #REQUIRED>
+<!ATTLIST pin
+  nm     CDATA #REQUIRED
+  no     CDATA #REQUIRED
+  iostd  (TTL|LVTTL|LVCMOS2|NA) "NA"
+  sr     (SLOW|FAST|slow|fast) "SLOW"
+  dir    (BIDIR|bidir|INPUT|input|OUTPUT|output) "BIDIR">
+]>
+<ibis><part arch="xc9500xl" device="XC9572XL" pkg="VQ64" spg="-7"/><pin dir="input" nm="bbc_ADDRESS&lt;4&gt;" no="60"/><pin dir="input" nm="bbc_ADDRESS&lt;2&gt;" no="62"/><pin dir="input" nm="bbc_ADDRESS&lt;1&gt;" no="63"/><pin dir="input" nm="bbc_ADDRESS&lt;0&gt;" no="64"/><pin dir="input" nm="bbc_RnW" no="16"/><pin dir="input" nm="bbc_1MHZE" no="15"/><pin dir="input" nm="bbc_INTnEXT" no="1"/><pin dir="input" nm="bbc_ADDRESS&lt;3&gt;" no="61"/><pin dir="input" nm="bbc_ADDRESS&lt;5&gt;" no="59"/><pin dir="input" nm="bbc_ADDRESS&lt;7&gt;" no="57"/><pin dir="input" nm="bbc_ADDRESS&lt;6&gt;" no="58"/><pin dir="input" nm="scsi_InO" no="45"/><pin dir="input" nm="bbc_nRST" no="11"/><pin dir="input" nm="bbc_nPGFC" no="12"/><pin dir="input" nm="scsi_nREQ" no="46"/><pin dir="input" nm="scsi_nMSG" no="48"/><pin dir="input" nm="scsi_nBSY" no="47"/><pin dir="input" nm="scsi_CnD" no="44"/><pin dir="output" nm="bbc_nIRQ" no="13" sr="fast"/><pin dir="output" nm="scsi_INTnEXT" no="43" sr="fast"/><pin dir="output" nm="scsi_nACK" no="40" sr="fast"/><pin dir="output" nm="scsi_nCONF" no="50" sr="fast"/><pin dir="output" nm="scsi_nRST" no="49" sr="fast"/><pin dir="output" nm="scsi_nSEL" no="42" sr="fast"/><pin dir="bidir" nm="bbc_DATA&lt;0&gt;" no="10" sr="fast"/><pin dir="bidir" nm="bbc_DATA&lt;1&gt;" no="9" sr="fast"/><pin dir="bidir" nm="bbc_DATA&lt;2&gt;" no="8" sr="fast"/><pin dir="bidir" nm="bbc_DATA&lt;4&gt;" no="6" sr="fast"/><pin dir="bidir" nm="bbc_DATA&lt;5&gt;" no="5" sr="fast"/><pin dir="bidir" nm="bbc_DATA&lt;6&gt;" no="4" sr="fast"/><pin dir="bidir" nm="bbc_DATA&lt;7&gt;" no="2" sr="fast"/><pin dir="bidir" nm="bbc_DATA&lt;3&gt;" no="7" sr="fast"/><pin dir="bidir" nm="scsi_nDATA&lt;0&gt;" no="31" sr="fast"/><pin dir="bidir" nm="scsi_nDATA&lt;1&gt;" no="32" sr="fast"/><pin dir="bidir" nm="scsi_nDATA&lt;2&gt;" no="33" sr="fast"/><pin dir="bidir" nm="scsi_nDATA&lt;3&gt;" no="34" sr="fast"/><pin dir="bidir" nm="scsi_nDATA&lt;4&gt;" no="35" sr="fast"/><pin dir="bidir" nm="scsi_nDATA&lt;5&gt;" no="36" sr="fast"/><pin dir="bidir" nm="scsi_nDATA&lt;6&gt;" no="38" sr="fast"/><pin dir="bidir" nm="scsi_nDATA&lt;7&gt;" no="39" sr="fast"/></ibis>
