@@ -27,6 +27,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 // Local includes
 #include "uart.h"
@@ -194,6 +195,42 @@ uint16_t uartPeek(void)
 	data = uartRxBuffer[tmpTail];
 
 	return (uartLastRxError << 8) + data;
+}
+
+// Peek from the UART and check for a CR terminated string
+// in the buffer (this is used to ensure we have a complete
+// F-Code response before sending it to the host
+bool uartPeekForString(void)
+{
+	uint16_t bytesAvailable;
+	uint16_t byteCounter;
+	uint16_t tmpRxTail;
+	uint16_t tmpTail;
+	uint8_t data;
+	
+	bytesAvailable = uartAvailable();
+	tmpRxTail = uartRxTail;
+	
+	// Are there any bytes available in the buffer?
+	if (bytesAvailable != 0)
+	{
+		// Look through the available bytes
+		for (byteCounter = 0; byteCounter < bytesAvailable; byteCounter++)
+		{
+			// Calculate Rx buffer index
+			tmpTail = (tmpRxTail + 1) & UART_RX_BUFFER_MASK;
+			tmpRxTail = tmpTail;
+
+			// Get data from the receive buffer
+			data = uartRxBuffer[tmpTail];
+			
+			// If the data is a CR, return with true
+			if (data == 0x0D) return true;
+		}
+	}
+
+	// No CR found in data	
+	return false;
 }
 
 // Returns the number of bytes waiting in the receive buffer

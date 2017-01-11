@@ -41,6 +41,7 @@ void uartInitialise(void);
 void uartWrite(uint8_t data);
 uint16_t uartRead(void);
 uint16_t uartPeek(void);
+bool uartPeekForString(void);
 uint16_t uartAvailable(void);
 void uartFlush(void);
 int uartPutChar(char data, FILE *stream);

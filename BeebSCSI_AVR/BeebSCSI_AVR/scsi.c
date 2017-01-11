@@ -1715,10 +1715,10 @@ uint8_t scsiWriteFCode(void)
 	scsiInformationTransferPhase(ITPHASE_DATAOUT);
 	
 	// Transfer a single block from the file system to the host
+	// Note: Since VFS is slower than ADFS we do not disable interrupts here as
+	// disabling interrupts can cause incoming serial bytes to be lost
 	if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: Transferring F-Code buffer from the host...\r\n"));
-	cli();
 	hostadapterPerformWriteDMA(scsiFcodeBuffer);
-	sei();
 		
 	// Check for a host reset condition
 	if (hostadapterReadResetFlag())
@@ -1781,10 +1781,10 @@ uint8_t scsiReadFCode(void)
 	fcodeReadBuffer();
 		
 	// Send the data to the host
+	// Note: Since VFS is slower than ADFS we do not disable interrupts here as
+	// disabling interrupts can cause incoming serial bytes to be lost
 	if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: Transferring F-Code buffer to the host...\r\n"));
-	cli();
 	hostadapterPerformReadDMA(scsiFcodeBuffer);
-	sei();
 		
 	// Check for a host reset condition
 	if (hostadapterReadResetFlag())
