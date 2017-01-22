@@ -113,8 +113,8 @@ void hostadapterDatabusOutput(void);
 uint8_t hostadapterReadByte(void);
 void hostadapterWriteByte(uint8_t databusValue);
 
-void hostadapterPerformReadDMA(uint8_t *dataBuffer);
-void hostadapterPerformWriteDMA(uint8_t *dataBuffer);
+uint16_t hostadapterPerformReadDMA(uint8_t *dataBuffer);
+uint16_t hostadapterPerformWriteDMA(uint8_t *dataBuffer);
 
 bool hostadapterConnectedToExternalBus(void);
 

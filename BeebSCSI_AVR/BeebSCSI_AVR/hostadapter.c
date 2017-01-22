@@ -39,6 +39,8 @@
 
 // Timeout counter (used when interrupts are not available to ensure
 // DMA read and writes do not hang the AVR waiting for host response
+// Note: This is an unsigned 32 bit integer and should therefore be
+// smaller than 4,294,967,295
 #define TOC_MAX 100000
 
 // Globals for the interrupt service routines
@@ -251,7 +253,8 @@ inline void hostadapterWriteByte(uint8_t databusValue)
 // Host DMA transfer functions ----------------------------------------------------------
 
 // Host reads data from SCSI device using DMA transfer (reads a 256 byte block)
-void hostadapterPerformReadDMA(uint8_t *dataBuffer)
+// Returns number of bytes transferred (for debug in case of DMA failure)
+uint16_t hostadapterPerformReadDMA(uint8_t *dataBuffer)
 {
 	uint16_t currentByte = 0;
 	uint32_t timeoutCounter = 0;
@@ -259,8 +262,8 @@ void hostadapterPerformReadDMA(uint8_t *dataBuffer)
 	// Loop to write bytes (unless a reset condition is detected)
 	while(currentByte < 256 && timeoutCounter != TOC_MAX)
 	{
-		// Write the current byte to the databus
-		PORTA = ~dataBuffer[currentByte];
+		// Write the current byte to the databus and point to the next byte
+		PORTA = ~dataBuffer[currentByte++];
 
 		// Set the REQuest signal
 		STATUS_NREQ_PORT &= ~STATUS_NREQ; // REQ = 0 (active)
@@ -270,25 +273,24 @@ void hostadapterPerformReadDMA(uint8_t *dataBuffer)
 		
 		while((NACK_PIN & NACK) != 0)
 		{
-			timeoutCounter++;
-			if (timeoutCounter == TOC_MAX)
+			if (++timeoutCounter == TOC_MAX)
 			{
 				// Set the host reset flag and quit
 				nrstFlag = true;
-				return;
+				return currentByte - 1;
 			}
 		}
 		
 		// Clear the REQuest signal
 		STATUS_NREQ_PORT |= STATUS_NREQ; // REQ = 1 (inactive)
-		
-		// Point to the next byte
-		currentByte++;
 	}
+	
+	return currentByte - 1;
 }
 
 // Host writes data to SCSI device using DMA transfer (writes a 256 byte block)
-void hostadapterPerformWriteDMA(uint8_t *dataBuffer)
+// Returns number of bytes transferred (for debug in case of DMA failure)
+uint16_t hostadapterPerformWriteDMA(uint8_t *dataBuffer)
 {
 	uint16_t currentByte = 0;
 	uint32_t timeoutCounter = 0;
@@ -304,24 +306,22 @@ void hostadapterPerformWriteDMA(uint8_t *dataBuffer)
 		
 		while((NACK_PIN & NACK) != 0)
 		{
-			timeoutCounter++;
-			if (timeoutCounter == TOC_MAX)
+			if (++timeoutCounter == TOC_MAX)
 			{
 				// Set the host reset flag and quit
 				nrstFlag = true;
-				return;
+				return currentByte;
 			}
 		}
 		
-		// Read the current byte from the databus
-		dataBuffer[currentByte] = ~PINA;
+		// Read the current byte from the databus and point to the next byte
+		dataBuffer[currentByte++] = ~PINA;
 		
 		// Clear the REQuest signal
 		STATUS_NREQ_PORT |= STATUS_NREQ; // REQ = 1 (inactive)
-		
-		// Point to the next byte
-		currentByte++;
 	}
+	
+	return currentByte - 1;
 }
 
 // Host adapter signal control and detection functions ------------------------------------

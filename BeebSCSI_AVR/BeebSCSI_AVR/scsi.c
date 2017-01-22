@@ -844,6 +844,8 @@ uint8_t scsiCommandRead6(void)
 	uint32_t numberOfBlocks = 0;
 	uint32_t currentBlock = 0;
 	
+	uint16_t bytesTransferred = 0;
+	
 	if (debugFlag_scsiCommands)
 	{
 		debugString_P(PSTR("SCSI Commands: READ command (0x08) received\r\n"));
@@ -935,14 +937,14 @@ uint8_t scsiCommandRead6(void)
 		
 		// Send the data to the host
 		cli();
-		hostadapterPerformReadDMA(scsiSectorBuffer);
+		bytesTransferred = hostadapterPerformReadDMA(scsiSectorBuffer);
 		sei();
 		
 		// Check for a host reset condition
 		if (hostadapterReadResetFlag())
 		{
 			sei();
-			if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: ReadDMA interrupted by host reset\r\n"));
+			if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("SCSI Commands: Read DMA interrupted by host reset at byte #"), bytesTransferred, true);
 			
 			// Close the currently open LUN image
 			filesystemCloseLunForRead();
@@ -998,6 +1000,8 @@ uint8_t scsiCommandWrite6(void)
 	uint32_t logicalBlockAddress = 0;
 	uint32_t numberOfBlocks = 0;
 	uint32_t currentBlock = 0;
+	
+	uint16_t bytesTransferred = 0;
 	
 	if (debugFlag_scsiCommands)
 	{
@@ -1070,13 +1074,13 @@ uint8_t scsiCommandWrite6(void)
 	{
 		// Get the data from the host
 		cli();
-		hostadapterPerformWriteDMA(scsiSectorBuffer);
+		bytesTransferred = hostadapterPerformWriteDMA(scsiSectorBuffer);
 		sei();
 		
 		// Check for a host reset condition
 		if (hostadapterReadResetFlag())
 		{
-			if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: ReadDMA interrupted by host reset\r\n"));
+			if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("SCSI Commands: Write DMA interrupted by host reset at byte #"), bytesTransferred, true);
 			
 			// Close the currently open LUN image
 			filesystemCloseLunForWrite();
@@ -1687,6 +1691,8 @@ uint8_t scsiCommandVerify(void)
 // of the block.
 uint8_t scsiWriteFCode(void)
 {
+	uint16_t bytesTransferred = 0;
+	
 	if (debugFlag_scsiCommands)
 	{
 		debugString_P(PSTR("SCSI Commands: WRITE F-Code command (G6 0x0A) received\r\n"));
@@ -1718,12 +1724,12 @@ uint8_t scsiWriteFCode(void)
 	// Note: Since VFS is slower than ADFS we do not disable interrupts here as
 	// disabling interrupts can cause incoming serial bytes to be lost
 	if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: Transferring F-Code buffer from the host...\r\n"));
-	hostadapterPerformWriteDMA(scsiFcodeBuffer);
+	bytesTransferred = hostadapterPerformWriteDMA(scsiFcodeBuffer);
 		
 	// Check for a host reset condition
 	if (hostadapterReadResetFlag())
 	{
-		if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: ReadDMA interrupted by host reset\r\n"));
+		if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("SCSI Commands: Write DMA interrupted by host reset at byte #"), bytesTransferred, true);
 		return SCSI_BUSFREE;
 	}
 		
@@ -1750,6 +1756,8 @@ uint8_t scsiWriteFCode(void)
 // phase is necessary.
 uint8_t scsiReadFCode(void)
 {
+	uint16_t bytesTransferred = 0;
+	
 	if (debugFlag_scsiCommands)
 	{
 		debugString_P(PSTR("SCSI Commands: READ F-Code command (G6 0x08) received\r\n"));
@@ -1784,13 +1792,14 @@ uint8_t scsiReadFCode(void)
 	// Note: Since VFS is slower than ADFS we do not disable interrupts here as
 	// disabling interrupts can cause incoming serial bytes to be lost
 	if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: Transferring F-Code buffer to the host...\r\n"));
-	hostadapterPerformReadDMA(scsiFcodeBuffer);
+	bytesTransferred = hostadapterPerformReadDMA(scsiFcodeBuffer);
 		
 	// Check for a host reset condition
 	if (hostadapterReadResetFlag())
 	{
 		sei();
-		if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: ReadDMA interrupted by host reset\r\n"));
+		if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("SCSI Commands: Read DMA interrupted by host reset at byte #"), bytesTransferred, true);
+		
 		return SCSI_BUSFREE;
 	}
 	
