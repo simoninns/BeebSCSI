@@ -1001,6 +1001,12 @@ void filesystemSetLunDirectory(uint8_t lunDirectoryNumber)
 	filesystemSetLunStatus(7, false);
 }
 
+// Function to read the current LUN directory (for the LUN jukeboxing functionality)
+uint8_t filesystemGetLunDirectory(void)
+{
+	return filesystemState.lunDirectory;
+}
+
 // Functions for creating LUNs and LUN descriptors ------------------------------------------------------------------------------------------------------------
 
 // Function to create a new LUN image (makes an empty .dat file)

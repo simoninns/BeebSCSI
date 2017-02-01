@@ -1,0 +1,9 @@
+## Ignore Visual Studio Code and BeebASM temporary files, build results, etc.
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# BeebASM floppy images
+*.ssd

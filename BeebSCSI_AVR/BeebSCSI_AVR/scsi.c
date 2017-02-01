@@ -40,6 +40,11 @@
 #include "scsi.h"
 #include "fcode.h"
 
+// Define the major and minor firmware version number returned
+// by the BSSENSE command
+#define FIRMWARE_MAJOR		0x02
+#define FIRMWARE_MINOR		0x00
+
 // Global for the emulation mode (fixed or removable drive)
 // Note: The fixed mode emulates SCSI-1 compliant hard drives for the Beeb
 // The removable mode emulates the Laser Video Disc Player (LV-DOS) for Domesday
@@ -209,6 +214,15 @@ void scsiProcessEmulation(void)
 		
 		case SCSI_READ_FCODE:
 		scsiState = scsiReadFCode();
+		break;
+		
+		// Handle BeebSCSI specific group 6 commands
+		case SCSI_BEEBSCSI_SENSE:
+		scsiState = scsiBeebScsiSense();
+		break;
+		
+		case SCSI_BEEBSCSI_SELECT:
+		scsiState = scsiBeebScsiSelect();
 		break;
 		
 		default:
@@ -441,7 +455,7 @@ uint8_t scsiEmulationCommand(void)
 		}
 	}
 	
-	// Transition to command based on received opCode (group 6 LV-DOS only commands)
+	// Transition to command based on received opCode (group 6 LV-DOS commands)
 	if (commandDataBlock.group == 6 && emulationMode == LVDOS_EMULATION)
 	{
 		// Select group 6 command type
@@ -453,6 +467,22 @@ uint8_t scsiEmulationCommand(void)
 			
 			case 0x08:
 			return SCSI_READ_FCODE;
+			break;
+		}
+	}
+	
+	// Transition to command based on received opCode (group 6 BeebSCSI commands)
+	if (commandDataBlock.group == 6)
+	{
+		// Select group 6 command type
+		switch (commandDataBlock.opCode)
+		{
+			case 0x10:
+			return SCSI_BEEBSCSI_SENSE;
+			break;
+			
+			case 0x11:
+			return SCSI_BEEBSCSI_SELECT;
 			break;
 		}
 	}
@@ -1809,5 +1839,176 @@ uint8_t scsiReadFCode(void)
 	if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: Read F-Code command successful\r\n"));
 	
 	// Transition to the successful state
+	return SCSI_STATUS;
+}
+
+// BeebSCSI specific group 6 commands -----------------------------------------------------------------------------------
+
+// SCSI Command BeebSCSI Sense (group 6 - command 0x10)
+//
+// This is a BeebSCSI vendor specific command.
+uint8_t scsiBeebScsiSense(void)
+{
+	uint8_t lunStatus = 0;
+	
+	if (debugFlag_scsiCommands)
+	{
+		debugString_P(PSTR("SCSI Commands: BSSENSE command (G6 0x10) received\r\n"));
+		debugStringInt16_P(PSTR("SCSI Commands: Target LUN = "), commandDataBlock.targetLUN, true);
+	}
+	
+	// This command does not use the LUN number
+	
+	// The parameter list must be 8 bytes
+	if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("SCSI Commands: List length = "), commandDataBlock.data[4],true);
+	if (commandDataBlock.data[4] != 8)
+	{
+		if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: Bad Argument error\r\n"));
+		// Indicate unsuccessful command in status and message
+		commandDataBlock.status = (commandDataBlock.targetLUN << 5) | 0x02; // 0x02 = Bad
+		commandDataBlock.message = 0x00;
+		
+		// Set request sense error globals
+		requestSenseData[commandDataBlock.targetLUN].errorFlag = true;
+		requestSenseData[commandDataBlock.targetLUN].validAddressFlag = false;
+		requestSenseData[commandDataBlock.targetLUN].errorClass = 0x02; // Class 02 error code
+		requestSenseData[commandDataBlock.targetLUN].errorCode = 0x24; // Bad argument
+		requestSenseData[commandDataBlock.targetLUN].logicalBlockAddress = 0x00;
+		
+		return SCSI_STATUS;
+	}
+	
+	// Set up the control signals ready for the data in phase
+	scsiInformationTransferPhase(ITPHASE_DATAIN);
+		
+	// Transfer the BSSENSE status bytes
+	if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: Sending BSSENSE descriptor to host\r\n"));
+	
+	// Byte 0 shows the START/STOP status of each LUN (1 = started)
+	if (filesystemReadLunStatus(0)) lunStatus |= (1 << 0);
+	if (filesystemReadLunStatus(1)) lunStatus |= (1 << 1);
+	if (filesystemReadLunStatus(2)) lunStatus |= (1 << 2);
+	if (filesystemReadLunStatus(3)) lunStatus |= (1 << 3);
+	if (filesystemReadLunStatus(4)) lunStatus |= (1 << 4);
+	if (filesystemReadLunStatus(5)) lunStatus |= (1 << 5);
+	if (filesystemReadLunStatus(6)) lunStatus |= (1 << 6);
+	if (filesystemReadLunStatus(7)) lunStatus |= (1 << 7);
+	hostadapterWriteByte(lunStatus);
+	
+	if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("SCSI Commands: LUN status byte = "), lunStatus, true);
+	
+	// Byte 1 shows the current LUN directory number
+	hostadapterWriteByte(filesystemGetLunDirectory());
+	
+	if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("SCSI Commands: LUN directory number = "), filesystemGetLunDirectory(), true);
+	
+	// Byte 2 shows if we are in fixed (0) or VP415 emulation mode (1)
+	if (emulationMode == FIXED_EMULATION)
+	{
+		hostadapterWriteByte(0x00);
+		if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: Emulation mode fixed (0x00)\r\n"));
+	}
+	else
+	{
+		hostadapterWriteByte(0x01);
+		if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: Emulation mode LV-DOS (0x01)\r\n"));
+	}
+	
+	// Bytes 3 and 4 show the major and minor firmware version numbers
+	hostadapterWriteByte(FIRMWARE_MAJOR);
+	hostadapterWriteByte(FIRMWARE_MINOR);
+	
+	// Bytes 5 to 7 are for future use
+	hostadapterWriteByte(0x00);
+	hostadapterWriteByte(0x00);
+	hostadapterWriteByte(0x00);
+	
+	// Indicate successful command in status and message
+	commandDataBlock.status = 0x00; // 0x00 = Good
+	commandDataBlock.message = 0x00;
+	
+	return SCSI_STATUS;
+}
+
+// SCSI Command BeebSCSI Select (group 6 - command 0x11)
+//
+// This is a BeebSCSI vendor specific command.
+uint8_t scsiBeebScsiSelect(void)
+{
+	uint8_t byteCounter;
+	uint8_t availableLUNs = 0;
+
+	if (debugFlag_scsiCommands)
+	{
+		debugString_P(PSTR("SCSI Commands: BSSELECT command (G6 0x11) received\r\n"));
+		debugStringInt16_P(PSTR("SCSI Commands: Target LUN = "), commandDataBlock.targetLUN, true);
+	}
+	
+	// Expect 8 bytes of data	
+	if (commandDataBlock.data[4] != 8)
+	{
+		if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: Bad Argument error\r\n"));
+		// Indicate unsuccessful command in status and message
+		commandDataBlock.status = (commandDataBlock.targetLUN << 5) | 0x02; // 0x02 = Bad
+		commandDataBlock.message = 0x00;
+		
+		// Set request sense error globals
+		requestSenseData[commandDataBlock.targetLUN].errorFlag = true;
+		requestSenseData[commandDataBlock.targetLUN].validAddressFlag = false;
+		requestSenseData[commandDataBlock.targetLUN].errorClass = 0x02; // Class 02 error code
+		requestSenseData[commandDataBlock.targetLUN].errorCode = 0x24; // Bad argument
+		requestSenseData[commandDataBlock.targetLUN].logicalBlockAddress = 0x00;
+		
+		return SCSI_STATUS;
+	}
+	
+	// Set up the control signals ready for the data out phase
+	scsiInformationTransferPhase(ITPHASE_DATAOUT);
+	
+	// Read the 8 bytes from the host
+	for (byteCounter = 0; byteCounter < commandDataBlock.data[4]; byteCounter++)
+	{
+		scsiSectorBuffer[byteCounter] = hostadapterReadByte();
+		if (debugFlag_scsiCommands) 
+		{
+			debugStringInt16_P(PSTR("SCSI Commands: Received byte "), (uint16_t)byteCounter, false);
+			debugStringInt16_P(PSTR(" = "), (uint16_t)scsiSectorBuffer[byteCounter], true);
+		}
+	}
+	
+	// Check if any LUNs are in the started state
+	for (byteCounter = 0; byteCounter < 8; byteCounter++)
+		if (filesystemReadLunStatus(byteCounter)) availableLUNs++;
+		
+	// Only jukebox if no LUNs are in the started state
+	if (availableLUNs == 0)
+	{
+		// Perform jukeboxing
+		filesystemSetLunDirectory(scsiSectorBuffer[0]);
+		
+		if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("SCSI Commands: Jukeboxing successful - LUN directory set to "), scsiSectorBuffer[0], true);
+	}
+	else
+	{
+		// One or more LUNs are started... cannot perform jukeboxing
+		if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: Error - cannot jukebox if LUNs are started\r\n"));
+		commandDataBlock.status = (commandDataBlock.targetLUN << 5) | 0x02; // 0x02 = Bad
+		commandDataBlock.message = 0x00;
+		
+		// Set request sense error globals
+		requestSenseData[commandDataBlock.targetLUN].errorFlag = true;
+		requestSenseData[commandDataBlock.targetLUN].validAddressFlag = false;
+		requestSenseData[commandDataBlock.targetLUN].errorClass = 0x02; // Class 02 error code
+		requestSenseData[commandDataBlock.targetLUN].errorCode = 0x02; // Unit not ready
+		requestSenseData[commandDataBlock.targetLUN].logicalBlockAddress = 0x00;
+		
+		return SCSI_STATUS;
+	}
+	
+	// Indicate successful command in status and message
+	if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: BSSELECT command successful\r\n"));
+	commandDataBlock.status = 0x00; // 0x00 = Good
+	commandDataBlock.message = 0x00;
+	
 	return SCSI_STATUS;
 }

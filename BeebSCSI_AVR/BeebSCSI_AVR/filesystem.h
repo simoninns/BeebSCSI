@@ -43,6 +43,7 @@ bool filesystemMount(void);
 bool filesystemDismount(void);
 
 void filesystemSetLunDirectory(uint8_t lunDirectoryNumber);
+uint8_t filesystemGetLunDirectory(void);
 
 bool filesystemSetLunStatus(uint8_t lunNumber, bool lunStatus);
 bool filesystemReadLunStatus(uint8_t lunNumber);
