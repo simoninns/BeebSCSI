@@ -24,6 +24,9 @@
 \
 \************************************************************************
 
+\\ Note: Contains code enhancements and suggestions by J.G. Harston
+\\       http://mdfs.net/
+
 \\ Global constants (OS calls)
 osasci = &FFE3                              ; OS call to print an ASCII character
 osargs = &FFDA                              ; OS call to read or write information on open objects or the filing system
@@ -118,7 +121,8 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
     EQUB romTypeByte                        ; ROM type (see above for details)
     EQUB copyright MOD 256                  ; Offset pointer to copyright string
     EQUB romVersion                         ; Version number
-    EQUS "BeebSCSI Utilities 1.00", 0       ; Title string (null terminated)
+    EQUS "BeebSCSI Utilities 1.01", 0       ; Title string (null terminated)
+    EQUS "1.01"                             ; Version string (terminated by 0 before (c))
 
     .copyright
         EQUS 0, "(C)"                       ; Mandatory start of title string
@@ -177,7 +181,7 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
 \\ Function: serviceCall09
 \\ Purpose: The service "*HELP issued" handler
 \\
-\\ The location ((?&F3*256)+?&F2)+Y points to any text supplied with
+\\ The location (&F2),Y points to any text supplied with
 \\ the *HELP or ASCII 13 if only *HELP was issued.
 .serviceCall09
     PHA                                     ; Preserve A
@@ -246,7 +250,7 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
     .serviceCall01BBC
         LDA #&0E                                ; &0E00 is the workspace location for shared low memory
         STA romFlags, X
-        CPY #&0E + 1                            ; Check is one page of shared low memory is available
+        CPY #&0E + 1                            ; Check if one page of shared low memory is available
         BCS serviceCall01Exit                   ; There is already enough shared low memory available, just quit
 
         LDY #&0E + 1                            ; Request a page of shared low memory (as none was available)
@@ -385,30 +389,40 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
         RTS                             ; Exit
 
 \\ ------------------------------------------------------------------------------------------------
+\\ Function: checkFilingSsystemType
+\\ Purpose: Checks which filing system is currently selected
+\\          On exit,    A = Filing system number
+\\                      NE = not a supported filing system
+\\                      EQ = supported filing system (ADFS or VFS) + CS = ADFS
+\\                      EQ = supported filing system (ADFS or VFS) + CC = VFS                      
+.checkFilingSystemType
+    LDA #&00                            ; Function &00,&00 - return filing system number
+    TAY
+    JSR osargs
+    CMP #&08
+    BEQ checkFilingSystemTypeDone       ; Return with EQ+CS for ADFS
+    CMP #&0A
+    CLC                                 ; Return with EQ+CC for VDFS
+                                        ; Return with NE for not ADFS/LVFS
+    .checkFilingSystemTypeDone
+        RTS
+
+\\ ------------------------------------------------------------------------------------------------
 \\ Function: scsiDscCommand
 \\ Purpose: Process the *scsiDsc command - Displays the geometry descriptor for the current LUN
 \\          as 22 bytes (stored in the LUN DSC file).  A SCSI MODESENSE command is used to collect
 \\          the required information
 .scsiDscCommand
     \\ Determine the current filing system type (ADFS, VFS, unknown)
-    .scsiDscDetermineFileSystem
-        \\ Check if we have a valid file system selected
-        LDA #&00                                ; Function &00 - return filing system number
-        LDY #&00
-        JSR osargs                              ; Call OSARGS to get filing system number in A
+    JSR checkFilingSystemType
+    BNE scsiDscUnsupportedFs                    ; FS is not VFS or ADFS
+    PLA                                         ; Push the filing system number to the stack
+    JMP processscsiDscCommand
 
-        PHA                                     ; Push the filing system number to the stack
-
-        CMP #&08                                ; Is the current file system ADFS?
-        BEQ processscsiDscCommand               ; Jump to command processing
-        CMP #&0A                                ; Is the current file system VFS?
-        BEQ processscsiDscCommand               ; Jump to command processing
-
+    .scsiDscUnsupportedFs
         \\ Unsupported file system selected... Show error and quit
         LDA #stringUnsupportedFileSystem        ; Specify the string to display
         JSR displayText                         ; Display the text
-
-        PLA                                     ; Discard the file system number from the stack
         JMP scsiDscQuit                         ; All done - return
 
     .processscsiDscCommand
@@ -539,24 +553,15 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
 \\          the current emulation mode (fixed hard drive or LV-DOS laser video disc player)
 .scsiStatusCommand
     \\ Determine the current filing system type (ADFS, VFS, unknown)
-    .scsiStatusDetermineFileSystem
-        \\ Check if we have a valid file system selected
-        LDA #&00                                ; Function &00 - return filing system number
-        LDY #&00
-        JSR osargs                              ; Call OSARGS to get filing system number in A
+    JSR checkFilingSystemType
+    BNE scsiStatusUnsupportedFs                 ; FS is not VFS or ADFS
+    PLA                                         ; Push the filing system number to the stack
+    JMP processscsiDscCommand
 
-        PHA                                     ; Push the filing system number to the stack
-
-        CMP #&08                                ; Is the current file system ADFS?
-        BEQ processscsiStatusCommand            ; Jump to command processing
-        CMP #&0A                                ; Is the current file system VFS?
-        BEQ processscsiStatusCommand            ; Jump to command processing
-
+    .scsiStatusUnsupportedFs
         \\ Unsupported file system selected... Show error and quit
         LDA #stringUnsupportedFileSystem        ; Specify the string to display
         JSR displayText                         ; Display the text
-
-        PLA                                     ; Discard the file system number from the stack
         JMP scsiStatusQuit                      ; All done - return
 
     .processscsiStatusCommand
@@ -794,50 +799,46 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
     CMP iIntegerHi                      ; If the high byte is set, the parameter is out of Range
     BNE scsiTraceCommandParamRangeError ; Display error
 
-    \\ Check the currently selected file system
-    LDA #&00                            ; Function &00 - return filing system number
-    LDY #&00
-    JSR osargs                          ; Call OSARGS to get filing system number in A
+    \\ Determine the current filing system type (ADFS, VFS, unknown)
+    JSR checkFilingSystemType
+    BNE scsiTraceUnsupportedFs          ; FS is not VFS or ADFS
+    BCS scsiTraceSetExternal            ; Branch if FS is ADFS
+    JMP scsiTraceSetInternal            ; Jump if FS is VFS
 
-    CMP #&08                            ; Is the current file system ADFS?
-    BEQ scsiTraceSetExternal            ; Jump to command processing
-    CMP #&0A                            ; Is the current file system VFS?
-    BEQ scsiTraceSetInternal            ; Jump to command processing
+    .scsiTraceUnsupportedFs
+        \\ Unsupported file system selected... Show error and quit
+        LDA #stringUnsupportedFileSystem    ; Specify the string to display
+        JSR displayText                     ; Display the text
+        JMP scsiTraceQuit                   ; All done - return
 
-    \\ Unsupported file system selected... Show error and quit
-    LDA #stringUnsupportedFileSystem    ; Specify the string to display
-    JSR displayText                     ; Display the text
+    \\ OSBYTE &97 (151) writes to SHIELA (internal 1 MHz bus)
+    .scsiTraceSetInternal
+        LDA #&97                            ; OSBYTE &97 - Write to SHEILA
+        LDX #&84                            ; offset within page (FD84WR command-NMODEM04WR)
+        LDY iIntegerLo                      ; Value to be written
+        JSR osbyte
+        JMP scsiTraceQuit                   ; Done
 
-    JMP scsiTraceQuit                   ; All done - return
+    \\ OSBYTE &93 (147) writes to FRED (external 1 MHz bus)
+    .scsiTraceSetExternal
+        LDA #&93                            ; OSBYTE &93 - Write to FRED
+        LDX #&44                            ; offset within page (NFC44WR command)
+        LDY iIntegerLo                      ; Value to be written
+        JSR osbyte
+        JMP scsiTraceQuit                   ; Done
 
-\\ OSBYTE &97 (151) writes to SHIELA (internal 1 MHz bus)
-.scsiTraceSetInternal
-    LDA #&97                            ; OSBYTE &97 - Write to SHEILA
-    LDX #&84                            ; offset within page (FD84WR command-NMODEM04WR)
-    LDY iIntegerLo                      ; Value to be written
-    JSR osbyte
-    JMP scsiTraceQuit                   ; Done
+    .scsiTraceCommandParamError
+        LDA #stringInvalidParameter         ; Specify the string to display
+        JSR displayText                     ; Display the text
+        JMP scsiTraceQuit
 
-\\ OSBYTE &93 (147) writes to FRED (external 1 MHz bus)
-.scsiTraceSetExternal
-    LDA #&93                            ; OSBYTE &93 - Write to FRED
-    LDX #&44                            ; offset within page (NFC44WR command)
-    LDY iIntegerLo                      ; Value to be written
-    JSR osbyte
-    JMP scsiTraceQuit                   ; Done
+    .scsiTraceCommandParamRangeError
+        LDA #stringInvalidParameterRange    ; Specify the string to display
+        JSR displayText                     ; Display the text
 
-.scsiTraceCommandParamError
-    LDA #stringInvalidParameter         ; Specify the string to display
-    JSR displayText                     ; Display the text
-    JMP scsiTraceQuit
-
-.scsiTraceCommandParamRangeError
-    LDA #stringInvalidParameterRange    ; Specify the string to display
-    JSR displayText                     ; Display the text
-
-.scsiTraceQuit
-    LDA #0                              ; Tell the MOS that the command has been serviced
-    RTS                                 ; All done - return
+    .scsiTraceQuit
+        LDA #0                              ; Tell the MOS that the command has been serviced
+        RTS                                 ; All done - return
 
 \\ ------------------------------------------------------------------------------------------------
 \\ Function: scsiJukeCommand
@@ -870,23 +871,15 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
 
     \\ Determine the current filing system type (ADFS, VFS, unknown)
     .scsiJukeDetermineFileSystem
-        \\ Check if we have a valid file system selected
-        LDA #&00                                ; Function &00 - return filing system number
-        LDY #&00
-        JSR osargs                              ; Call OSARGS to get filing system number in A
+        JSR checkFilingSystemType
+        BNE scsiJukeUnsupportedFs               ; FS is not VFS or ADFS
+        PLA                                     ; Push the filing system number to the stack
+        JMP processscsiJukeCommand
 
-        PHA                                     ; Push the filing system number to the stack
-
-        CMP #&08                                ; Is the current file system ADFS?
-        BEQ processscsiJukeCommand              ; Jump to command processing
-        CMP #&0A                                ; Is the current file system VFS?
-        BEQ processscsiJukeCommand              ; Jump to command processing
-
+    .scsiJukeUnsupportedFs
         \\ Unsupported file system selected... Show error and quit
         LDA #stringUnsupportedFileSystem        ; Specify the string to display
         JSR displayText                         ; Display the text
-
-        PLA                                     ; Discard the file system number from the stack
         JMP scsiJukeQuit                        ; All done - return
 
     .processscsiJukeCommand
@@ -986,19 +979,14 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
 \\          Collects any waiting FCODE response text from VFS and displays it to the user
 .fcoderCommand
     \\ Determine the current filing system type (ADFS, VFS, unknown)
-    .fcoderDetermineFileSystem
-        \\ Check if we have a valid file system selected
-        LDA #&00                                ; Function &00 - return filing system number
-        LDY #&00
-        JSR osargs                              ; Call OSARGS to get filing system number in A
+    JSR checkFilingSystemType
+    BNE scsifcoderUnsupportedFs             ; FS not ADFS or VFS
+    BCC processfcoderCommand                ; Branch if FS is VFS, continue if ADFS
 
-        CMP #&0A                                ; Is the current file system VFS?
-        BEQ processfcoderCommand                ; Jump to command processing
-
+    .scsifcoderUnsupportedFs
         \\ Unsupported file system selected... Show error and quit
         LDA #stringOnlyVfs                      ; Specify the string to display
         JSR displayText                         ; Display the text
-
         JMP fcoderQuit                          ; All done - return
 
     .processfcoderCommand
@@ -1167,22 +1155,21 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
 \\
 \\          A indicates the required string number (0-255)
 .displayText
-    .displayTextStart
-        \\ Copy the requested string number to ZP memory and preserve X and Y
-        STA stringNumber
-        TXA : PHA                               ; Preserve X
-        TYA : PHA                               ; Preserve Y
+    \\ Copy the requested string number to ZP memory and preserve X and Y
+    STA stringNumber
+    TXA : PHA                               ; Preserve X
+    TYA : PHA                               ; Preserve Y
 
-        \\ Put the pointer to the table in our zero page pointer variables
-        LDA #LO(displayTextTable)
-        STA stringTableAddr                     ; Store table low byte
-        LDA #HI(displayTextTable)
-        STA stringTableAddrHi                   ; Store table high byte
+    \\ Put the pointer to the table in our zero page pointer variables
+    LDA #LO(displayTextTable)
+    STA stringTableAddr                     ; Store table low byte
+    LDA #HI(displayTextTable)
+    STA stringTableAddrHi                   ; Store table high byte
 
-        LDX #0                                  ; X = Current string number
-        LDY #0                                  ; Set our table offset pointer (Y) to zero
-        CPX stringNumber                        ; Is the requested string number 0?
-        BEQ displayTextOutputString             ; If so print the string
+    LDX #0                                  ; X = Current string number
+    LDY #0                                  ; Set our table offset pointer (Y) to zero
+    CPX stringNumber                        ; Is the requested string number 0?
+    BEQ displayTextOutputString             ; If so print the string
 
     .displayTextNextStringLoop
         LDA (stringTableAddr), Y                ; Get the current byte from the table
@@ -1223,12 +1210,12 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
     .displayTextTable
         ; 0 - stringStarHelp
         EQUB &0D
-        EQUS "BeebSCSI Utilities 1.00", &0D
+        EQUS "BeebSCSI Utilities 1.01", &0D
         EQUS "  BeebSCSI", &0D
         EQUB 0
         ; 1 - stringStarHelpExtended
         EQUB &0D
-        EQUS "BeebSCSI Utilities 1.00", &0D
+        EQUS "BeebSCSI Utilities 1.01", &0D
         EQUS "  SCSIDSC", &0D
         EQUS "  SCSISTATUS", &0D
         EQUS "  SCSITRACE  <0-255>", &0D
