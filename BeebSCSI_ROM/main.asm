@@ -416,7 +416,7 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
     \\ Determine the current filing system type (ADFS, VFS, unknown)
     JSR checkFilingSystemType
     BNE scsiDscUnsupportedFs                    ; FS is not VFS or ADFS
-    PLA                                         ; Push the filing system number to the stack
+    PHA                                         ; Push the filing system number to the stack
     JMP processscsiDscCommand
 
     .scsiDscUnsupportedFs
@@ -555,8 +555,8 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
     \\ Determine the current filing system type (ADFS, VFS, unknown)
     JSR checkFilingSystemType
     BNE scsiStatusUnsupportedFs                 ; FS is not VFS or ADFS
-    PLA                                         ; Push the filing system number to the stack
-    JMP processscsiDscCommand
+    PHA                                         ; Push the filing system number to the stack
+    JMP processscsiStatusCommand
 
     .scsiStatusUnsupportedFs
         \\ Unsupported file system selected... Show error and quit
@@ -873,7 +873,7 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
     .scsiJukeDetermineFileSystem
         JSR checkFilingSystemType
         BNE scsiJukeUnsupportedFs               ; FS is not VFS or ADFS
-        PLA                                     ; Push the filing system number to the stack
+        PHA                                     ; Push the filing system number to the stack
         JMP processscsiJukeCommand
 
     .scsiJukeUnsupportedFs
