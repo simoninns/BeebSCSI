@@ -414,7 +414,7 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
     JMP processscsiDscCommand
 
     .scsiDscUnsupportedFs
-        \\ Unsupported file system selected... Show error and quit
+        \\ Unsupported file system selected... Generate error condition
         JMP errorOnlyAdfsVfsSupported
 
     .processscsiDscCommand
@@ -545,7 +545,7 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
     JMP processscsiStatusCommand
 
     .scsiStatusUnsupportedFs
-        \\ Unsupported file system selected... Show error and quit
+        \\ Unsupported file system selected... Generate error condition
         JMP errorOnlyAdfsVfsSupported
 
     .processscsiStatusCommand
@@ -768,14 +768,14 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
 .scsiTraceCommand
     INY                                 ; Point to next character in command string
     JSR str2intValid                    ; Check for a valid numeric parameter
-    BCS scsiTraceCommandParamError      ; Invalid parameter - report error
+    BCS scsiTraceCommandParamError      ; Invalid parameter - Generate error condition
 
     JSR str2int                         ; Convert the parameter to an integer
 
     \\ Range check the parameter (0-255)
     LDA #0
     CMP iIntegerHi                      ; If the high byte is set, the parameter is out of Range
-    BNE scsiTraceCommandParamRangeError ; Display error
+    BNE scsiTraceCommandParamRangeError ; Generate error condition
 
     \\ Determine the current filing system type (ADFS, VFS, unknown)
     JSR checkFilingSystemType
@@ -784,7 +784,7 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
     JMP scsiTraceSetInternal            ; Jump if FS is VFS
 
     .scsiTraceUnsupportedFs
-        \\ Unsupported file system selected... Show error and quit
+        \\ Unsupported file system selected... Generate error condition
         JMP errorOnlyAdfsVfsSupported
 
     \\ OSBYTE &97 (151) writes to SHIELA (internal 1 MHz bus)
@@ -820,14 +820,14 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
     \\ Check the parameter for validity
     INY                                 ; Point to next character in command string
     JSR str2intValid                    ; Check for a valid numeric parameter
-    BCS scsiJukeCommandParamError       ; Invalid parameter - report error
+    BCS scsiJukeCommandParamError       ; Invalid parameter - Generate error condition
 
     JSR str2int                         ; Convert the parameter to an integer
 
     \\ Range check the parameter (0-255)
     LDA #0
     CMP iIntegerHi                      ; If the high byte is set, the parameter is out of Range
-    BNE scsiJukeCommandParamRangeError  ; Display error
+    BNE scsiJukeCommandParamRangeError  ; Generate error condition
     JMP scsiJukeDetermineFileSystem     ; All ok, continue
 
     .scsiJukeCommandParamError
@@ -846,7 +846,7 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
         JMP processscsiJukeCommand
 
     .scsiJukeUnsupportedFs
-        \\ Unsupported file system selected... Show error and quit
+        \\ Unsupported file system selected... Generate error condition
         JMP errorOnlyAdfsVfsSupported
 
     .processscsiJukeCommand
@@ -944,7 +944,7 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
     BCC processfcoderCommand                ; Branch if FS is VFS, continue if ADFS
 
     .scsifcoderUnsupportedFs
-        \\ Unsupported file system selected... Show error and quit
+        \\ Unsupported file system selected... Generate error condition
         JMP errorOnlyVfs
 
     .processfcoderCommand
@@ -1223,7 +1223,7 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
         BRK 
         .errorOnlyAdfsVfsSupportedText
             EQUB 0                      ; BRK instruction
-            EQUB &10                    ; Error Number &10
+            EQUB &F8                    ; Error Number &F8 (Bad filing system)
             EQUS "Unsupported filing system in use - Only VFS and ADFS are allowed", 0
             EQUB &FF
 
@@ -1239,7 +1239,7 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
         BRK 
         .errorMissingOrInvalidParameterText
             EQUB 0                      ; BRK instruction
-            EQUB &20                    ; Error Number &20
+            EQUB &FC                    ; Error Number &FC (Bad number/Bad address)
             EQUS "Missing or invalid parameter", 0
             EQUB &FF
 
@@ -1255,7 +1255,7 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
         BRK 
         .errorParameterOutOfRangeText
             EQUB 0                      ; BRK instruction
-            EQUB &21                    ; Error Number &21
+            EQUB &FC                    ; Error Number &FC (Bad number/Bad address)
             EQUS "Supplied parameter is out of range", 0
             EQUB &FF
 
@@ -1271,7 +1271,7 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
         BRK 
         .errorScsiText
             EQUB 0                      ; BRK instruction
-            EQUB &30                    ; Error Number &30
+            EQUB &C7                    ; Error Number &C7 (Disc error)
             EQUS "Filing system reported SCSI error", 0
             EQUB &FF
 
@@ -1287,7 +1287,7 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
         BRK 
         .errorOnlyVfsText
             EQUB 0                      ; BRK instruction
-            EQUB &11                    ; Error Number &11
+            EQUB &F8                    ; Error Number &F8 (Bad filing system)
             EQUS "Filing system must be VFS", 0
             EQUB &FF
 
@@ -1303,7 +1303,7 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
         BRK 
         .errorCouldNotJukeText
             EQUB 0                      ; BRK instruction
-            EQUB &40                    ; Error Number &40
+            EQUB &C7                    ; Error Number &C7 (Disc error)
             EQUS "Juke failed - did you *BYE?", 0
             EQUB &FF
 
