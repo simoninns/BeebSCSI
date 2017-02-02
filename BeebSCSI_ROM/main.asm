@@ -1,7 +1,7 @@
 \************************************************************************
-\	main.asm
+\   main.asm
 \
-\	Main BeebSCSI_ROM functions
+\   Main BeebSCSI_ROM functions
 \   BeebSCSI_ROM - BeebSCSI Utility ROM
 \   Copyright (C) 2017 Simon Inns
 \
@@ -60,25 +60,19 @@ bitmaskPattern = &AD                        ; Bit mask used by * command process
 \\ String identification constants
 stringStarHelp                  = 00
 stringStarHelpExtended          = 01
-stringUnsupportedFileSystem     = 02
-stringInvalidParameter          = 03
-stringInvalidParameterRange     = 04
-stringScsiError                 = 05
-stringLun                       = 06
-stringIsStopped                 = 07
-stringIsStarted                 = 08
-stringCurrentJuke               = 09
-stringFixedEmulationMode        = 10
-stringLvdosEmulationMode        = 11
-stringJukeFailed                = 12
-stringDscTitle                  = 13
-stringDscHeads                  = 14
-stringDscCylinders              = 15
-stringDscStep                   = 16
-stringDscRwcc                   = 17
-stringDscLandingZone            = 18
-stringOnlyVfs                   = 19
-stringFirmwareVersion           = 20
+stringLun                       = 02
+stringIsStopped                 = 03
+stringIsStarted                 = 04
+stringCurrentJuke               = 05
+stringFixedEmulationMode        = 06
+stringLvdosEmulationMode        = 07
+stringDscTitle                  = 08
+stringDscHeads                  = 09
+stringDscCylinders              = 10
+stringDscStep                   = 11
+stringDscRwcc                   = 12
+stringDscLandingZone            = 13
+stringFirmwareVersion           = 14
 
 \\ Constants (other)
 EOL = &0D                                   ; Parameter parsing EOL character (&0D is ASCII CR)
@@ -121,8 +115,8 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
     EQUB romTypeByte                        ; ROM type (see above for details)
     EQUB copyright MOD 256                  ; Offset pointer to copyright string
     EQUB romVersion                         ; Version number
-    EQUS "BeebSCSI Utilities 1.01", 0       ; Title string (null terminated)
-    EQUS "1.01"                             ; Version string (terminated by 0 before (c))
+    EQUS "BeebSCSI Utilities 1.02", 0       ; Title string (null terminated)
+    EQUS "1.02"                             ; Version string (terminated by 0 before (c))
 
     .copyright
         EQUS 0, "(C)"                       ; Mandatory start of title string
@@ -421,9 +415,7 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
 
     .scsiDscUnsupportedFs
         \\ Unsupported file system selected... Show error and quit
-        LDA #stringUnsupportedFileSystem        ; Specify the string to display
-        JSR displayText                         ; Display the text
-        JMP scsiDscQuit                         ; All done - return
+        JMP errorOnlyAdfsVfsSupported
 
     .processscsiDscCommand
         \\ This command requires shared workspace, claim it if necessary
@@ -432,40 +424,25 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
 
         \\ Here we send a MODESENSE SCSI command and receive a 22 byte descriptor
         \\ for the current LUN (Drive number)
-        LDY #&00                                ; Use Y as index (= 0)
+        LDX #&00                                ; X is index to the control block data
+        LDY #&00                                ; Y is index to the control block
+        .scsiDscControlBlockLoop
+            LDA scsiModeSenseCommandBlock, X    ; Get a byte from the control block data
+            STA (workspaceAddress), Y           ; Store the byte in the control block
+            INX
+            INY
+            CPY #16                             ; End of control block data?
+            BNE scsiDscControlBlockLoop
 
-        LDA #&00                                ; Byte &00 - Controller number
-        STA (workspaceAddress), Y : INY
-        LDA #&0F                                ; Byte &01 - Start address (LSB) - Place at 0F (after this control block)
-        STA (workspaceAddress), Y : INY
-        LDA workspaceAddressHi                  ; Byte &02 - Start address
-        STA (workspaceAddress), Y : INY
-        LDA #&FF                                ; Byte &03 - Start address
-        STA (workspaceAddress), Y : INY
-        LDA #&FF                                ; Byte &04 - Start address (MSB)
-        STA (workspaceAddress), Y : INY
-        LDA #&1A                                ; Byte &05 - Command block - SCSI Command
-        STA (workspaceAddress), Y : INY
-        LDA #&00                                ; Byte &06 - Command block - LUN ID + LBA
-        STA (workspaceAddress), Y : INY
-        \\LDA #&00                              ; Byte &07 - Command block - LBA
-        STA (workspaceAddress), Y : INY
-        \\LDA #&00                              ; Byte &08 - Command block - LBA
-        STA (workspaceAddress), Y : INY
-        LDA #&16                                ; Byte &09 - Command block - Sector count (bytes requested)
-        STA (workspaceAddress), Y : INY
-        LDA #&00                                ; Byte &0A - Command block - Always 0
-        STA (workspaceAddress), Y : INY
-        \\LDA #&00                              ; Byte &0B - Data length (LSB)
-        STA (workspaceAddress), Y : INY
-        \\LDA #&00                              ; Byte &0C - Data length
-        STA (workspaceAddress), Y : INY
-        \\LDA #&00                              ; Byte &0D - Data length
-        STA (workspaceAddress), Y : INY
-        \\LDA #&00                              ; Byte &0E - Data length (MSB)
-        STA (workspaceAddress), Y : INY
+            \\ Copy the returned data address into the control block
+            LDY #&01                            ; Byte pointer
+            LDA #&0F                            ; LSB of returned data block
+            STA (workspaceAddress), Y
+            INY
+            LDA workspaceAddressHi              ; MSB of returned data block
+            STA (workspaceAddress), Y
 
-        \\ Point to the command block
+        \\ Point X and Y to the command block
         LDA workspaceAddress                    ; Get low byte of address
         TAX
         LDA workspaceAddressHi                  ; Get high byte of address
@@ -493,9 +470,7 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
             BEQ scsiDscPrettyPrint
 
             \\ Show SCSI error
-            LDA #stringScsiError                    ; Specify the string to display
-            JSR displayText                         ; Display the text
-            JMP scsiDscQuit
+            JMP errorScsi
 
         \\ Pretty print the DSC values for the user (using the same
         \\ field order as SuperForm)
@@ -546,6 +521,17 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
             LDA #0                                  ; Tell the MOS that the command has been serviced
             RTS                                     ; All done - return
 
+        .scsiModeSenseCommandBlock
+            \\ 15 byte control block for OSWORD &72 - SCSI MODE SENSE command
+            EQUB &00            ; Controller number
+            EQUD &FFFF0000      ; Transfer address
+            EQUB &1A            ; SCSI command group and command
+            EQUW &0000          ; LBA (LSB, 2nd byte)
+            EQUB &00            ; LBA (MSB)
+            EQUB &16            ; Sector count/bytes requested (22 bytes)
+            EQUB &00            ; Always 0
+            EQUD &00000000      ; Data length
+
 \\ ------------------------------------------------------------------------------------------------
 \\ Function: scsiStatusCommand
 \\ Purpose: Process the *scsiStatus command - Gets 8 bytes of status data from BeebSCSI that
@@ -560,9 +546,7 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
 
     .scsiStatusUnsupportedFs
         \\ Unsupported file system selected... Show error and quit
-        LDA #stringUnsupportedFileSystem        ; Specify the string to display
-        JSR displayText                         ; Display the text
-        JMP scsiStatusQuit                      ; All done - return
+        JMP errorOnlyAdfsVfsSupported
 
     .processscsiStatusCommand
         \\ This command requires shared workspace, claim it if necessary
@@ -571,38 +555,23 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
 
         \\ Here we send a BSSENSE SCSI command and receive a 8 byte status descriptor
         \\ for the current LUN (Drive number)
-        LDY #&00                                ; Use Y as index (= 0)
+        LDX #&00                                ; X is index to the control block data
+        LDY #&00                                ; Y is index to the control block
+        .scsiStatusControlBlockLoop
+            LDA scsiBSSenseCommandBlock, X      ; Get a byte from the control block data
+            STA (workspaceAddress), Y           ; Store the byte in the control block
+            INX
+            INY
+            CPY #16                             ; End of control block data?
+            BNE scsiStatusControlBlockLoop
 
-        LDA #&00                                ; Byte &00 - Controller number
-        STA (workspaceAddress), Y : INY
-        LDA #&0F                                ; Byte &01 - Start address (LSB) - Place at 0F (after this control block)
-        STA (workspaceAddress), Y : INY
-        LDA workspaceAddressHi                  ; Byte &02 - Start address
-        STA (workspaceAddress), Y : INY
-        LDA #&FF                                ; Byte &03 - Start address
-        STA (workspaceAddress), Y : INY
-        LDA #&FF                                ; Byte &04 - Start address (MSB)
-        STA (workspaceAddress), Y : INY
-        LDA #&D0                                ; Byte &05 - Command block - SCSI Command (G6 0x10)
-        STA (workspaceAddress), Y : INY
-        LDA #&00                                ; Byte &06 - Command block - LUN ID + LBA
-        STA (workspaceAddress), Y : INY
-        \\LDA #&00                              ; Byte &07 - Command block - LBA
-        STA (workspaceAddress), Y : INY
-        \\LDA #&00                              ; Byte &08 - Command block - LBA
-        STA (workspaceAddress), Y : INY
-        LDA #&08                                ; Byte &09 - Command block - Sector count (bytes requested)
-        STA (workspaceAddress), Y : INY
-        LDA #&00                                ; Byte &0A - Command block - Always 0
-        STA (workspaceAddress), Y : INY
-        \\LDA #&00                              ; Byte &0B - Data length (LSB)
-        STA (workspaceAddress), Y : INY
-        \\LDA #&00                              ; Byte &0C - Data length
-        STA (workspaceAddress), Y : INY
-        \\LDA #&00                              ; Byte &0D - Data length
-        STA (workspaceAddress), Y : INY
-        \\LDA #&00                              ; Byte &0E - Data length (MSB)
-        STA (workspaceAddress), Y : INY
+            \\ Copy the returned data address into the control block
+            LDY #&01                            ; Byte pointer
+            LDA #&0F                            ; LSB of returned data block
+            STA (workspaceAddress), Y
+            INY
+            LDA workspaceAddressHi              ; MSB of returned data block
+            STA (workspaceAddress), Y
 
         \\ Point to the command block
         LDA workspaceAddress                    ; Get low byte of address
@@ -632,9 +601,7 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
             BEQ scsiStatusDisplayResult
 
             \\ Show SCSI error
-            LDA #stringScsiError                    ; Specify the string to display
-            JSR displayText                         ; Display the text
-            JMP scsiDscQuit
+            JMP errorScsi
 
         \\ Display the results to the user
         .scsiStatusDisplayResult
@@ -708,6 +675,17 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
     .scsiStatusQuit
         LDA #0                              ; Tell the MOS that the command has been serviced
         RTS                                 ; All done - return
+
+    .scsiBSSenseCommandBlock
+        \\ 15 byte control block for OSWORD &72 - SCSI BSSENSE command
+        EQUB &00            ; Controller number
+        EQUD &FFFF0000      ; Transfer address
+        EQUB &D0            ; SCSI command group and command
+        EQUW &0000          ; LBA (LSB, 2nd byte)
+        EQUB &00            ; LBA (MSB)
+        EQUB &08            ; Sector count/bytes requested (8 bytes)
+        EQUB &00            ; Always 0
+        EQUD &00000000      ; Data length
 
 \\ ------------------------------------------------------------------------------------------------
 \\ Function: printHexNumber
@@ -807,9 +785,7 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
 
     .scsiTraceUnsupportedFs
         \\ Unsupported file system selected... Show error and quit
-        LDA #stringUnsupportedFileSystem    ; Specify the string to display
-        JSR displayText                     ; Display the text
-        JMP scsiTraceQuit                   ; All done - return
+        JMP errorOnlyAdfsVfsSupported
 
     \\ OSBYTE &97 (151) writes to SHIELA (internal 1 MHz bus)
     .scsiTraceSetInternal
@@ -828,13 +804,10 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
         JMP scsiTraceQuit                   ; Done
 
     .scsiTraceCommandParamError
-        LDA #stringInvalidParameter         ; Specify the string to display
-        JSR displayText                     ; Display the text
-        JMP scsiTraceQuit
+        JMP errorMissingOrInvalidParameter
 
     .scsiTraceCommandParamRangeError
-        LDA #stringInvalidParameterRange    ; Specify the string to display
-        JSR displayText                     ; Display the text
+        JMP errorParameterOutOfRange
 
     .scsiTraceQuit
         LDA #0                              ; Tell the MOS that the command has been serviced
@@ -858,14 +831,10 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
     JMP scsiJukeDetermineFileSystem     ; All ok, continue
 
     .scsiJukeCommandParamError
-        LDA #stringInvalidParameter         ; Specify the string to display
-        JSR displayText                     ; Display the text
-        JMP scsiJukeQuit
+        JMP errorMissingOrInvalidParameter
 
     .scsiJukeCommandParamRangeError
-        LDA #stringInvalidParameterRange    ; Specify the string to display
-        JSR displayText                     ; Display the text
-        JMP scsiJukeQuit
+        JMP errorParameterOutOfRange
 
     \\ Parameter is stored in iIntegerLo
 
@@ -878,9 +847,7 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
 
     .scsiJukeUnsupportedFs
         \\ Unsupported file system selected... Show error and quit
-        LDA #stringUnsupportedFileSystem        ; Specify the string to display
-        JSR displayText                         ; Display the text
-        JMP scsiJukeQuit                        ; All done - return
+        JMP errorOnlyAdfsVfsSupported
 
     .processscsiJukeCommand
         \\ This command requires shared workspace, claim it if necessary
@@ -889,39 +856,23 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
 
         \\ Here we send a BSSELECT SCSI command and send a 8 byte select descriptor
         \\ for the current LUN (Drive number)
-        LDY #&00                                ; Use Y as index (= 0)
+        LDX #&00                                ; X is index to the control block data
+        LDY #&00                                ; Y is index to the control block
+        .scsiJukeControlBlockLoop
+            LDA scsiBSSelectCommandBlock, X     ; Get a byte from the control block data
+            STA (workspaceAddress), Y           ; Store the byte in the control block
+            INX
+            INY
+            CPY #16                             ; End of control block data?
+            BNE scsiJukeControlBlockLoop
 
-        \\ Set up the command block
-        LDA #&00                                ; Byte &00 - Controller number
-        STA (workspaceAddress), Y : INY
-        LDA #&0F                                ; Byte &01 - Start address (LSB) - Place at 0F (after this control block)
-        STA (workspaceAddress), Y : INY
-        LDA workspaceAddressHi                  ; Byte &02 - Start address
-        STA (workspaceAddress), Y : INY
-        LDA #&FF                                ; Byte &03 - Start address
-        STA (workspaceAddress), Y : INY
-        LDA #&FF                                ; Byte &04 - Start address (MSB)
-        STA (workspaceAddress), Y : INY
-        LDA #&D1                                ; Byte &05 - Command block - SCSI Command (G6 0x11)
-        STA (workspaceAddress), Y : INY
-        LDA #&00                                ; Byte &06 - Command block - LUN ID + LBA
-        STA (workspaceAddress), Y : INY
-        \\LDA #&00                              ; Byte &07 - Command block - LBA
-        STA (workspaceAddress), Y : INY
-        \\LDA #&00                              ; Byte &08 - Command block - LBA
-        STA (workspaceAddress), Y : INY
-        LDA #&08                                ; Byte &09 - Command block - Sector count (bytes to send)
-        STA (workspaceAddress), Y : INY
-        LDA #&00                                ; Byte &0A - Command block - Always 0
-        STA (workspaceAddress), Y : INY
-        \\LDA #&00                              ; Byte &0B - Data length (LSB)
-        STA (workspaceAddress), Y : INY
-        \\LDA #&00                              ; Byte &0C - Data length
-        STA (workspaceAddress), Y : INY
-        \\LDA #&00                              ; Byte &0D - Data length
-        STA (workspaceAddress), Y : INY
-        \\LDA #&00                              ; Byte &0E - Data length (MSB)
-        STA (workspaceAddress), Y : INY
+            \\ Copy the data (to send) address into the control block
+            LDY #&01                            ; Byte pointer
+            LDA #&0F                            ; LSB of data block
+            STA (workspaceAddress), Y
+            INY
+            LDA workspaceAddressHi              ; MSB of data block
+            STA (workspaceAddress), Y
 
         \\ Set up the descriptor block
         LDY #&0F                                ; Start of the data block
@@ -964,13 +915,22 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
             BEQ scsiJukeQuit
 
             \\ Show SCSI error
-            LDA #stringJukeFailed                   ; Specify the string to display
-            JSR displayText                         ; Display the text
-            JMP scsiJukeQuit    
+            JMP errorCouldNotJuke
 
     .scsiJukeQuit
         LDA #0                              ; Tell the MOS that the command has been serviced
         RTS                                 ; All done - return
+
+    .scsiBSSelectCommandBlock
+        \\ 15 byte control block for OSWORD &72 - SCSI BSSELECT command
+        EQUB &00            ; Controller number
+        EQUD &FFFF0000      ; Transfer address
+        EQUB &D1            ; SCSI command group and command
+        EQUW &0000          ; LBA (LSB, 2nd byte)
+        EQUB &00            ; LBA (MSB)
+        EQUB &08            ; Sector count/bytes to send (8 bytes)
+        EQUB &00            ; Always 0
+        EQUD &00000000      ; Data length
 
 \\ ------------------------------------------------------------------------------------------------
 \\ Function: fcoderCommand
@@ -985,9 +945,7 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
 
     .scsifcoderUnsupportedFs
         \\ Unsupported file system selected... Show error and quit
-        LDA #stringOnlyVfs                      ; Specify the string to display
-        JSR displayText                         ; Display the text
-        JMP fcoderQuit                          ; All done - return
+        JMP errorOnlyVfs
 
     .processfcoderCommand
         \\ This command requires shared workspace, claim it if necessary
@@ -1210,58 +1168,144 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
     .displayTextTable
         ; 0 - stringStarHelp
         EQUB &0D
-        EQUS "BeebSCSI Utilities 1.01", &0D
+        EQUS "BeebSCSI Utilities 1.02", &0D
         EQUS "  BeebSCSI", &0D
         EQUB 0
         ; 1 - stringStarHelpExtended
         EQUB &0D
-        EQUS "BeebSCSI Utilities 1.01", &0D
+        EQUS "BeebSCSI Utilities 1.02", &0D
         EQUS "  SCSIDSC", &0D
         EQUS "  SCSISTATUS", &0D
         EQUS "  SCSITRACE  <0-255>", &0D
         EQUS "  SCSIJUKE   <0-255>", &0D
         EQUS "  FCODER", &0D
         EQUB 0
-        ; 2 - stringUnsupportedFileSystem
-        EQUS "Unsupported filing system in use.  Only VFS and ADFS are allowed.", &0D, 0
-        ; 3 - stringInvalidParameter
-        EQUS "Missing or invalid parameter", &0D, 0
-        ; 4 - stringInvalidParameterRange
-        EQUS "Supplied parameter is out of range", &0D, 0
-        ; 5 - stringScsiError
-        EQUS "Filing system reported SCSI error", &0D, 0
-        ; 6 - stringLun
+        ; 2 - stringLun
         EQUS "LUN ", 0
-        ; 7 - stringIsStopped
+        ; 3 - stringIsStopped
         EQUS " is not mounted", &0D, 0
-        ; 8 - stringIsStarted
+        ; 4 - stringIsStarted
         EQUS " is mounted", &0D, 0
-        ; 9 - stringCurrentJuke
+        ; 5 - stringCurrentJuke
         EQUS "Current jukebox number is ", 0
-        ; 10 - stringFixedEmulationMode
+        ; 6 - stringFixedEmulationMode
         EQUS "Emulation mode is Winchester", &0D, 0
-        ; 11 - stringLvdosEmulationMode
+        ; 7 - stringLvdosEmulationMode
         EQUS "Emulation mode is Philips VP415", &0D, 0
-        ; 12 - stringJukeFailed
-        EQUS "Command unsuccessful (SCSI error) - did you *BYE?", &0D, 0
-        ; 13 - stringDscTitle
+        ; 8 - stringDscTitle
         EQUS "SCSI Geometry descriptor:", &0D, 0
-        ; 14 - stringDscHeads
+        ; 9 - stringDscHeads
         EQUS "  Heads = &", 0
-        ; 15 - stringDscCylinders
+        ; 10 - stringDscCylinders
         EQUS &0D, "  Cylinders = &", 0
-        ; 16 - stringDscStep
+        ; 11 - stringDscStep
         EQUS &0D, "  Step = &", 0
-        ; 17 - stringDscRwcc
+        ; 12 - stringDscRwcc
         EQUS &0D, "  RWCC = &", 0
-        ; 18 - stringDscLandingZone
+        ; 13 - stringDscLandingZone
         EQUS &0D, "  Landing Zone = &", 0
-        ; 19 - stringOnlyVfs
-        EQUS "Filing system must be VFS", &0D, 0
-        ; 20 - stringFirmwareVersion
+        ; 14 - stringFirmwareVersion
         EQUS "BeebSCSI firmware is v", 0
 
 \\ ------------------------------------------------------------------------------------------------
+\\ Function: errorHandler
+\\ Purpose: Handlers for the various possible error conditions
+.errorHandlers
+    .errorOnlyAdfsVfsSupported
+        LDX #&FF
+        .errorOnlyAdfsVfsSupportedLoop
+        LDA errorOnlyAdfsVfsSupportedText, X    ; Fetch a byte of data
+        STA &100, X                             ; Store at the bottom of the stack
+        INX                                     ; Next byte
+        CMP #&FF                                ; Terminator byte?
+        BNE errorOnlyAdfsVfsSupportedLoop       ; No, loop again
+        JMP &100                                ; Execute BRK (outside of ROM)
+        BRK 
+        .errorOnlyAdfsVfsSupportedText
+            EQUB 0                      ; BRK instruction
+            EQUB &10                    ; Error Number &10
+            EQUS "Unsupported filing system in use - Only VFS and ADFS are allowed", 0
+            EQUB &FF
+
+    .errorMissingOrInvalidParameter
+        LDX #&FF
+        .errorMissingOrInvalidParameterLoop
+        LDA errorMissingOrInvalidParameterText, X    ; Fetch a byte of data
+        STA &100, X                             ; Store at the bottom of the stack
+        INX                                     ; Next byte
+        CMP #&FF                                ; Terminator byte?
+        BNE errorMissingOrInvalidParameterLoop  ; No, loop again
+        JMP &100                                ; Execute BRK (outside of ROM)
+        BRK 
+        .errorMissingOrInvalidParameterText
+            EQUB 0                      ; BRK instruction
+            EQUB &20                    ; Error Number &20
+            EQUS "Missing or invalid parameter", 0
+            EQUB &FF
+
+    .errorParameterOutOfRange
+        LDX #&FF
+        .errorParameterOutOfRangeLoop
+        LDA errorParameterOutOfRangeText, X     ; Fetch a byte of data
+        STA &100, X                             ; Store at the bottom of the stack
+        INX                                     ; Next byte
+        CMP #&FF                                ; Terminator byte?
+        BNE errorParameterOutOfRangeLoop        ; No, loop again
+        JMP &100                                ; Execute BRK (outside of ROM)
+        BRK 
+        .errorParameterOutOfRangeText
+            EQUB 0                      ; BRK instruction
+            EQUB &21                    ; Error Number &21
+            EQUS "Supplied parameter is out of range", 0
+            EQUB &FF
+
+    .errorScsi
+        LDX #&FF
+        .errorScsiLoop
+        LDA errorScsiText, X                    ; Fetch a byte of data
+        STA &100, X                             ; Store at the bottom of the stack
+        INX                                     ; Next byte
+        CMP #&FF                                ; Terminator byte?
+        BNE errorScsiLoop                       ; No, loop again
+        JMP &100                                ; Execute BRK (outside of ROM)
+        BRK 
+        .errorScsiText
+            EQUB 0                      ; BRK instruction
+            EQUB &30                    ; Error Number &30
+            EQUS "Filing system reported SCSI error", 0
+            EQUB &FF
+
+    .errorOnlyVfs
+        LDX #&FF
+        .errorOnlyVfsLoop
+        LDA errorOnlyVfsText, X                 ; Fetch a byte of data
+        STA &100, X                             ; Store at the bottom of the stack
+        INX                                     ; Next byte
+        CMP #&FF                                ; Terminator byte?
+        BNE errorOnlyVfsLoop                    ; No, loop again
+        JMP &100                                ; Execute BRK (outside of ROM)
+        BRK 
+        .errorOnlyVfsText
+            EQUB 0                      ; BRK instruction
+            EQUB &11                    ; Error Number &11
+            EQUS "Filing system must be VFS", 0
+            EQUB &FF
+
+    .errorCouldNotJuke
+        LDX #&FF
+        .errorCouldNotJukeLoop
+        LDA errorCouldNotJukeText, X            ; Fetch a byte of data
+        STA &100, X                             ; Store at the bottom of the stack
+        INX                                     ; Next byte
+        CMP #&FF                                ; Terminator byte?
+        BNE errorCouldNotJukeLoop               ; No, loop again
+        JMP &100                                ; Execute BRK (outside of ROM)
+        BRK 
+        .errorCouldNotJukeText
+            EQUB 0                      ; BRK instruction
+            EQUB &40                    ; Error Number &40
+            EQUS "Juke failed - did you *BYE?", 0
+            EQUB &FF
 
 \\ End of the actual code
 .codeEnd
