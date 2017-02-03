@@ -1214,9 +1214,9 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
     .errorOnlyAdfsVfsSupported
         LDX #&FF
         .errorOnlyAdfsVfsSupportedLoop
+        INX                                     ; Next byte
         LDA errorOnlyAdfsVfsSupportedText, X    ; Fetch a byte of data
         STA &100, X                             ; Store at the bottom of the stack
-        INX                                     ; Next byte
         CMP #&FF                                ; Terminator byte?
         BNE errorOnlyAdfsVfsSupportedLoop       ; No, loop again
         JMP &100                                ; Execute BRK (outside of ROM)
@@ -1230,9 +1230,9 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
     .errorMissingOrInvalidParameter
         LDX #&FF
         .errorMissingOrInvalidParameterLoop
+        INX                                     ; Next byte
         LDA errorMissingOrInvalidParameterText, X    ; Fetch a byte of data
         STA &100, X                             ; Store at the bottom of the stack
-        INX                                     ; Next byte
         CMP #&FF                                ; Terminator byte?
         BNE errorMissingOrInvalidParameterLoop  ; No, loop again
         JMP &100                                ; Execute BRK (outside of ROM)
@@ -1246,9 +1246,9 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
     .errorParameterOutOfRange
         LDX #&FF
         .errorParameterOutOfRangeLoop
+        INX                                     ; Next byte
         LDA errorParameterOutOfRangeText, X     ; Fetch a byte of data
         STA &100, X                             ; Store at the bottom of the stack
-        INX                                     ; Next byte
         CMP #&FF                                ; Terminator byte?
         BNE errorParameterOutOfRangeLoop        ; No, loop again
         JMP &100                                ; Execute BRK (outside of ROM)
@@ -1262,9 +1262,9 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
     .errorScsi
         LDX #&FF
         .errorScsiLoop
+        INX                                     ; Next byte
         LDA errorScsiText, X                    ; Fetch a byte of data
         STA &100, X                             ; Store at the bottom of the stack
-        INX                                     ; Next byte
         CMP #&FF                                ; Terminator byte?
         BNE errorScsiLoop                       ; No, loop again
         JMP &100                                ; Execute BRK (outside of ROM)
@@ -1278,9 +1278,9 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
     .errorOnlyVfs
         LDX #&FF
         .errorOnlyVfsLoop
+        INX                                     ; Next byte
         LDA errorOnlyVfsText, X                 ; Fetch a byte of data
         STA &100, X                             ; Store at the bottom of the stack
-        INX                                     ; Next byte
         CMP #&FF                                ; Terminator byte?
         BNE errorOnlyVfsLoop                    ; No, loop again
         JMP &100                                ; Execute BRK (outside of ROM)
@@ -1294,9 +1294,9 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
     .errorCouldNotJuke
         LDX #&FF
         .errorCouldNotJukeLoop
+        INX                                     ; Next byte
         LDA errorCouldNotJukeText, X            ; Fetch a byte of data
         STA &100, X                             ; Store at the bottom of the stack
-        INX                                     ; Next byte
         CMP #&FF                                ; Terminator byte?
         BNE errorCouldNotJukeLoop               ; No, loop again
         JMP &100                                ; Execute BRK (outside of ROM)
