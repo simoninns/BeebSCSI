@@ -455,6 +455,7 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
         \\ File system is ADFS.  Use OSWORD &72
         LDA #&72                                ; Execute OSWORD &72 (ADFS)
         JSR osword
+        JSR claimSharedWorkspace                ; Reclaim workspace after OSWORD call
         JMP scsiDscCheckResult
 
         .scsiDscSendToVFS
@@ -586,6 +587,7 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
         \\ File system is ADFS.  Use OSWORD &72
         LDA #&72                                ; Execute OSWORD &72 (ADFS)
         JSR osword
+        JSR claimSharedWorkspace                ; Reclaim workspace after OSWORD call
         JMP scsiStatusCheckResult
 
         .scsiStatusSendToVFS
@@ -900,12 +902,14 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
         \\ File system is ADFS.  Use OSWORD &72
         LDA #&72                                ; Execute OSWORD &72 (ADFS)
         JSR osword
+        JSR claimSharedWorkspace                ; Reclaim workspace after OSWORD call
         JMP scsiJukeCheckResult
 
         .scsiJukeSendToVFS
             \\ File system is VFS.  Use OSWORD &62
             LDA #&62                                ; Execute OSWORD &62 (VFS)
             JSR osword
+            JSR claimSharedWorkspace                ; Reclaim workspace after OSWORD call
 
         \\ Ensure the SCSI command successfully executed
         .scsiJukeCheckResult
@@ -958,6 +962,7 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
         TAY
         LDA #&64
         JSR osword                          ; Get F-Code response
+        JSR claimSharedWorkspace            ; Reclaim workspace after OSWORD call
 
     \\ Show the returned 16 bytes of ASCII
     .showfcodeoutput
