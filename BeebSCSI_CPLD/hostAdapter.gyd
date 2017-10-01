@@ -48,20 +48,21 @@ scsi_nSEL S:PIN42
 
 PARTITION FB1_1 EXP6_ bbc_DATA_out<2> EXP7_ N0
 		 bbc_DATA_out<1> bbc_DATA_out<0> EXP8_
-PARTITION FB1_9 scsi_nSEL_OBUF/scsi_nSEL_OBUF_SETF__$INT status_out<6> status_out<2> status_out<1>
-		 status_out<0> scsi_nSEL_OBUF/scsi_nSEL_OBUF_CLKF__$INT scsi_nACK_OBUF/scsi_nACK_OBUF_CLKF__$INT irqFirstStageQ/irqFirstStageQ_CLKF__$INT
-		 $OpTx$$OpTx$FX_DC$11_INV$69 status_out<4>
+PARTITION FB1_11 status_out<7>/status_out<7>_CLKF__$INT status_out<6> scsi_nSEL_OBUF/scsi_nSEL_OBUF_CLKF__$INT scsi_nACK_OBUF/scsi_nACK_OBUF_CLKF__$INT
+		 irqFirstStageQ/irqFirstStageQ_CLKF__$INT dataInLatchQ<7>/dataInLatchQ<7>_CLKF__$INT $OpTx$$OpTx$FX_DC$47_INV$70 status_out<4>
+		
 PARTITION FB2_10 EXP9_ bbc_DATA_out<7> bbc_DATA_out<6> EXP10_
 		 bbc_DATA_out<5> bbc_DATA_out<4> EXP11_ bbc_DATA_out<3>
 		
 
-PARTITION FB3_1 status_out<7> status_out<5> scsi_nDATA_out<0> scsi_nDATA_out<1>
-		 dataInLatchQ<5> scsi_nDATA_out<3> dataInLatchQ<4> dataInLatchQ<3>
-		 dataInLatchQ<2> scsi_nDATA_out<7> scsi_nDATA_out<2> scsi_nACK_OBUF
-		 dataInLatchQ<1> scsi_nDATA_out<4> scsi_nDATA_out<5> scsi_nSEL_OBUF
-		 scsi_nDATA_out<6> dataInLatchQ<0>
+PARTITION FB3_1 status_out<5> status_out<2> scsi_nDATA_out<0> scsi_nDATA_out<1>
+		 dataInLatchQ<3> scsi_nDATA_out<3> dataInLatchQ<2> dataInLatchQ<1>
+		 dataInLatchQ<0> scsi_nDATA_out<7> scsi_nDATA_out<2> scsi_nACK_OBUF
+		 IRQ scsi_nDATA_out<4> scsi_nDATA_out<5> scsi_nSEL_OBUF
+		 scsi_nDATA_out<6> irqFirstStageQ
 PARTITION FB4_2 scsi_INTnEXT_OBUF$BUF0
 PARTITION FB4_6 scsi_nRST_OBUF$BUF0
-PARTITION FB4_13 dataInLatchQ<7> scsi_nCONF_OBUF dataInLatchQ<6> cleanPGFC
-		 IRQ irqFirstStageQ
+PARTITION FB4_9 scsi_nSEL_OBUF/scsi_nSEL_OBUF_SETF__$INT status_out<7> status_out<1> status_out<0>
+		 dataInLatchQ<7> scsi_nCONF_OBUF dataInLatchQ<6> dataInLatchQ<5>
+		 dataInLatchQ<4> cleanPGFC
 

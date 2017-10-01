@@ -6,7 +6,7 @@
 ********** Mapped Logic **********
 </td></tr><tr><td>
 </td></tr><tr><td>
-$OpTx$$OpTx$FX_DC$11_INV$69 <= ((NOT bbc_ADDRESS(4) AND bbc_1MHZE AND NOT bbc_ADDRESS(7) AND 
+$OpTx$$OpTx$FX_DC$47_INV$70 <= ((NOT bbc_ADDRESS(4) AND bbc_1MHZE AND NOT bbc_ADDRESS(7) AND 
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT bbc_ADDRESS(5) AND NOT bbc_ADDRESS(3) AND cleanPGFC AND bbc_INTnEXT)
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT bbc_ADDRESS(4) AND bbc_1MHZE AND NOT bbc_ADDRESS(7) AND 
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT bbc_ADDRESS(5) AND NOT bbc_ADDRESS(3) AND cleanPGFC AND bbc_ADDRESS(6)));
@@ -54,7 +54,7 @@ bbc_DATA_I(0) <= ((NOT bbc_ADDRESS(4) AND NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	bbc_INTnEXT AND NOT scsi_nDATA(0).PIN));
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bbc_DATA(0) <= bbc_DATA_I(0) when bbc_DATA_OE(0) = '1' else 'Z';
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bbc_DATA_OE(0) <= (NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND bbc_RnW AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	$OpTx$$OpTx$FX_DC$11_INV$69);
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	$OpTx$$OpTx$FX_DC$47_INV$70);
 </td></tr><tr><td>
 </td></tr><tr><td>
 bbc_DATA_I(1) <= ((NOT bbc_ADDRESS(4) AND NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND 
@@ -83,7 +83,7 @@ bbc_DATA_I(1) <= ((NOT bbc_ADDRESS(4) AND NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	bbc_INTnEXT AND NOT scsi_nDATA(1).PIN));
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bbc_DATA(1) <= bbc_DATA_I(1) when bbc_DATA_OE(1) = '1' else 'Z';
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bbc_DATA_OE(1) <= (NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND bbc_RnW AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	$OpTx$$OpTx$FX_DC$11_INV$69);
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	$OpTx$$OpTx$FX_DC$47_INV$70);
 </td></tr><tr><td>
 </td></tr><tr><td>
 bbc_DATA_I(2) <= ((NOT bbc_ADDRESS(4) AND NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND 
@@ -112,7 +112,7 @@ bbc_DATA_I(2) <= ((NOT bbc_ADDRESS(4) AND NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	bbc_INTnEXT AND NOT scsi_nDATA(2).PIN));
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bbc_DATA(2) <= bbc_DATA_I(2) when bbc_DATA_OE(2) = '1' else 'Z';
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bbc_DATA_OE(2) <= (NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND bbc_RnW AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	$OpTx$$OpTx$FX_DC$11_INV$69);
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	$OpTx$$OpTx$FX_DC$47_INV$70);
 </td></tr><tr><td>
 </td></tr><tr><td>
 bbc_DATA_I(3) <= ((NOT bbc_ADDRESS(4) AND NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND 
@@ -133,7 +133,7 @@ bbc_DATA_I(3) <= ((NOT bbc_ADDRESS(4) AND NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT bbc_INTnEXT AND bbc_ADDRESS(6) AND dataInLatchQ(3)));
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bbc_DATA(3) <= bbc_DATA_I(3) when bbc_DATA_OE(3) = '1' else 'Z';
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bbc_DATA_OE(3) <= (NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND bbc_RnW AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	$OpTx$$OpTx$FX_DC$11_INV$69);
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	$OpTx$$OpTx$FX_DC$47_INV$70);
 </td></tr><tr><td>
 </td></tr><tr><td>
 bbc_DATA_I(4) <= ((NOT bbc_ADDRESS(4) AND NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND 
@@ -162,7 +162,7 @@ bbc_DATA_I(4) <= ((NOT bbc_ADDRESS(4) AND NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	status_out(4)));
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bbc_DATA(4) <= bbc_DATA_I(4) when bbc_DATA_OE(4) = '1' else 'Z';
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bbc_DATA_OE(4) <= (NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND bbc_RnW AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	$OpTx$$OpTx$FX_DC$11_INV$69);
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	$OpTx$$OpTx$FX_DC$47_INV$70);
 </td></tr><tr><td>
 </td></tr><tr><td>
 bbc_DATA_I(5) <= ((NOT bbc_ADDRESS(4) AND NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND 
@@ -191,7 +191,7 @@ bbc_DATA_I(5) <= ((NOT bbc_ADDRESS(4) AND NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	bbc_INTnEXT AND NOT scsi_nDATA(5).PIN));
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bbc_DATA(5) <= bbc_DATA_I(5) when bbc_DATA_OE(5) = '1' else 'Z';
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bbc_DATA_OE(5) <= (NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND bbc_RnW AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	$OpTx$$OpTx$FX_DC$11_INV$69);
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	$OpTx$$OpTx$FX_DC$47_INV$70);
 </td></tr><tr><td>
 </td></tr><tr><td>
 bbc_DATA_I(6) <= ((NOT bbc_ADDRESS(4) AND NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND 
@@ -220,7 +220,7 @@ bbc_DATA_I(6) <= ((NOT bbc_ADDRESS(4) AND NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	bbc_INTnEXT AND NOT scsi_nDATA(6).PIN));
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bbc_DATA(6) <= bbc_DATA_I(6) when bbc_DATA_OE(6) = '1' else 'Z';
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bbc_DATA_OE(6) <= (NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND bbc_RnW AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	$OpTx$$OpTx$FX_DC$11_INV$69);
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	$OpTx$$OpTx$FX_DC$47_INV$70);
 </td></tr><tr><td>
 </td></tr><tr><td>
 bbc_DATA_I(7) <= ((NOT bbc_ADDRESS(4) AND NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND 
@@ -249,7 +249,7 @@ bbc_DATA_I(7) <= ((NOT bbc_ADDRESS(4) AND NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	bbc_INTnEXT AND NOT scsi_nDATA(7).PIN));
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bbc_DATA(7) <= bbc_DATA_I(7) when bbc_DATA_OE(7) = '1' else 'Z';
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bbc_DATA_OE(7) <= (NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND bbc_RnW AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	$OpTx$$OpTx$FX_DC$11_INV$69);
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	$OpTx$$OpTx$FX_DC$47_INV$70);
 </td></tr><tr><td>
 </td></tr><tr><td>
 bbc_nIRQ_I <= '0';
@@ -258,37 +258,29 @@ bbc_nIRQ_I <= '0';
 </td></tr><tr><td>
 FDCPE_cleanPGFC: FDCPE port map (cleanPGFC,NOT bbc_nPGFC,bbc_1MHZE,bbc_nPGFC,'0');
 </td></tr><tr><td>
-FDCPE_dataInLatchQ0: FDCPE port map (dataInLatchQ(0),bbc_DATA(0).PIN,dataInLatchQ_C(0),'0','0');
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dataInLatchQ_C(0) <= (NOT bbc_ADDRESS(1) AND NOT bbc_ADDRESS(0) AND NOT bbc_RnW AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	$OpTx$$OpTx$FX_DC$11_INV$69);
+FDCPE_dataInLatchQ0: FDCPE port map (dataInLatchQ(0),bbc_DATA(0).PIN,NOT dataInLatchQ(7)/dataInLatchQ(7)_CLKF__$INT,'0','0');
 </td></tr><tr><td>
-FDCPE_dataInLatchQ1: FDCPE port map (dataInLatchQ(1),bbc_DATA(1).PIN,dataInLatchQ_C(1),'0','0');
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dataInLatchQ_C(1) <= (NOT bbc_ADDRESS(1) AND NOT bbc_ADDRESS(0) AND NOT bbc_RnW AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	$OpTx$$OpTx$FX_DC$11_INV$69);
+FDCPE_dataInLatchQ1: FDCPE port map (dataInLatchQ(1),bbc_DATA(1).PIN,NOT dataInLatchQ(7)/dataInLatchQ(7)_CLKF__$INT,'0','0');
 </td></tr><tr><td>
-FDCPE_dataInLatchQ2: FDCPE port map (dataInLatchQ(2),bbc_DATA(2).PIN,dataInLatchQ_C(2),'0','0');
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dataInLatchQ_C(2) <= (NOT bbc_ADDRESS(1) AND NOT bbc_ADDRESS(0) AND NOT bbc_RnW AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	$OpTx$$OpTx$FX_DC$11_INV$69);
+FDCPE_dataInLatchQ2: FDCPE port map (dataInLatchQ(2),bbc_DATA(2).PIN,NOT dataInLatchQ(7)/dataInLatchQ(7)_CLKF__$INT,'0','0');
 </td></tr><tr><td>
-FDCPE_dataInLatchQ3: FDCPE port map (dataInLatchQ(3),bbc_DATA(3).PIN,dataInLatchQ_C(3),'0','0');
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dataInLatchQ_C(3) <= (NOT bbc_ADDRESS(1) AND NOT bbc_ADDRESS(0) AND NOT bbc_RnW AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	$OpTx$$OpTx$FX_DC$11_INV$69);
+FDCPE_dataInLatchQ3: FDCPE port map (dataInLatchQ(3),bbc_DATA(3).PIN,NOT dataInLatchQ(7)/dataInLatchQ(7)_CLKF__$INT,'0','0');
 </td></tr><tr><td>
-FDCPE_dataInLatchQ4: FDCPE port map (dataInLatchQ(4),bbc_DATA(4).PIN,dataInLatchQ_C(4),'0','0');
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dataInLatchQ_C(4) <= (NOT bbc_ADDRESS(1) AND NOT bbc_ADDRESS(0) AND NOT bbc_RnW AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	$OpTx$$OpTx$FX_DC$11_INV$69);
+FDCPE_dataInLatchQ4: FDCPE port map (dataInLatchQ(4),bbc_DATA(4).PIN,NOT dataInLatchQ(7)/dataInLatchQ(7)_CLKF__$INT,'0','0');
 </td></tr><tr><td>
-FDCPE_dataInLatchQ5: FDCPE port map (dataInLatchQ(5),bbc_DATA(5).PIN,dataInLatchQ_C(5),'0','0');
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dataInLatchQ_C(5) <= (NOT bbc_ADDRESS(1) AND NOT bbc_ADDRESS(0) AND NOT bbc_RnW AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	$OpTx$$OpTx$FX_DC$11_INV$69);
+FDCPE_dataInLatchQ5: FDCPE port map (dataInLatchQ(5),bbc_DATA(5).PIN,NOT dataInLatchQ(7)/dataInLatchQ(7)_CLKF__$INT,'0','0');
 </td></tr><tr><td>
-FDCPE_dataInLatchQ6: FDCPE port map (dataInLatchQ(6),bbc_DATA(6).PIN,dataInLatchQ_C(6),'0','0');
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dataInLatchQ_C(6) <= (NOT bbc_ADDRESS(1) AND NOT bbc_ADDRESS(0) AND NOT bbc_RnW AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	$OpTx$$OpTx$FX_DC$11_INV$69);
+FDCPE_dataInLatchQ6: FDCPE port map (dataInLatchQ(6),bbc_DATA(6).PIN,NOT dataInLatchQ(7)/dataInLatchQ(7)_CLKF__$INT,'0','0');
 </td></tr><tr><td>
-FDCPE_dataInLatchQ7: FDCPE port map (dataInLatchQ(7),bbc_DATA(7).PIN,dataInLatchQ_C(7),'0','0');
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dataInLatchQ_C(7) <= (NOT bbc_ADDRESS(1) AND NOT bbc_ADDRESS(0) AND NOT bbc_RnW AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	$OpTx$$OpTx$FX_DC$11_INV$69);
+FDCPE_dataInLatchQ7: FDCPE port map (dataInLatchQ(7),bbc_DATA(7).PIN,NOT dataInLatchQ(7)/dataInLatchQ(7)_CLKF__$INT,'0','0');
+</td></tr><tr><td>
+</td></tr><tr><td>
+dataInLatchQ(7)/dataInLatchQ(7)_CLKF__$INT <= ((NOT bbc_ADDRESS(4) AND NOT bbc_ADDRESS(1) AND NOT bbc_ADDRESS(0) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT bbc_RnW AND bbc_1MHZE AND NOT bbc_ADDRESS(7) AND NOT bbc_ADDRESS(5) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT bbc_ADDRESS(3) AND cleanPGFC AND bbc_INTnEXT)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT bbc_ADDRESS(4) AND NOT bbc_ADDRESS(1) AND NOT bbc_ADDRESS(0) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT bbc_RnW AND bbc_1MHZE AND NOT bbc_ADDRESS(7) AND NOT bbc_ADDRESS(5) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT bbc_ADDRESS(3) AND cleanPGFC AND bbc_ADDRESS(6)));
 </td></tr><tr><td>
 FDCPE_irqFirstStageQ: FDCPE port map (irqFirstStageQ,bbc_DATA(0).PIN,NOT irqFirstStageQ/irqFirstStageQ_CLKF__$INT,NOT bbc_nRST,'0');
 </td></tr><tr><td>
@@ -385,37 +377,31 @@ scsi_nSEL_OBUF/scsi_nSEL_OBUF_CLKF__$INT <= ((NOT bbc_ADDRESS(4) AND NOT bbc_ADD
 </td></tr><tr><td>
 scsi_nSEL_OBUF/scsi_nSEL_OBUF_SETF__$INT <= (bbc_nRST AND scsi_nBSY);
 </td></tr><tr><td>
-FDCPE_status_out0: FDCPE port map (status_out(0),NOT scsi_nMSG,status_out_C(0),'0','0');
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;status_out_C(0) <= (NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND bbc_ADDRESS(0) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	bbc_RnW AND $OpTx$$OpTx$FX_DC$11_INV$69);
+FDCPE_status_out0: FDCPE port map (status_out(0),NOT scsi_nMSG,NOT status_out(7)/status_out(7)_CLKF__$INT,'0','0');
 </td></tr><tr><td>
-FDCPE_status_out1: FDCPE port map (status_out(1),NOT scsi_nBSY,status_out_C(1),'0','0');
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;status_out_C(1) <= (NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND bbc_ADDRESS(0) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	bbc_RnW AND $OpTx$$OpTx$FX_DC$11_INV$69);
+FDCPE_status_out1: FDCPE port map (status_out(1),NOT scsi_nBSY,NOT status_out(7)/status_out(7)_CLKF__$INT,'0','0');
 </td></tr><tr><td>
-FDCPE_status_out2: FDCPE port map (status_out(2),status_out_D(2),status_out_C(2),'0','0');
+FDCPE_status_out2: FDCPE port map (status_out(2),status_out_D(2),NOT status_out(7)/status_out(7)_CLKF__$INT,'0','0');
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;status_out_D(2) <= (bbc_nRST AND bbc_INTnEXT);
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;status_out_C(2) <= (NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND bbc_ADDRESS(0) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	bbc_RnW AND $OpTx$$OpTx$FX_DC$11_INV$69);
 </td></tr><tr><td>
-FDCPE_status_out4: FDCPE port map (status_out(4),status_out_D(4),status_out_C(4),'0','0');
+FDCPE_status_out4: FDCPE port map (status_out(4),status_out_D(4),NOT status_out(7)/status_out(7)_CLKF__$INT,'0','0');
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;status_out_D(4) <= IRQ
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	 XOR 
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;status_out_D(4) <= bbc_INTnEXT;
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;status_out_C(4) <= (NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND bbc_ADDRESS(0) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	bbc_RnW AND $OpTx$$OpTx$FX_DC$11_INV$69);
 </td></tr><tr><td>
-FDCPE_status_out5: FDCPE port map (status_out(5),NOT scsi_nREQ,status_out_C(5),'0','0');
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;status_out_C(5) <= (NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND bbc_ADDRESS(0) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	bbc_RnW AND $OpTx$$OpTx$FX_DC$11_INV$69);
+FDCPE_status_out5: FDCPE port map (status_out(5),NOT scsi_nREQ,NOT status_out(7)/status_out(7)_CLKF__$INT,'0','0');
 </td></tr><tr><td>
-FDCPE_status_out6: FDCPE port map (status_out(6),NOT scsi_InO,status_out_C(6),'0','0');
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;status_out_C(6) <= (NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND bbc_ADDRESS(0) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	bbc_RnW AND $OpTx$$OpTx$FX_DC$11_INV$69);
+FDCPE_status_out6: FDCPE port map (status_out(6),NOT scsi_InO,NOT status_out(7)/status_out(7)_CLKF__$INT,'0','0');
 </td></tr><tr><td>
-FDCPE_status_out7: FDCPE port map (status_out(7),NOT scsi_CnD,status_out_C(7),'0','0');
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;status_out_C(7) <= (NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND bbc_ADDRESS(0) AND 
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	bbc_RnW AND $OpTx$$OpTx$FX_DC$11_INV$69);
+</td></tr><tr><td>
+status_out(7)/status_out(7)_CLKF__$INT <= ((NOT bbc_ADDRESS(4) AND NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	bbc_ADDRESS(0) AND bbc_RnW AND bbc_1MHZE AND NOT bbc_ADDRESS(7) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT bbc_ADDRESS(5) AND NOT bbc_ADDRESS(3) AND cleanPGFC AND bbc_INTnEXT)
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	OR (NOT bbc_ADDRESS(4) AND NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	bbc_ADDRESS(0) AND bbc_RnW AND bbc_1MHZE AND NOT bbc_ADDRESS(7) AND 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	NOT bbc_ADDRESS(5) AND NOT bbc_ADDRESS(3) AND cleanPGFC AND bbc_ADDRESS(6)));
+</td></tr><tr><td>
+FDCPE_status_out7: FDCPE port map (status_out(7),NOT scsi_CnD,NOT status_out(7)/status_out(7)_CLKF__$INT,'0','0');
 </td></tr><tr><td>
 Register Legend:
 <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; FDCPE (Q,D,C,CLR,PRE,CE); 

@@ -160,7 +160,7 @@ module hostAdapter(
 	// The Acorn host adapter uses a 74LS373 octal D-type transparent latch IC
 	// as the data in latch.  In Verilog this would be an inferred latch as it
 	// is combinational rather than clocked.  To avoid this issue we emulate
-	// a 74LS573 instead (which latches on the postive edge of the clock).
+	// a 74LS573 instead (which latches on the negative edge of the clock).
 	// Since the nFC40WR command is used to trigger the latch (and it's negative
 	// logic) we have to invert it before using it as the LE (Latch Enable).
 	//

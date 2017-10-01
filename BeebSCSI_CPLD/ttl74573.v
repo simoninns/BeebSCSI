@@ -38,9 +38,10 @@ module ttl74573(
 		Q <= 8'b0;
 	end
 
-	always @ (posedge LE)
+	// Latch on the negative edge of LE (i.e. High-to-Low transition)
+	always @ (negedge LE)
 	begin
-		if (LE) Q <= D;
+		if (!LE) Q <= D;
 	end
 
 endmodule

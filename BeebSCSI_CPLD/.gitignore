@@ -20,9 +20,12 @@ xst
 *.exe
 *.gise
 *.grf
+*.gyd
 *.html
+*.htm
 *.ibs
 *.ini
+*.ipf
 *.jhd
 *.lck
 *.log
@@ -30,9 +33,11 @@ xst
 *.lso
 *.lst
 *.map
+*.mfd
 *.mppr
 *.mrp
 *.ncd
+*.nga
 *.ngc
 *.ngd
 *.ngm
@@ -66,6 +71,7 @@ sch2HdlBatchFile
 *.ut
 *.vhf
 *.vhi
+*.vm6
 *.wdb
 *.xcf
 *.xml
