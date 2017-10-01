@@ -3,7 +3,7 @@
  
 cpldfit:  version P.20131013                        Xilinx Inc.
                                   Fitter Report
-Design Name: hostAdapter                         Date:  9-30-2017,  7:58PM
+Design Name: hostAdapter                         Date: 10- 1-2017, 10:36AM
 Device Used: XC9572XL-7-VQ64
 Fitting Status: Successful
 
@@ -11,18 +11,18 @@ Fitting Status: Successful
 
 Macrocells     Product Terms    Function Block   Registers      Pins           
 Used/Tot       Used/Tot         Inps Used/Tot    Used/Tot       Used/Tot       
-47 /72  ( 65%) 138 /360  ( 38%) 100/216 ( 46%)   19 /72  ( 26%) 40 /52  ( 77%)
+46 /72  ( 64%) 136 /360  ( 38%) 103/216 ( 48%)   19 /72  ( 26%) 40 /52  ( 77%)
 
 ** Function Block Resources **
 
 Function    Mcells      FB Inps     Pterms      IO          
 Block       Used/Tot    Used/Tot    Used/Tot    Used/Tot    
-FB1          12/18       25/54       39/90       8/13
+FB1          13/18       26/54       41/90       8/13
 FB2           5/18       28/54       33/90      13/13*
-FB3          18/18*      24/54       45/90      10/14
-FB4          12/18       23/54       21/90       9/12
+FB3          16/18       26/54       40/90      10/14
+FB4          12/18       23/54       22/90       9/12
              -----       -----       -----      -----    
-             47/72      100/216     138/360     40/52 
+             46/72      103/216     136/360     40/52 
 
 * - Resource is exhausted
 
@@ -47,7 +47,7 @@ GSR           :    0           0    |
 
 ** Power Data **
 
-There are 47 macrocells in high performance mode (MCHP).
+There are 46 macrocells in high performance mode (MCHP).
 There are 0 macrocells in low power mode (MCLP).
 End of Mapped Resource Summary
 **************************  Errors and Warnings  ***************************
@@ -96,34 +96,33 @@ scsi_INTnEXT                                1     1     FB4_2   43   I/O     O  
 scsi_nRST                                   1     1     FB4_6   49   I/O     O       STD  FAST 
 scsi_nCONF                                  2     12    FB4_14  50   I/O     O       STD  FAST 
 
-** 25 Buried Nodes **
+** 24 Buried Nodes **
 
 Signal                                      Total Total Loc     Pwr  Reg Init
 Name                                        Pts   Inps          Mode State
-status_out<7>/status_out<7>_CLKF__$INT      2     12    FB1_11  STD  
-status_out<6>                               2     2     FB1_12  STD  RESET
+status_out<6>                               2     6     FB1_10  STD  RESET
+status_out<2>                               2     7     FB1_11  STD  RESET
+status_out<0>                               2     6     FB1_12  STD  RESET
 scsi_nSEL_OBUF/scsi_nSEL_OBUF_CLKF__$INT    2     12    FB1_13  STD  
 scsi_nACK_OBUF/scsi_nACK_OBUF_CLKF__$INT    2     11    FB1_14  STD  
 irqFirstStageQ/irqFirstStageQ_CLKF__$INT    2     12    FB1_15  STD  
 dataInLatchQ<7>/dataInLatchQ<7>_CLKF__$INT  2     11    FB1_16  STD  
-$OpTx$$OpTx$FX_DC$47_INV$70                 2     8     FB1_17  STD  
-status_out<4>                               3     3     FB1_18  STD  RESET
-status_out<5>                               2     2     FB3_1   STD  RESET
-status_out<2>                               2     3     FB3_2   STD  RESET
-dataInLatchQ<3>                             2     2     FB3_5   STD  RESET
-dataInLatchQ<2>                             2     2     FB3_7   STD  RESET
-dataInLatchQ<1>                             2     2     FB3_8   STD  RESET
-dataInLatchQ<0>                             2     2     FB3_9   STD  RESET
+$OpTx$$OpTx$FX_DC$11_INV$65                 2     8     FB1_17  STD  
+status_out<4>                               3     7     FB1_18  STD  RESET
+scsi_nSEL_OBUF/scsi_nSEL_OBUF_SETF__$INT    1     2     FB3_5   STD  
+status_out<7>                               2     6     FB3_7   STD  RESET
+status_out<5>                               2     6     FB3_8   STD  RESET
+status_out<1>                               2     6     FB3_9   STD  RESET
 IRQ                                         2     3     FB3_13  STD  
 irqFirstStageQ                              3     3     FB3_18  STD  RESET
-scsi_nSEL_OBUF/scsi_nSEL_OBUF_SETF__$INT    1     2     FB4_9   STD  
-status_out<7>                               2     2     FB4_10  STD  RESET
-status_out<1>                               2     2     FB4_11  STD  RESET
-status_out<0>                               2     2     FB4_12  STD  RESET
-dataInLatchQ<7>                             2     2     FB4_13  STD  RESET
-dataInLatchQ<6>                             2     2     FB4_15  STD  RESET
-dataInLatchQ<5>                             2     2     FB4_16  STD  RESET
-dataInLatchQ<4>                             2     2     FB4_17  STD  RESET
+dataInLatchQ<7>                             2     2     FB4_9   STD  RESET
+dataInLatchQ<6>                             2     2     FB4_10  STD  RESET
+dataInLatchQ<5>                             2     2     FB4_11  STD  RESET
+dataInLatchQ<4>                             2     2     FB4_12  STD  RESET
+dataInLatchQ<3>                             2     2     FB4_13  STD  RESET
+dataInLatchQ<2>                             2     2     FB4_15  STD  RESET
+dataInLatchQ<1>                             2     2     FB4_16  STD  RESET
+dataInLatchQ<0>                             2     2     FB4_17  STD  RESET
 cleanPGFC                                   2     1     FB4_18  STD  RESET
 
 ** 18 Inputs **
@@ -165,8 +164,8 @@ Pin Type/Use - I  - Input             GCK - Global Clock
 X            - Signal used as input to the macrocell logic.
 Pin No.      - ~  - User Assigned
 *********************************** FB1  ***********************************
-Number of function block inputs used/remaining:               25/29
-Number of signals used by logic mapping into function block:  25
+Number of function block inputs used/remaining:               26/28
+Number of signals used by logic mapping into function block:  26
 Signal              Total   Imp   Exp Unused  Loc     Pin   Pin     Pin
 Name                Pt      Pt    Pt  Pt               #    Type    Use
 (unused)              0       0   \/1   4     FB1_1         (b)     (b)
@@ -178,10 +177,9 @@ bbc_DATA<0>           7       2<-   0   0     FB1_6   10    I/O     I/O
 (unused)              0       0   /\2   3     FB1_7         (b)     (b)
 (unused)              0       0     0   5     FB1_8   11    I/O     I
 (unused)              0       0     0   5     FB1_9   15    GCK/I/O GCK/I
-(unused)              0       0     0   5     FB1_10  18    I/O     
-status_out<7>/status_out<7>_CLKF__$INT
-                      2       0     0   3     FB1_11  16    GCK/I/O I
-status_out<6>         2       0     0   3     FB1_12  23    I/O     (b)
+status_out<6>         2       0     0   3     FB1_10  18    I/O     (b)
+status_out<2>         2       0     0   3     FB1_11  16    GCK/I/O I
+status_out<0>         2       0     0   3     FB1_12  23    I/O     (b)
 scsi_nSEL_OBUF/scsi_nSEL_OBUF_CLKF__$INT
                       2       0     0   3     FB1_13        (b)     (b)
 scsi_nACK_OBUF/scsi_nACK_OBUF_CLKF__$INT
@@ -190,30 +188,30 @@ irqFirstStageQ/irqFirstStageQ_CLKF__$INT
                       2       0     0   3     FB1_15  19    I/O     (b)
 dataInLatchQ<7>/dataInLatchQ<7>_CLKF__$INT
                       2       0     0   3     FB1_16        (b)     (b)
-$OpTx$$OpTx$FX_DC$47_INV$70
+$OpTx$$OpTx$FX_DC$11_INV$65
                       2       0     0   3     FB1_17  20    I/O     (b)
 status_out<4>         3       0     0   2     FB1_18        (b)     (b)
 
 Signals Used by Logic in Function Block
-  1: $OpTx$$OpTx$FX_DC$47_INV$70  10: bbc_ADDRESS<3>    18: dataInLatchQ<1> 
-  2: IRQ                          11: bbc_ADDRESS<4>    19: dataInLatchQ<2> 
-  3: scsi_nDATA<2>.PIN            12: bbc_ADDRESS<5>    20: bbc_INTnEXT 
-  4: scsi_nDATA<1>.PIN            13: bbc_ADDRESS<6>    21: scsi_InO 
-  5: scsi_nDATA<0>.PIN            14: bbc_ADDRESS<7>    22: status_out<0> 
-  6: bbc_1MHZE                    15: bbc_RnW           23: status_out<1> 
-  7: bbc_ADDRESS<0>               16: cleanPGFC         24: status_out<2> 
-  8: bbc_ADDRESS<1>               17: dataInLatchQ<0>   25: status_out<7>/status_out<7>_CLKF__$INT 
-  9: bbc_ADDRESS<2>              
+  1: $OpTx$$OpTx$FX_DC$11_INV$65  10: bbc_ADDRESS<3>    19: dataInLatchQ<2> 
+  2: IRQ                          11: bbc_ADDRESS<4>    20: bbc_INTnEXT 
+  3: scsi_nDATA<2>.PIN            12: bbc_ADDRESS<5>    21: scsi_InO 
+  4: scsi_nDATA<1>.PIN            13: bbc_ADDRESS<6>    22: scsi_nMSG 
+  5: scsi_nDATA<0>.PIN            14: bbc_ADDRESS<7>    23: bbc_nRST 
+  6: bbc_1MHZE                    15: bbc_RnW           24: status_out<0> 
+  7: bbc_ADDRESS<0>               16: cleanPGFC         25: status_out<1> 
+  8: bbc_ADDRESS<1>               17: dataInLatchQ<0>   26: status_out<2> 
+  9: bbc_ADDRESS<2>               18: dataInLatchQ<1>  
 
 Signal                        1         2         3         4 FB
 Name                0----+----0----+----0----+----0----+----0 Inputs
-bbc_DATA<2>          X.X..XXXXXXXXXXX..XXX..X................ 17
+bbc_DATA<2>          X.X..XXXXXXXXXXX..XXX....X.............. 17
 bbc_nIRQ             .X...................................... 1
-bbc_DATA<1>          X..X.XXXXXXXXXXX.X.XX.X................. 17
-bbc_DATA<0>          X...XXXXXXXXXXXXX..XXX.................. 17
-status_out<7>/status_out<7>_CLKF__$INT 
-                     .....XXXXXXXXXXX...X.................... 12
-status_out<6>        ....................X...X............... 2
+bbc_DATA<1>          X..X.XXXXXXXXXXX.X.XX...X............... 17
+bbc_DATA<0>          X...XXXXXXXXXXXXX..XX..X................ 17
+status_out<6>        X.....XXX.....X.....X................... 6
+status_out<2>        X.....XXX.....X....X..X................. 7
+status_out<0>        X.....XXX.....X......X.................. 6
 scsi_nSEL_OBUF/scsi_nSEL_OBUF_CLKF__$INT 
                      .....XXXXXXXXXXX...X.................... 12
 scsi_nACK_OBUF/scsi_nACK_OBUF_CLKF__$INT 
@@ -222,9 +220,9 @@ irqFirstStageQ/irqFirstStageQ_CLKF__$INT
                      .....XXXXXXXXXXX...X.................... 12
 dataInLatchQ<7>/dataInLatchQ<7>_CLKF__$INT 
                      .....XXX.XXXXXXX...X.................... 11
-$OpTx$$OpTx$FX_DC$47_INV$70 
+$OpTx$$OpTx$FX_DC$11_INV$65 
                      .....X...XXXXX.X...X.................... 8
-status_out<4>        .X.................X....X............... 3
+status_out<4>        XX....XXX.....X....X.................... 7
                     0----+----1----+----2----+----3----+----4
                               0         0         0         0
 *********************************** FB2  ***********************************
@@ -252,7 +250,7 @@ bbc_DATA<3>           5       0     0   0     FB2_17  7     I/O     I/O
 (unused)              0       0     0   5     FB2_18        (b)     
 
 Signals Used by Logic in Function Block
-  1: $OpTx$$OpTx$FX_DC$47_INV$70  11: bbc_ADDRESS<3>    20: dataInLatchQ<5> 
+  1: $OpTx$$OpTx$FX_DC$11_INV$65  11: bbc_ADDRESS<3>    20: dataInLatchQ<5> 
   2: scsi_nDATA<5>.PIN            12: bbc_ADDRESS<4>    21: dataInLatchQ<6> 
   3: scsi_nDATA<4>.PIN            13: bbc_ADDRESS<5>    22: dataInLatchQ<7> 
   4: scsi_nDATA<3>.PIN            14: bbc_ADDRESS<6>    23: bbc_INTnEXT 
@@ -273,19 +271,20 @@ bbc_DATA<3>          X..X..XXXXXXXXXXXX....XX................ 16
                     0----+----1----+----2----+----3----+----4
                               0         0         0         0
 *********************************** FB3  ***********************************
-Number of function block inputs used/remaining:               24/30
-Number of signals used by logic mapping into function block:  24
+Number of function block inputs used/remaining:               26/28
+Number of signals used by logic mapping into function block:  26
 Signal              Total   Imp   Exp Unused  Loc     Pin   Pin     Pin
 Name                Pt      Pt    Pt  Pt               #    Type    Use
-status_out<5>         2       0     0   3     FB3_1         (b)     (b)
-status_out<2>         2       0     0   3     FB3_2   22    I/O     (b)
+(unused)              0       0     0   5     FB3_1         (b)     
+(unused)              0       0     0   5     FB3_2   22    I/O     
 scsi_nDATA<0>         3       0     0   2     FB3_3   31    I/O     I/O
 scsi_nDATA<1>         3       0     0   2     FB3_4   32    I/O     I/O
-dataInLatchQ<3>       2       0     0   3     FB3_5   24    I/O     (b)
+scsi_nSEL_OBUF/scsi_nSEL_OBUF_SETF__$INT
+                      1       0     0   4     FB3_5   24    I/O     (b)
 scsi_nDATA<3>         3       0     0   2     FB3_6   34    I/O     I/O
-dataInLatchQ<2>       2       0     0   3     FB3_7         (b)     (b)
-dataInLatchQ<1>       2       0     0   3     FB3_8   25    I/O     (b)
-dataInLatchQ<0>       2       0     0   3     FB3_9   27    I/O     (b)
+status_out<7>         2       0     0   3     FB3_7         (b)     (b)
+status_out<5>         2       0     0   3     FB3_8   25    I/O     (b)
+status_out<1>         2       0     0   3     FB3_9   27    I/O     (b)
 scsi_nDATA<7>         3       0     0   2     FB3_10  39    I/O     I/O
 scsi_nDATA<2>         3       0     0   2     FB3_11  33    I/O     I/O
 scsi_nACK             2       0     0   3     FB3_12  40    I/O     O
@@ -297,35 +296,35 @@ scsi_nDATA<6>         3       0     0   2     FB3_17  38    I/O     I/O
 irqFirstStageQ        3       0     0   2     FB3_18        (b)     (b)
 
 Signals Used by Logic in Function Block
-  1: IRQ                9: dataInLatchQ<3>                             17: bbc_INTnEXT 
-  2: bbc_DATA<3>.PIN   10: dataInLatchQ<4>                             18: scsi_InO 
-  3: bbc_DATA<2>.PIN   11: dataInLatchQ<5>                             19: scsi_nACK_OBUF/scsi_nACK_OBUF_CLKF__$INT 
-  4: bbc_DATA<1>.PIN   12: dataInLatchQ<6>                             20: scsi_nREQ 
-  5: bbc_DATA<0>.PIN   13: dataInLatchQ<7>                             21: bbc_nRST 
-  6: dataInLatchQ<0>   14: dataInLatchQ<7>/dataInLatchQ<7>_CLKF__$INT  22: scsi_nSEL_OBUF/scsi_nSEL_OBUF_CLKF__$INT 
-  7: dataInLatchQ<1>   15: irqFirstStageQ                              23: scsi_nSEL_OBUF/scsi_nSEL_OBUF_SETF__$INT 
-  8: dataInLatchQ<2>   16: irqFirstStageQ/irqFirstStageQ_CLKF__$INT    24: status_out<7>/status_out<7>_CLKF__$INT 
+  1: $OpTx$$OpTx$FX_DC$11_INV$65  10: dataInLatchQ<2>                           19: bbc_INTnEXT 
+  2: IRQ                          11: dataInLatchQ<3>                           20: scsi_InO 
+  3: bbc_DATA<0>.PIN              12: dataInLatchQ<4>                           21: scsi_nACK_OBUF/scsi_nACK_OBUF_CLKF__$INT 
+  4: bbc_ADDRESS<0>               13: dataInLatchQ<5>                           22: scsi_nBSY 
+  5: bbc_ADDRESS<1>               14: dataInLatchQ<6>                           23: scsi_nREQ 
+  6: bbc_ADDRESS<2>               15: dataInLatchQ<7>                           24: bbc_nRST 
+  7: bbc_RnW                      16: irqFirstStageQ                            25: scsi_nSEL_OBUF/scsi_nSEL_OBUF_CLKF__$INT 
+  8: dataInLatchQ<0>              17: irqFirstStageQ/irqFirstStageQ_CLKF__$INT  26: scsi_nSEL_OBUF/scsi_nSEL_OBUF_SETF__$INT 
+  9: dataInLatchQ<1>              18: scsi_CnD                                 
 
 Signal                        1         2         3         4 FB
 Name                0----+----0----+----0----+----0----+----0 Inputs
-status_out<5>        ...................X...X................ 2
-status_out<2>        ................X...X..X................ 3
-scsi_nDATA<0>        .....X..........XX...................... 3
-scsi_nDATA<1>        ......X.........XX...................... 3
-dataInLatchQ<3>      .X...........X.......................... 2
-scsi_nDATA<3>        ........X.......XX...................... 3
-dataInLatchQ<2>      ..X..........X.......................... 2
-dataInLatchQ<1>      ...X.........X.......................... 2
-dataInLatchQ<0>      ....X........X.......................... 2
-scsi_nDATA<7>        ............X...XX...................... 3
-scsi_nDATA<2>        .......X........XX...................... 3
-scsi_nACK            ..................XX.................... 2
-IRQ                  X.............X....X.................... 3
-scsi_nDATA<4>        .........X......XX...................... 3
-scsi_nDATA<5>        ..........X.....XX...................... 3
-scsi_nSEL            .....................XX................. 2
-scsi_nDATA<6>        ...........X....XX...................... 3
-irqFirstStageQ       ....X..........X....X................... 3
+scsi_nDATA<0>        .......X..........XX.................... 3
+scsi_nDATA<1>        ........X.........XX.................... 3
+scsi_nSEL_OBUF/scsi_nSEL_OBUF_SETF__$INT 
+                     .....................X.X................ 2
+scsi_nDATA<3>        ..........X.......XX.................... 3
+status_out<7>        X..XXXX..........X...................... 6
+status_out<5>        X..XXXX...............X................. 6
+status_out<1>        X..XXXX..............X.................. 6
+scsi_nDATA<7>        ..............X...XX.................... 3
+scsi_nDATA<2>        .........X........XX.................... 3
+scsi_nACK            ....................X.X................. 2
+IRQ                  .X.............X......X................. 3
+scsi_nDATA<4>        ...........X......XX.................... 3
+scsi_nDATA<5>        ............X.....XX.................... 3
+scsi_nSEL            ........................XX.............. 2
+scsi_nDATA<6>        .............X....XX.................... 3
+irqFirstStageQ       ..X.............X......X................ 3
                     0----+----1----+----2----+----3----+----4
                               0         0         0         0
 *********************************** FB4  ***********************************
@@ -341,43 +340,41 @@ scsi_INTnEXT          1       0     0   4     FB4_2   43    I/O     O
 scsi_nRST             1       0     0   4     FB4_6   49    I/O     O
 (unused)              0       0     0   5     FB4_7         (b)     
 (unused)              0       0     0   5     FB4_8   45    I/O     I
-scsi_nSEL_OBUF/scsi_nSEL_OBUF_SETF__$INT
-                      1       0     0   4     FB4_9         (b)     (b)
-status_out<7>         2       0     0   3     FB4_10  51    I/O     (b)
-status_out<1>         2       0     0   3     FB4_11  48    I/O     I
-status_out<0>         2       0     0   3     FB4_12  52    I/O     (b)
-dataInLatchQ<7>       2       0     0   3     FB4_13        (b)     (b)
+dataInLatchQ<7>       2       0     0   3     FB4_9         (b)     (b)
+dataInLatchQ<6>       2       0     0   3     FB4_10  51    I/O     (b)
+dataInLatchQ<5>       2       0     0   3     FB4_11  48    I/O     I
+dataInLatchQ<4>       2       0     0   3     FB4_12  52    I/O     (b)
+dataInLatchQ<3>       2       0     0   3     FB4_13        (b)     (b)
 scsi_nCONF            2       0     0   3     FB4_14  50    I/O     O
-dataInLatchQ<6>       2       0     0   3     FB4_15  56    I/O     (b)
-dataInLatchQ<5>       2       0     0   3     FB4_16        (b)     (b)
-dataInLatchQ<4>       2       0     0   3     FB4_17  57    I/O     I
+dataInLatchQ<2>       2       0     0   3     FB4_15  56    I/O     (b)
+dataInLatchQ<1>       2       0     0   3     FB4_16        (b)     (b)
+dataInLatchQ<0>       2       0     0   3     FB4_17  57    I/O     I
 cleanPGFC             2       0     0   3     FB4_18        (b)     (b)
 
 Signals Used by Logic in Function Block
-  1: bbc_DATA<7>.PIN    9: bbc_ADDRESS<3>    17: dataInLatchQ<7>/dataInLatchQ<7>_CLKF__$INT 
-  2: bbc_DATA<6>.PIN   10: bbc_ADDRESS<4>    18: scsi_CnD 
-  3: bbc_DATA<5>.PIN   11: bbc_ADDRESS<5>    19: bbc_INTnEXT 
-  4: bbc_DATA<4>.PIN   12: bbc_ADDRESS<6>    20: scsi_nBSY 
-  5: bbc_1MHZE         13: bbc_ADDRESS<7>    21: scsi_nMSG 
-  6: bbc_ADDRESS<0>    14: bbc_RnW           22: bbc_nRST 
-  7: bbc_ADDRESS<1>    15: bbc_nPGFC         23: status_out<7>/status_out<7>_CLKF__$INT 
-  8: bbc_ADDRESS<2>    16: cleanPGFC        
+  1: bbc_DATA<7>.PIN    9: bbc_1MHZE         17: bbc_ADDRESS<7> 
+  2: bbc_DATA<6>.PIN   10: bbc_ADDRESS<0>    18: bbc_RnW 
+  3: bbc_DATA<5>.PIN   11: bbc_ADDRESS<1>    19: bbc_nPGFC 
+  4: bbc_DATA<4>.PIN   12: bbc_ADDRESS<2>    20: cleanPGFC 
+  5: bbc_DATA<3>.PIN   13: bbc_ADDRESS<3>    21: dataInLatchQ<7>/dataInLatchQ<7>_CLKF__$INT 
+  6: bbc_DATA<2>.PIN   14: bbc_ADDRESS<4>    22: bbc_INTnEXT 
+  7: bbc_DATA<1>.PIN   15: bbc_ADDRESS<5>    23: bbc_nRST 
+  8: bbc_DATA<0>.PIN   16: bbc_ADDRESS<6>   
 
 Signal                        1         2         3         4 FB
 Name                0----+----0----+----0----+----0----+----0 Inputs
-scsi_INTnEXT         ..................X..................... 1
-scsi_nRST            .....................X.................. 1
-scsi_nSEL_OBUF/scsi_nSEL_OBUF_SETF__$INT 
-                     ...................X.X.................. 2
-status_out<7>        .................X....X................. 2
-status_out<1>        ...................X..X................. 2
-status_out<0>        ....................X.X................. 2
-dataInLatchQ<7>      X...............X....................... 2
-scsi_nCONF           ....XXXXXXXXXX.X..X..................... 12
-dataInLatchQ<6>      .X..............X....................... 2
-dataInLatchQ<5>      ..X.............X....................... 2
-dataInLatchQ<4>      ...X............X....................... 2
-cleanPGFC            ..............X......................... 1
+scsi_INTnEXT         .....................X.................. 1
+scsi_nRST            ......................X................. 1
+dataInLatchQ<7>      X...................X................... 2
+dataInLatchQ<6>      .X..................X................... 2
+dataInLatchQ<5>      ..X.................X................... 2
+dataInLatchQ<4>      ...X................X................... 2
+dataInLatchQ<3>      ....X...............X................... 2
+scsi_nCONF           ........XXXXXXXXXX.X.X.................. 12
+dataInLatchQ<2>      .....X..............X................... 2
+dataInLatchQ<1>      ......X.............X................... 2
+dataInLatchQ<0>      .......X............X................... 2
+cleanPGFC            ..................X..................... 1
                     0----+----1----+----2----+----3----+----4
                               0         0         0         0
 *******************************  Equations  ********************************
@@ -385,7 +382,7 @@ cleanPGFC            ..............X......................... 1
 ********** Mapped Logic **********
 
 
-$OpTx$$OpTx$FX_DC$47_INV$70 <= ((NOT bbc_ADDRESS(4) AND bbc_1MHZE AND NOT bbc_ADDRESS(7) AND 
+$OpTx$$OpTx$FX_DC$11_INV$65 <= ((NOT bbc_ADDRESS(4) AND bbc_1MHZE AND NOT bbc_ADDRESS(7) AND 
 	NOT bbc_ADDRESS(5) AND NOT bbc_ADDRESS(3) AND cleanPGFC AND bbc_INTnEXT)
 	OR (NOT bbc_ADDRESS(4) AND bbc_1MHZE AND NOT bbc_ADDRESS(7) AND 
 	NOT bbc_ADDRESS(5) AND NOT bbc_ADDRESS(3) AND cleanPGFC AND bbc_ADDRESS(6)));
@@ -433,7 +430,7 @@ bbc_DATA_I(0) <= ((NOT bbc_ADDRESS(4) AND NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS
 	bbc_INTnEXT AND NOT scsi_nDATA(0).PIN));
 bbc_DATA(0) <= bbc_DATA_I(0) when bbc_DATA_OE(0) = '1' else 'Z';
 bbc_DATA_OE(0) <= (NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND bbc_RnW AND 
-	$OpTx$$OpTx$FX_DC$47_INV$70);
+	$OpTx$$OpTx$FX_DC$11_INV$65);
 
 
 bbc_DATA_I(1) <= ((NOT bbc_ADDRESS(4) AND NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND 
@@ -462,7 +459,7 @@ bbc_DATA_I(1) <= ((NOT bbc_ADDRESS(4) AND NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS
 	bbc_INTnEXT AND NOT scsi_nDATA(1).PIN));
 bbc_DATA(1) <= bbc_DATA_I(1) when bbc_DATA_OE(1) = '1' else 'Z';
 bbc_DATA_OE(1) <= (NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND bbc_RnW AND 
-	$OpTx$$OpTx$FX_DC$47_INV$70);
+	$OpTx$$OpTx$FX_DC$11_INV$65);
 
 
 bbc_DATA_I(2) <= ((NOT bbc_ADDRESS(4) AND NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND 
@@ -491,7 +488,7 @@ bbc_DATA_I(2) <= ((NOT bbc_ADDRESS(4) AND NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS
 	bbc_INTnEXT AND NOT scsi_nDATA(2).PIN));
 bbc_DATA(2) <= bbc_DATA_I(2) when bbc_DATA_OE(2) = '1' else 'Z';
 bbc_DATA_OE(2) <= (NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND bbc_RnW AND 
-	$OpTx$$OpTx$FX_DC$47_INV$70);
+	$OpTx$$OpTx$FX_DC$11_INV$65);
 
 
 bbc_DATA_I(3) <= ((NOT bbc_ADDRESS(4) AND NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND 
@@ -512,7 +509,7 @@ bbc_DATA_I(3) <= ((NOT bbc_ADDRESS(4) AND NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS
 	NOT bbc_INTnEXT AND bbc_ADDRESS(6) AND dataInLatchQ(3)));
 bbc_DATA(3) <= bbc_DATA_I(3) when bbc_DATA_OE(3) = '1' else 'Z';
 bbc_DATA_OE(3) <= (NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND bbc_RnW AND 
-	$OpTx$$OpTx$FX_DC$47_INV$70);
+	$OpTx$$OpTx$FX_DC$11_INV$65);
 
 
 bbc_DATA_I(4) <= ((NOT bbc_ADDRESS(4) AND NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND 
@@ -541,7 +538,7 @@ bbc_DATA_I(4) <= ((NOT bbc_ADDRESS(4) AND NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS
 	status_out(4)));
 bbc_DATA(4) <= bbc_DATA_I(4) when bbc_DATA_OE(4) = '1' else 'Z';
 bbc_DATA_OE(4) <= (NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND bbc_RnW AND 
-	$OpTx$$OpTx$FX_DC$47_INV$70);
+	$OpTx$$OpTx$FX_DC$11_INV$65);
 
 
 bbc_DATA_I(5) <= ((NOT bbc_ADDRESS(4) AND NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND 
@@ -570,7 +567,7 @@ bbc_DATA_I(5) <= ((NOT bbc_ADDRESS(4) AND NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS
 	bbc_INTnEXT AND NOT scsi_nDATA(5).PIN));
 bbc_DATA(5) <= bbc_DATA_I(5) when bbc_DATA_OE(5) = '1' else 'Z';
 bbc_DATA_OE(5) <= (NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND bbc_RnW AND 
-	$OpTx$$OpTx$FX_DC$47_INV$70);
+	$OpTx$$OpTx$FX_DC$11_INV$65);
 
 
 bbc_DATA_I(6) <= ((NOT bbc_ADDRESS(4) AND NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND 
@@ -599,7 +596,7 @@ bbc_DATA_I(6) <= ((NOT bbc_ADDRESS(4) AND NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS
 	bbc_INTnEXT AND NOT scsi_nDATA(6).PIN));
 bbc_DATA(6) <= bbc_DATA_I(6) when bbc_DATA_OE(6) = '1' else 'Z';
 bbc_DATA_OE(6) <= (NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND bbc_RnW AND 
-	$OpTx$$OpTx$FX_DC$47_INV$70);
+	$OpTx$$OpTx$FX_DC$11_INV$65);
 
 
 bbc_DATA_I(7) <= ((NOT bbc_ADDRESS(4) AND NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND 
@@ -628,7 +625,7 @@ bbc_DATA_I(7) <= ((NOT bbc_ADDRESS(4) AND NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS
 	bbc_INTnEXT AND NOT scsi_nDATA(7).PIN));
 bbc_DATA(7) <= bbc_DATA_I(7) when bbc_DATA_OE(7) = '1' else 'Z';
 bbc_DATA_OE(7) <= (NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND bbc_RnW AND 
-	$OpTx$$OpTx$FX_DC$47_INV$70);
+	$OpTx$$OpTx$FX_DC$11_INV$65);
 
 
 bbc_nIRQ_I <= '0';
@@ -756,31 +753,37 @@ scsi_nSEL_OBUF/scsi_nSEL_OBUF_CLKF__$INT <= ((NOT bbc_ADDRESS(4) AND NOT bbc_ADD
 
 scsi_nSEL_OBUF/scsi_nSEL_OBUF_SETF__$INT <= (bbc_nRST AND scsi_nBSY);
 
-FDCPE_status_out0: FDCPE port map (status_out(0),NOT scsi_nMSG,NOT status_out(7)/status_out(7)_CLKF__$INT,'0','0');
+FDCPE_status_out0: FDCPE port map (status_out(0),NOT scsi_nMSG,status_out_C(0),'0','0');
+status_out_C(0) <= (NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND bbc_ADDRESS(0) AND 
+	bbc_RnW AND $OpTx$$OpTx$FX_DC$11_INV$65);
 
-FDCPE_status_out1: FDCPE port map (status_out(1),NOT scsi_nBSY,NOT status_out(7)/status_out(7)_CLKF__$INT,'0','0');
+FDCPE_status_out1: FDCPE port map (status_out(1),NOT scsi_nBSY,status_out_C(1),'0','0');
+status_out_C(1) <= (NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND bbc_ADDRESS(0) AND 
+	bbc_RnW AND $OpTx$$OpTx$FX_DC$11_INV$65);
 
-FDCPE_status_out2: FDCPE port map (status_out(2),status_out_D(2),NOT status_out(7)/status_out(7)_CLKF__$INT,'0','0');
+FDCPE_status_out2: FDCPE port map (status_out(2),status_out_D(2),status_out_C(2),'0','0');
 status_out_D(2) <= (bbc_nRST AND bbc_INTnEXT);
+status_out_C(2) <= (NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND bbc_ADDRESS(0) AND 
+	bbc_RnW AND $OpTx$$OpTx$FX_DC$11_INV$65);
 
-FDCPE_status_out4: FDCPE port map (status_out(4),status_out_D(4),NOT status_out(7)/status_out(7)_CLKF__$INT,'0','0');
+FDCPE_status_out4: FDCPE port map (status_out(4),status_out_D(4),status_out_C(4),'0','0');
 status_out_D(4) <= IRQ
 	 XOR 
 status_out_D(4) <= bbc_INTnEXT;
+status_out_C(4) <= (NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND bbc_ADDRESS(0) AND 
+	bbc_RnW AND $OpTx$$OpTx$FX_DC$11_INV$65);
 
-FDCPE_status_out5: FDCPE port map (status_out(5),NOT scsi_nREQ,NOT status_out(7)/status_out(7)_CLKF__$INT,'0','0');
+FDCPE_status_out5: FDCPE port map (status_out(5),NOT scsi_nREQ,status_out_C(5),'0','0');
+status_out_C(5) <= (NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND bbc_ADDRESS(0) AND 
+	bbc_RnW AND $OpTx$$OpTx$FX_DC$11_INV$65);
 
-FDCPE_status_out6: FDCPE port map (status_out(6),NOT scsi_InO,NOT status_out(7)/status_out(7)_CLKF__$INT,'0','0');
+FDCPE_status_out6: FDCPE port map (status_out(6),NOT scsi_InO,status_out_C(6),'0','0');
+status_out_C(6) <= (NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND bbc_ADDRESS(0) AND 
+	bbc_RnW AND $OpTx$$OpTx$FX_DC$11_INV$65);
 
-
-status_out(7)/status_out(7)_CLKF__$INT <= ((NOT bbc_ADDRESS(4) AND NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND 
-	bbc_ADDRESS(0) AND bbc_RnW AND bbc_1MHZE AND NOT bbc_ADDRESS(7) AND 
-	NOT bbc_ADDRESS(5) AND NOT bbc_ADDRESS(3) AND cleanPGFC AND bbc_INTnEXT)
-	OR (NOT bbc_ADDRESS(4) AND NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND 
-	bbc_ADDRESS(0) AND bbc_RnW AND bbc_1MHZE AND NOT bbc_ADDRESS(7) AND 
-	NOT bbc_ADDRESS(5) AND NOT bbc_ADDRESS(3) AND cleanPGFC AND bbc_ADDRESS(6)));
-
-FDCPE_status_out7: FDCPE port map (status_out(7),NOT scsi_CnD,NOT status_out(7)/status_out(7)_CLKF__$INT,'0','0');
+FDCPE_status_out7: FDCPE port map (status_out(7),NOT scsi_CnD,status_out_C(7),'0','0');
+status_out_C(7) <= (NOT bbc_ADDRESS(2) AND NOT bbc_ADDRESS(1) AND bbc_ADDRESS(0) AND 
+	bbc_RnW AND $OpTx$$OpTx$FX_DC$11_INV$65);
 
 Register Legend:
  FDCPE (Q,D,C,CLR,PRE,CE); 

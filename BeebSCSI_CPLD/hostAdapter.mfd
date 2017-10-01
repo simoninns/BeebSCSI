@@ -2,8 +2,8 @@ MDF Database:  version 1.0
 MDF_INFO | hostAdapter | XC9572XL-7-VQ64
 MACROCELL | 0 | 5 | bbc_DATA_out<0>
 ATTRIBUTES | 265986 | 0
-INPUTS | 18 | bbc_ADDRESS<4>  | bbc_ADDRESS<2>  | bbc_ADDRESS<1>  | bbc_ADDRESS<0>  | bbc_RnW  | bbc_1MHZE  | bbc_ADDRESS<7>  | bbc_ADDRESS<5>  | bbc_ADDRESS<3>  | cleanPGFC  | bbc_INTnEXT  | status_out<0>  | bbc_ADDRESS<6>  | scsi_InO  | dataInLatchQ<0>  | scsi_nDATA<0>.PIN  | $OpTx$$OpTx$FX_DC$47_INV$70  | EXP8_.EXP
-INPUTMC | 5 | 3 | 17 | 3 | 11 | 2 | 8 | 0 | 16 | 0 | 6
+INPUTS | 18 | bbc_ADDRESS<4>  | bbc_ADDRESS<2>  | bbc_ADDRESS<1>  | bbc_ADDRESS<0>  | bbc_RnW  | bbc_1MHZE  | bbc_ADDRESS<7>  | bbc_ADDRESS<5>  | bbc_ADDRESS<3>  | cleanPGFC  | bbc_INTnEXT  | status_out<0>  | bbc_ADDRESS<6>  | scsi_InO  | dataInLatchQ<0>  | scsi_nDATA<0>.PIN  | $OpTx$$OpTx$FX_DC$11_INV$65  | EXP8_.EXP
+INPUTMC | 5 | 3 | 17 | 0 | 11 | 3 | 16 | 0 | 16 | 0 | 6
 INPUTP | 13 | 87 | 89 | 90 | 92 | 21 | 20 | 83 | 86 | 88 | 1 | 84 | 65 | 43
 IMPORTS | 1 | 0 | 6
 EQ | 27 | 
@@ -33,12 +33,12 @@ EQ | 27 |
 	!bbc_ADDRESS<5> & !bbc_ADDRESS<3> & scsi_InO & cleanPGFC & 
 	!bbc_INTnEXT & bbc_ADDRESS<6> & dataInLatchQ<0>;
    bbc_DATA<0>.OE = !bbc_ADDRESS<2> & !bbc_ADDRESS<1> & bbc_RnW & 
-	$OpTx$$OpTx$FX_DC$47_INV$70;
+	$OpTx$$OpTx$FX_DC$11_INV$65;
 
 MACROCELL | 0 | 4 | bbc_DATA_out<1>
 ATTRIBUTES | 265986 | 0
-INPUTS | 18 | bbc_ADDRESS<4>  | bbc_ADDRESS<2>  | bbc_ADDRESS<1>  | bbc_ADDRESS<0>  | bbc_RnW  | bbc_1MHZE  | bbc_ADDRESS<7>  | bbc_ADDRESS<5>  | bbc_ADDRESS<3>  | cleanPGFC  | bbc_INTnEXT  | status_out<1>  | bbc_ADDRESS<6>  | scsi_InO  | dataInLatchQ<1>  | scsi_nDATA<1>.PIN  | $OpTx$$OpTx$FX_DC$47_INV$70  | N0.EXP
-INPUTMC | 5 | 3 | 17 | 3 | 10 | 2 | 7 | 0 | 16 | 0 | 3
+INPUTS | 18 | bbc_ADDRESS<4>  | bbc_ADDRESS<2>  | bbc_ADDRESS<1>  | bbc_ADDRESS<0>  | bbc_RnW  | bbc_1MHZE  | bbc_ADDRESS<7>  | bbc_ADDRESS<5>  | bbc_ADDRESS<3>  | cleanPGFC  | bbc_INTnEXT  | status_out<1>  | bbc_ADDRESS<6>  | scsi_InO  | dataInLatchQ<1>  | scsi_nDATA<1>.PIN  | $OpTx$$OpTx$FX_DC$11_INV$65  | N0.EXP
+INPUTMC | 5 | 3 | 17 | 2 | 8 | 3 | 15 | 0 | 16 | 0 | 3
 INPUTP | 13 | 87 | 89 | 90 | 92 | 21 | 20 | 83 | 86 | 88 | 1 | 84 | 65 | 44
 IMPORTS | 1 | 0 | 3
 EQ | 27 | 
@@ -68,12 +68,12 @@ EQ | 27 |
 	!bbc_ADDRESS<5> & !bbc_ADDRESS<3> & scsi_InO & cleanPGFC & 
 	!bbc_INTnEXT & bbc_ADDRESS<6> & dataInLatchQ<1>;
    bbc_DATA<1>.OE = !bbc_ADDRESS<2> & !bbc_ADDRESS<1> & bbc_RnW & 
-	$OpTx$$OpTx$FX_DC$47_INV$70;
+	$OpTx$$OpTx$FX_DC$11_INV$65;
 
 MACROCELL | 0 | 1 | bbc_DATA_out<2>
 ATTRIBUTES | 265986 | 0
-INPUTS | 19 | bbc_ADDRESS<4>  | bbc_ADDRESS<2>  | bbc_ADDRESS<1>  | bbc_ADDRESS<0>  | bbc_RnW  | bbc_1MHZE  | bbc_ADDRESS<7>  | bbc_ADDRESS<5>  | bbc_ADDRESS<3>  | cleanPGFC  | bbc_INTnEXT  | status_out<2>  | bbc_ADDRESS<6>  | scsi_InO  | dataInLatchQ<2>  | scsi_nDATA<2>.PIN  | $OpTx$$OpTx$FX_DC$47_INV$70  | EXP6_.EXP  | EXP7_.EXP
-INPUTMC | 6 | 3 | 17 | 2 | 1 | 2 | 6 | 0 | 16 | 0 | 0 | 0 | 2
+INPUTS | 19 | bbc_ADDRESS<4>  | bbc_ADDRESS<2>  | bbc_ADDRESS<1>  | bbc_ADDRESS<0>  | bbc_RnW  | bbc_1MHZE  | bbc_ADDRESS<7>  | bbc_ADDRESS<5>  | bbc_ADDRESS<3>  | cleanPGFC  | bbc_INTnEXT  | status_out<2>  | bbc_ADDRESS<6>  | scsi_InO  | dataInLatchQ<2>  | scsi_nDATA<2>.PIN  | $OpTx$$OpTx$FX_DC$11_INV$65  | EXP6_.EXP  | EXP7_.EXP
+INPUTMC | 6 | 3 | 17 | 0 | 10 | 3 | 14 | 0 | 16 | 0 | 0 | 0 | 2
 INPUTP | 13 | 87 | 89 | 90 | 92 | 21 | 20 | 83 | 86 | 88 | 1 | 84 | 65 | 46
 IMPORTS | 2 | 0 | 0 | 0 | 2
 EQ | 28 | 
@@ -104,13 +104,13 @@ EQ | 28 |
 	!bbc_ADDRESS<5> & !bbc_ADDRESS<3> & scsi_InO & cleanPGFC & 
 	!bbc_INTnEXT & bbc_ADDRESS<6> & dataInLatchQ<2>;
    bbc_DATA<2>.OE = !bbc_ADDRESS<2> & !bbc_ADDRESS<1> & bbc_RnW & 
-	$OpTx$$OpTx$FX_DC$47_INV$70;
+	$OpTx$$OpTx$FX_DC$11_INV$65;
 
 MACROCELL | 1 | 14 | bbc_DATA_out<4>
 ATTRIBUTES | 265986 | 0
 OUTPUTMC | 1 | 1 | 13
-INPUTS | 18 | bbc_ADDRESS<4>  | bbc_ADDRESS<2>  | bbc_ADDRESS<1>  | bbc_ADDRESS<0>  | bbc_RnW  | bbc_1MHZE  | bbc_ADDRESS<7>  | bbc_ADDRESS<5>  | bbc_ADDRESS<3>  | cleanPGFC  | bbc_INTnEXT  | status_out<4>  | bbc_ADDRESS<6>  | scsi_InO  | scsi_nDATA<5>.PIN  | dataInLatchQ<5>  | $OpTx$$OpTx$FX_DC$47_INV$70  | EXP11_.EXP
-INPUTMC | 5 | 3 | 17 | 0 | 17 | 3 | 15 | 0 | 16 | 1 | 15
+INPUTS | 18 | bbc_ADDRESS<4>  | bbc_ADDRESS<2>  | bbc_ADDRESS<1>  | bbc_ADDRESS<0>  | bbc_RnW  | bbc_1MHZE  | bbc_ADDRESS<7>  | bbc_ADDRESS<5>  | bbc_ADDRESS<3>  | cleanPGFC  | bbc_INTnEXT  | status_out<4>  | bbc_ADDRESS<6>  | scsi_InO  | scsi_nDATA<5>.PIN  | dataInLatchQ<5>  | $OpTx$$OpTx$FX_DC$11_INV$65  | EXP11_.EXP
+INPUTMC | 5 | 3 | 17 | 0 | 17 | 3 | 10 | 0 | 16 | 1 | 15
 INPUTP | 13 | 87 | 89 | 90 | 92 | 21 | 20 | 83 | 86 | 88 | 1 | 84 | 65 | 50
 EXPORTS | 1 | 1 | 13
 IMPORTS | 1 | 1 | 15
@@ -141,7 +141,7 @@ EQ | 35 |
 	!bbc_ADDRESS<5> & !bbc_ADDRESS<3> & scsi_InO & cleanPGFC & 
 	!bbc_INTnEXT & bbc_ADDRESS<6> & dataInLatchQ<4>;
    bbc_DATA<4>.OE = !bbc_ADDRESS<2> & !bbc_ADDRESS<1> & bbc_RnW & 
-	$OpTx$$OpTx$FX_DC$47_INV$70;
+	$OpTx$$OpTx$FX_DC$11_INV$65;
     bbc_DATA_out<4>.EXP  =  !bbc_ADDRESS<4> & !bbc_ADDRESS<2> & !bbc_ADDRESS<1> & 
 	!bbc_ADDRESS<0> & bbc_RnW & bbc_1MHZE & !bbc_ADDRESS<7> & 
 	!bbc_ADDRESS<5> & !bbc_ADDRESS<3> & !scsi_InO & cleanPGFC & 
@@ -153,8 +153,8 @@ EQ | 35 |
 
 MACROCELL | 1 | 13 | bbc_DATA_out<5>
 ATTRIBUTES | 265986 | 0
-INPUTS | 18 | bbc_ADDRESS<4>  | bbc_ADDRESS<2>  | bbc_ADDRESS<1>  | bbc_ADDRESS<0>  | bbc_RnW  | bbc_1MHZE  | bbc_ADDRESS<7>  | bbc_ADDRESS<5>  | bbc_ADDRESS<3>  | cleanPGFC  | bbc_INTnEXT  | status_out<5>  | bbc_ADDRESS<6>  | scsi_InO  | dataInLatchQ<5>  | scsi_nDATA<5>.PIN  | $OpTx$$OpTx$FX_DC$47_INV$70  | bbc_DATA_out<4>.EXP
-INPUTMC | 5 | 3 | 17 | 2 | 0 | 3 | 15 | 0 | 16 | 1 | 14
+INPUTS | 18 | bbc_ADDRESS<4>  | bbc_ADDRESS<2>  | bbc_ADDRESS<1>  | bbc_ADDRESS<0>  | bbc_RnW  | bbc_1MHZE  | bbc_ADDRESS<7>  | bbc_ADDRESS<5>  | bbc_ADDRESS<3>  | cleanPGFC  | bbc_INTnEXT  | status_out<5>  | bbc_ADDRESS<6>  | scsi_InO  | dataInLatchQ<5>  | scsi_nDATA<5>.PIN  | $OpTx$$OpTx$FX_DC$11_INV$65  | bbc_DATA_out<4>.EXP
+INPUTMC | 5 | 3 | 17 | 2 | 7 | 3 | 10 | 0 | 16 | 1 | 14
 INPUTP | 13 | 87 | 89 | 90 | 92 | 21 | 20 | 83 | 86 | 88 | 1 | 84 | 65 | 50
 IMPORTS | 1 | 1 | 14
 EQ | 27 | 
@@ -184,12 +184,12 @@ EQ | 27 |
 	!bbc_ADDRESS<5> & !bbc_ADDRESS<3> & scsi_InO & cleanPGFC & 
 	!bbc_INTnEXT & bbc_ADDRESS<6> & dataInLatchQ<5>;
    bbc_DATA<5>.OE = !bbc_ADDRESS<2> & !bbc_ADDRESS<1> & bbc_RnW & 
-	$OpTx$$OpTx$FX_DC$47_INV$70;
+	$OpTx$$OpTx$FX_DC$11_INV$65;
 
 MACROCELL | 1 | 11 | bbc_DATA_out<6>
 ATTRIBUTES | 265986 | 0
-INPUTS | 18 | bbc_ADDRESS<4>  | bbc_ADDRESS<2>  | bbc_ADDRESS<1>  | bbc_ADDRESS<0>  | bbc_RnW  | bbc_1MHZE  | bbc_ADDRESS<7>  | bbc_ADDRESS<5>  | bbc_ADDRESS<3>  | cleanPGFC  | bbc_INTnEXT  | status_out<6>  | bbc_ADDRESS<6>  | scsi_InO  | dataInLatchQ<6>  | scsi_nDATA<6>.PIN  | $OpTx$$OpTx$FX_DC$47_INV$70  | EXP10_.EXP
-INPUTMC | 5 | 3 | 17 | 0 | 11 | 3 | 14 | 0 | 16 | 1 | 12
+INPUTS | 18 | bbc_ADDRESS<4>  | bbc_ADDRESS<2>  | bbc_ADDRESS<1>  | bbc_ADDRESS<0>  | bbc_RnW  | bbc_1MHZE  | bbc_ADDRESS<7>  | bbc_ADDRESS<5>  | bbc_ADDRESS<3>  | cleanPGFC  | bbc_INTnEXT  | status_out<6>  | bbc_ADDRESS<6>  | scsi_InO  | dataInLatchQ<6>  | scsi_nDATA<6>.PIN  | $OpTx$$OpTx$FX_DC$11_INV$65  | EXP10_.EXP
+INPUTMC | 5 | 3 | 17 | 0 | 9 | 3 | 9 | 0 | 16 | 1 | 12
 INPUTP | 13 | 87 | 89 | 90 | 92 | 21 | 20 | 83 | 86 | 88 | 1 | 84 | 65 | 52
 IMPORTS | 1 | 1 | 12
 EQ | 27 | 
@@ -219,12 +219,12 @@ EQ | 27 |
 	!bbc_ADDRESS<5> & !bbc_ADDRESS<3> & scsi_InO & cleanPGFC & 
 	!bbc_INTnEXT & bbc_ADDRESS<6> & dataInLatchQ<6>;
    bbc_DATA<6>.OE = !bbc_ADDRESS<2> & !bbc_ADDRESS<1> & bbc_RnW & 
-	$OpTx$$OpTx$FX_DC$47_INV$70;
+	$OpTx$$OpTx$FX_DC$11_INV$65;
 
 MACROCELL | 1 | 10 | bbc_DATA_out<7>
 ATTRIBUTES | 265986 | 0
-INPUTS | 18 | bbc_ADDRESS<4>  | bbc_ADDRESS<2>  | bbc_ADDRESS<1>  | bbc_ADDRESS<0>  | bbc_RnW  | bbc_1MHZE  | bbc_ADDRESS<7>  | bbc_ADDRESS<5>  | bbc_ADDRESS<3>  | cleanPGFC  | bbc_INTnEXT  | status_out<7>  | bbc_ADDRESS<6>  | scsi_InO  | dataInLatchQ<7>  | scsi_nDATA<7>.PIN  | $OpTx$$OpTx$FX_DC$47_INV$70  | EXP9_.EXP
-INPUTMC | 5 | 3 | 17 | 3 | 9 | 3 | 12 | 0 | 16 | 1 | 9
+INPUTS | 18 | bbc_ADDRESS<4>  | bbc_ADDRESS<2>  | bbc_ADDRESS<1>  | bbc_ADDRESS<0>  | bbc_RnW  | bbc_1MHZE  | bbc_ADDRESS<7>  | bbc_ADDRESS<5>  | bbc_ADDRESS<3>  | cleanPGFC  | bbc_INTnEXT  | status_out<7>  | bbc_ADDRESS<6>  | scsi_InO  | dataInLatchQ<7>  | scsi_nDATA<7>.PIN  | $OpTx$$OpTx$FX_DC$11_INV$65  | EXP9_.EXP
+INPUTMC | 5 | 3 | 17 | 2 | 6 | 3 | 8 | 0 | 16 | 1 | 9
 INPUTP | 13 | 87 | 89 | 90 | 92 | 21 | 20 | 83 | 86 | 88 | 1 | 84 | 65 | 54
 IMPORTS | 1 | 1 | 9
 EQ | 27 | 
@@ -254,12 +254,12 @@ EQ | 27 |
 	!bbc_ADDRESS<5> & !bbc_ADDRESS<3> & scsi_InO & cleanPGFC & 
 	!bbc_INTnEXT & bbc_ADDRESS<6> & dataInLatchQ<7>;
    bbc_DATA<7>.OE = !bbc_ADDRESS<2> & !bbc_ADDRESS<1> & bbc_RnW & 
-	$OpTx$$OpTx$FX_DC$47_INV$70;
+	$OpTx$$OpTx$FX_DC$11_INV$65;
 
 MACROCELL | 1 | 16 | bbc_DATA_out<3>
 ATTRIBUTES | 265986 | 0
-INPUTS | 16 | bbc_ADDRESS<4>  | bbc_ADDRESS<2>  | bbc_ADDRESS<1>  | bbc_ADDRESS<0>  | bbc_RnW  | bbc_1MHZE  | bbc_ADDRESS<7>  | bbc_ADDRESS<5>  | bbc_ADDRESS<3>  | scsi_InO  | cleanPGFC  | bbc_INTnEXT  | dataInLatchQ<3>  | scsi_nDATA<3>.PIN  | bbc_ADDRESS<6>  | $OpTx$$OpTx$FX_DC$47_INV$70
-INPUTMC | 3 | 3 | 17 | 2 | 4 | 0 | 16
+INPUTS | 16 | bbc_ADDRESS<4>  | bbc_ADDRESS<2>  | bbc_ADDRESS<1>  | bbc_ADDRESS<0>  | bbc_RnW  | bbc_1MHZE  | bbc_ADDRESS<7>  | bbc_ADDRESS<5>  | bbc_ADDRESS<3>  | scsi_InO  | cleanPGFC  | bbc_INTnEXT  | dataInLatchQ<3>  | scsi_nDATA<3>.PIN  | bbc_ADDRESS<6>  | $OpTx$$OpTx$FX_DC$11_INV$65
+INPUTMC | 3 | 3 | 17 | 3 | 12 | 0 | 16
 INPUTP | 13 | 87 | 89 | 90 | 92 | 21 | 20 | 83 | 86 | 88 | 65 | 1 | 47 | 84
 EQ | 18 | 
    bbc_DATA<3> = !bbc_ADDRESS<4> & !bbc_ADDRESS<2> & !bbc_ADDRESS<1> & 
@@ -279,7 +279,7 @@ EQ | 18 |
 	!bbc_ADDRESS<5> & !bbc_ADDRESS<3> & scsi_InO & cleanPGFC & 
 	!bbc_INTnEXT & bbc_ADDRESS<6> & dataInLatchQ<3>;
    bbc_DATA<3>.OE = !bbc_ADDRESS<2> & !bbc_ADDRESS<1> & bbc_RnW & 
-	$OpTx$$OpTx$FX_DC$47_INV$70;
+	$OpTx$$OpTx$FX_DC$11_INV$65;
 
 MACROCELL | 2 | 17 | irqFirstStageQ
 ATTRIBUTES | 8520496 | 0
@@ -295,7 +295,7 @@ EQ | 3 |
 MACROCELL | 2 | 2 | scsi_nDATA_out<0>
 ATTRIBUTES | 265986 | 0
 INPUTS | 3 | scsi_InO  | bbc_INTnEXT  | dataInLatchQ<0>
-INPUTMC | 1 | 2 | 8
+INPUTMC | 1 | 3 | 16
 INPUTP | 2 | 65 | 1
 EQ | 3 | 
    scsi_nDATA<0> = scsi_InO & bbc_INTnEXT & dataInLatchQ<0>
@@ -305,7 +305,7 @@ EQ | 3 |
 MACROCELL | 2 | 3 | scsi_nDATA_out<1>
 ATTRIBUTES | 265986 | 0
 INPUTS | 3 | scsi_InO  | bbc_INTnEXT  | dataInLatchQ<1>
-INPUTMC | 1 | 2 | 7
+INPUTMC | 1 | 3 | 15
 INPUTP | 2 | 65 | 1
 EQ | 3 | 
    scsi_nDATA<1> = scsi_InO & bbc_INTnEXT & dataInLatchQ<1>
@@ -315,7 +315,7 @@ EQ | 3 |
 MACROCELL | 2 | 10 | scsi_nDATA_out<2>
 ATTRIBUTES | 265986 | 0
 INPUTS | 3 | scsi_InO  | bbc_INTnEXT  | dataInLatchQ<2>
-INPUTMC | 1 | 2 | 6
+INPUTMC | 1 | 3 | 14
 INPUTP | 2 | 65 | 1
 EQ | 3 | 
    scsi_nDATA<2> = scsi_InO & bbc_INTnEXT & dataInLatchQ<2>
@@ -325,7 +325,7 @@ EQ | 3 |
 MACROCELL | 2 | 5 | scsi_nDATA_out<3>
 ATTRIBUTES | 265986 | 0
 INPUTS | 3 | scsi_InO  | bbc_INTnEXT  | dataInLatchQ<3>
-INPUTMC | 1 | 2 | 4
+INPUTMC | 1 | 3 | 12
 INPUTP | 2 | 65 | 1
 EQ | 3 | 
    scsi_nDATA<3> = scsi_InO & bbc_INTnEXT & dataInLatchQ<3>
@@ -335,7 +335,7 @@ EQ | 3 |
 MACROCELL | 2 | 13 | scsi_nDATA_out<4>
 ATTRIBUTES | 265986 | 0
 INPUTS | 3 | scsi_InO  | bbc_INTnEXT  | dataInLatchQ<4>
-INPUTMC | 1 | 3 | 16
+INPUTMC | 1 | 3 | 11
 INPUTP | 2 | 65 | 1
 EQ | 3 | 
    scsi_nDATA<4> = scsi_InO & bbc_INTnEXT & dataInLatchQ<4>
@@ -345,7 +345,7 @@ EQ | 3 |
 MACROCELL | 2 | 14 | scsi_nDATA_out<5>
 ATTRIBUTES | 265986 | 0
 INPUTS | 3 | scsi_InO  | bbc_INTnEXT  | dataInLatchQ<5>
-INPUTMC | 1 | 3 | 15
+INPUTMC | 1 | 3 | 10
 INPUTP | 2 | 65 | 1
 EQ | 3 | 
    scsi_nDATA<5> = scsi_InO & bbc_INTnEXT & dataInLatchQ<5>
@@ -355,7 +355,7 @@ EQ | 3 |
 MACROCELL | 2 | 16 | scsi_nDATA_out<6>
 ATTRIBUTES | 265986 | 0
 INPUTS | 3 | scsi_InO  | bbc_INTnEXT  | dataInLatchQ<6>
-INPUTMC | 1 | 3 | 14
+INPUTMC | 1 | 3 | 9
 INPUTP | 2 | 65 | 1
 EQ | 3 | 
    scsi_nDATA<6> = scsi_InO & bbc_INTnEXT & dataInLatchQ<6>
@@ -365,7 +365,7 @@ EQ | 3 |
 MACROCELL | 2 | 9 | scsi_nDATA_out<7>
 ATTRIBUTES | 265986 | 0
 INPUTS | 3 | scsi_InO  | bbc_INTnEXT  | dataInLatchQ<7>
-INPUTMC | 1 | 3 | 12
+INPUTMC | 1 | 3 | 8
 INPUTP | 2 | 65 | 1
 EQ | 3 | 
    scsi_nDATA<7> = scsi_InO & bbc_INTnEXT & dataInLatchQ<7>
@@ -374,7 +374,7 @@ EQ | 3 |
 
 MACROCELL | 3 | 17 | cleanPGFC
 ATTRIBUTES | 8553232 | 0
-OUTPUTMC | 22 | 0 | 5 | 0 | 4 | 0 | 1 | 1 | 14 | 1 | 13 | 1 | 11 | 1 | 10 | 1 | 16 | 3 | 13 | 0 | 16 | 0 | 14 | 0 | 15 | 0 | 10 | 0 | 13 | 0 | 12 | 0 | 0 | 0 | 2 | 0 | 3 | 0 | 6 | 1 | 9 | 1 | 12 | 1 | 15
+OUTPUTMC | 21 | 0 | 5 | 0 | 4 | 0 | 1 | 1 | 14 | 1 | 13 | 1 | 11 | 1 | 10 | 1 | 16 | 3 | 13 | 0 | 16 | 0 | 14 | 0 | 15 | 0 | 13 | 0 | 12 | 0 | 0 | 0 | 2 | 0 | 3 | 0 | 6 | 1 | 9 | 1 | 12 | 1 | 15
 INPUTS | 1 | bbc_nPGFC
 INPUTP | 1 | 16
 EQ | 3 | 
@@ -393,7 +393,7 @@ EQ | 2 |
    IRQ = irqFirstStageQ & IRQ
 	# irqFirstStageQ & !scsi_nREQ;
 
-MACROCELL | 2 | 8 | dataInLatchQ<0>
+MACROCELL | 3 | 16 | dataInLatchQ<0>
 ATTRIBUTES | 8520480 | 0
 OUTPUTMC | 3 | 0 | 5 | 2 | 2 | 0 | 6
 INPUTS | 2 | bbc_DATA<0>.PIN  | dataInLatchQ<7>/dataInLatchQ<7>_CLKF__$INT
@@ -403,7 +403,7 @@ EQ | 2 |
    dataInLatchQ<0>.D = bbc_DATA<0>.PIN;
    dataInLatchQ<0>.CLK = !dataInLatchQ<7>/dataInLatchQ<7>_CLKF__$INT;
 
-MACROCELL | 2 | 7 | dataInLatchQ<1>
+MACROCELL | 3 | 15 | dataInLatchQ<1>
 ATTRIBUTES | 8520480 | 0
 OUTPUTMC | 3 | 0 | 4 | 2 | 3 | 0 | 3
 INPUTS | 2 | bbc_DATA<1>.PIN  | dataInLatchQ<7>/dataInLatchQ<7>_CLKF__$INT
@@ -413,7 +413,7 @@ EQ | 2 |
    dataInLatchQ<1>.D = bbc_DATA<1>.PIN;
    dataInLatchQ<1>.CLK = !dataInLatchQ<7>/dataInLatchQ<7>_CLKF__$INT;
 
-MACROCELL | 2 | 6 | dataInLatchQ<2>
+MACROCELL | 3 | 14 | dataInLatchQ<2>
 ATTRIBUTES | 8520480 | 0
 OUTPUTMC | 3 | 0 | 1 | 2 | 10 | 0 | 2
 INPUTS | 2 | bbc_DATA<2>.PIN  | dataInLatchQ<7>/dataInLatchQ<7>_CLKF__$INT
@@ -423,7 +423,7 @@ EQ | 2 |
    dataInLatchQ<2>.D = bbc_DATA<2>.PIN;
    dataInLatchQ<2>.CLK = !dataInLatchQ<7>/dataInLatchQ<7>_CLKF__$INT;
 
-MACROCELL | 2 | 4 | dataInLatchQ<3>
+MACROCELL | 3 | 12 | dataInLatchQ<3>
 ATTRIBUTES | 8520480 | 0
 OUTPUTMC | 2 | 1 | 16 | 2 | 5
 INPUTS | 2 | bbc_DATA<3>.PIN  | dataInLatchQ<7>/dataInLatchQ<7>_CLKF__$INT
@@ -433,7 +433,7 @@ EQ | 2 |
    dataInLatchQ<3>.D = bbc_DATA<3>.PIN;
    dataInLatchQ<3>.CLK = !dataInLatchQ<7>/dataInLatchQ<7>_CLKF__$INT;
 
-MACROCELL | 3 | 16 | dataInLatchQ<4>
+MACROCELL | 3 | 11 | dataInLatchQ<4>
 ATTRIBUTES | 8520480 | 0
 OUTPUTMC | 2 | 2 | 13 | 1 | 15
 INPUTS | 2 | bbc_DATA<4>.PIN  | dataInLatchQ<7>/dataInLatchQ<7>_CLKF__$INT
@@ -443,7 +443,7 @@ EQ | 2 |
    dataInLatchQ<4>.D = bbc_DATA<4>.PIN;
    dataInLatchQ<4>.CLK = !dataInLatchQ<7>/dataInLatchQ<7>_CLKF__$INT;
 
-MACROCELL | 3 | 15 | dataInLatchQ<5>
+MACROCELL | 3 | 10 | dataInLatchQ<5>
 ATTRIBUTES | 8520480 | 0
 OUTPUTMC | 3 | 1 | 13 | 2 | 14 | 1 | 14
 INPUTS | 2 | bbc_DATA<5>.PIN  | dataInLatchQ<7>/dataInLatchQ<7>_CLKF__$INT
@@ -453,7 +453,7 @@ EQ | 2 |
    dataInLatchQ<5>.D = bbc_DATA<5>.PIN;
    dataInLatchQ<5>.CLK = !dataInLatchQ<7>/dataInLatchQ<7>_CLKF__$INT;
 
-MACROCELL | 3 | 14 | dataInLatchQ<6>
+MACROCELL | 3 | 9 | dataInLatchQ<6>
 ATTRIBUTES | 8520480 | 0
 OUTPUTMC | 3 | 1 | 11 | 2 | 16 | 1 | 12
 INPUTS | 2 | bbc_DATA<6>.PIN  | dataInLatchQ<7>/dataInLatchQ<7>_CLKF__$INT
@@ -463,7 +463,7 @@ EQ | 2 |
    dataInLatchQ<6>.D = bbc_DATA<6>.PIN;
    dataInLatchQ<6>.CLK = !dataInLatchQ<7>/dataInLatchQ<7>_CLKF__$INT;
 
-MACROCELL | 3 | 12 | dataInLatchQ<7>
+MACROCELL | 3 | 8 | dataInLatchQ<7>
 ATTRIBUTES | 8520480 | 0
 OUTPUTMC | 3 | 1 | 10 | 2 | 9 | 1 | 9
 INPUTS | 2 | bbc_DATA<7>.PIN  | dataInLatchQ<7>/dataInLatchQ<7>_CLKF__$INT
@@ -473,82 +473,89 @@ EQ | 2 |
    dataInLatchQ<7>.D = bbc_DATA<7>.PIN;
    dataInLatchQ<7>.CLK = !dataInLatchQ<7>/dataInLatchQ<7>_CLKF__$INT;
 
-MACROCELL | 3 | 11 | status_out<0>
+MACROCELL | 0 | 11 | status_out<0>
 ATTRIBUTES | 8520480 | 0
 OUTPUTMC | 1 | 0 | 5
-INPUTS | 2 | scsi_nMSG  | status_out<7>/status_out<7>_CLKF__$INT
-INPUTMC | 1 | 0 | 10
-INPUTP | 1 | 68
-EQ | 2 | 
+INPUTS | 6 | scsi_nMSG  | bbc_ADDRESS<2>  | bbc_ADDRESS<1>  | bbc_ADDRESS<0>  | bbc_RnW  | $OpTx$$OpTx$FX_DC$11_INV$65
+INPUTMC | 1 | 0 | 16
+INPUTP | 5 | 68 | 89 | 90 | 92 | 21
+EQ | 3 | 
    status_out<0>.D = !scsi_nMSG;
-   status_out<0>.CLK = !status_out<7>/status_out<7>_CLKF__$INT;
+   status_out<0>.CLK = !bbc_ADDRESS<2> & !bbc_ADDRESS<1> & bbc_ADDRESS<0> & 
+	bbc_RnW & $OpTx$$OpTx$FX_DC$11_INV$65;
 
-MACROCELL | 3 | 10 | status_out<1>
+MACROCELL | 2 | 8 | status_out<1>
 ATTRIBUTES | 8520480 | 0
 OUTPUTMC | 1 | 0 | 4
-INPUTS | 2 | scsi_nBSY  | status_out<7>/status_out<7>_CLKF__$INT
-INPUTMC | 1 | 0 | 10
-INPUTP | 1 | 67
-EQ | 2 | 
+INPUTS | 6 | scsi_nBSY  | bbc_ADDRESS<2>  | bbc_ADDRESS<1>  | bbc_ADDRESS<0>  | bbc_RnW  | $OpTx$$OpTx$FX_DC$11_INV$65
+INPUTMC | 1 | 0 | 16
+INPUTP | 5 | 67 | 89 | 90 | 92 | 21
+EQ | 3 | 
    status_out<1>.D = !scsi_nBSY;
-   status_out<1>.CLK = !status_out<7>/status_out<7>_CLKF__$INT;
+   status_out<1>.CLK = !bbc_ADDRESS<2> & !bbc_ADDRESS<1> & bbc_ADDRESS<0> & 
+	bbc_RnW & $OpTx$$OpTx$FX_DC$11_INV$65;
 
-MACROCELL | 2 | 1 | status_out<2>
+MACROCELL | 0 | 10 | status_out<2>
 ATTRIBUTES | 8520480 | 0
 OUTPUTMC | 1 | 0 | 1
-INPUTS | 3 | bbc_nRST  | bbc_INTnEXT  | status_out<7>/status_out<7>_CLKF__$INT
-INPUTMC | 1 | 0 | 10
-INPUTP | 2 | 15 | 1
-EQ | 2 | 
+INPUTS | 7 | bbc_nRST  | bbc_INTnEXT  | bbc_ADDRESS<2>  | bbc_ADDRESS<1>  | bbc_ADDRESS<0>  | bbc_RnW  | $OpTx$$OpTx$FX_DC$11_INV$65
+INPUTMC | 1 | 0 | 16
+INPUTP | 6 | 15 | 1 | 89 | 90 | 92 | 21
+EQ | 3 | 
    status_out<2>.D = bbc_nRST & bbc_INTnEXT;
-   status_out<2>.CLK = !status_out<7>/status_out<7>_CLKF__$INT;
+   status_out<2>.CLK = !bbc_ADDRESS<2> & !bbc_ADDRESS<1> & bbc_ADDRESS<0> & 
+	bbc_RnW & $OpTx$$OpTx$FX_DC$11_INV$65;
 
 MACROCELL | 0 | 17 | status_out<4>
 ATTRIBUTES | 8520480 | 0
 OUTPUTMC | 1 | 1 | 14
-INPUTS | 3 | IRQ  | bbc_INTnEXT  | status_out<7>/status_out<7>_CLKF__$INT
-INPUTMC | 2 | 2 | 12 | 0 | 10
-INPUTP | 1 | 1
-EQ | 3 | 
+INPUTS | 7 | IRQ  | bbc_INTnEXT  | bbc_ADDRESS<2>  | bbc_ADDRESS<1>  | bbc_ADDRESS<0>  | bbc_RnW  | $OpTx$$OpTx$FX_DC$11_INV$65
+INPUTMC | 2 | 2 | 12 | 0 | 16
+INPUTP | 5 | 1 | 89 | 90 | 92 | 21
+EQ | 4 | 
    status_out<4>.D = IRQ
 	$ bbc_INTnEXT;
-   status_out<4>.CLK = !status_out<7>/status_out<7>_CLKF__$INT;
+   status_out<4>.CLK = !bbc_ADDRESS<2> & !bbc_ADDRESS<1> & bbc_ADDRESS<0> & 
+	bbc_RnW & $OpTx$$OpTx$FX_DC$11_INV$65;
 
-MACROCELL | 2 | 0 | status_out<5>
+MACROCELL | 2 | 7 | status_out<5>
 ATTRIBUTES | 8520480 | 0
 OUTPUTMC | 1 | 1 | 13
-INPUTS | 2 | scsi_nREQ  | status_out<7>/status_out<7>_CLKF__$INT
-INPUTMC | 1 | 0 | 10
-INPUTP | 1 | 66
-EQ | 2 | 
+INPUTS | 6 | scsi_nREQ  | bbc_ADDRESS<2>  | bbc_ADDRESS<1>  | bbc_ADDRESS<0>  | bbc_RnW  | $OpTx$$OpTx$FX_DC$11_INV$65
+INPUTMC | 1 | 0 | 16
+INPUTP | 5 | 66 | 89 | 90 | 92 | 21
+EQ | 3 | 
    status_out<5>.D = !scsi_nREQ;
-   status_out<5>.CLK = !status_out<7>/status_out<7>_CLKF__$INT;
+   status_out<5>.CLK = !bbc_ADDRESS<2> & !bbc_ADDRESS<1> & bbc_ADDRESS<0> & 
+	bbc_RnW & $OpTx$$OpTx$FX_DC$11_INV$65;
 
-MACROCELL | 0 | 11 | status_out<6>
+MACROCELL | 0 | 9 | status_out<6>
 ATTRIBUTES | 8520480 | 0
 OUTPUTMC | 1 | 1 | 11
-INPUTS | 2 | scsi_InO  | status_out<7>/status_out<7>_CLKF__$INT
-INPUTMC | 1 | 0 | 10
-INPUTP | 1 | 65
-EQ | 2 | 
+INPUTS | 6 | scsi_InO  | bbc_ADDRESS<2>  | bbc_ADDRESS<1>  | bbc_ADDRESS<0>  | bbc_RnW  | $OpTx$$OpTx$FX_DC$11_INV$65
+INPUTMC | 1 | 0 | 16
+INPUTP | 5 | 65 | 89 | 90 | 92 | 21
+EQ | 3 | 
    status_out<6>.D = !scsi_InO;
-   status_out<6>.CLK = !status_out<7>/status_out<7>_CLKF__$INT;
+   status_out<6>.CLK = !bbc_ADDRESS<2> & !bbc_ADDRESS<1> & bbc_ADDRESS<0> & 
+	bbc_RnW & $OpTx$$OpTx$FX_DC$11_INV$65;
 
-MACROCELL | 3 | 9 | status_out<7>
+MACROCELL | 2 | 6 | status_out<7>
 ATTRIBUTES | 8520480 | 0
 OUTPUTMC | 1 | 1 | 10
-INPUTS | 2 | scsi_CnD  | status_out<7>/status_out<7>_CLKF__$INT
-INPUTMC | 1 | 0 | 10
-INPUTP | 1 | 63
-EQ | 2 | 
+INPUTS | 6 | scsi_CnD  | bbc_ADDRESS<2>  | bbc_ADDRESS<1>  | bbc_ADDRESS<0>  | bbc_RnW  | $OpTx$$OpTx$FX_DC$11_INV$65
+INPUTMC | 1 | 0 | 16
+INPUTP | 5 | 63 | 89 | 90 | 92 | 21
+EQ | 3 | 
    status_out<7>.D = !scsi_CnD;
-   status_out<7>.CLK = !status_out<7>/status_out<7>_CLKF__$INT;
+   status_out<7>.CLK = !bbc_ADDRESS<2> & !bbc_ADDRESS<1> & bbc_ADDRESS<0> & 
+	bbc_RnW & $OpTx$$OpTx$FX_DC$11_INV$65;
 
 MACROCELL | 0 | 3 | N0
 ATTRIBUTES | 265986 | 0
 OUTPUTMC | 1 | 0 | 4
 INPUTS | 16 | IRQ  | bbc_ADDRESS<4>  | bbc_ADDRESS<2>  | bbc_ADDRESS<1>  | bbc_ADDRESS<0>  | bbc_RnW  | bbc_1MHZE  | bbc_ADDRESS<7>  | bbc_ADDRESS<5>  | bbc_ADDRESS<3>  | scsi_InO  | cleanPGFC  | bbc_ADDRESS<6>  | scsi_nDATA<1>.PIN  | bbc_INTnEXT  | dataInLatchQ<1>
-INPUTMC | 3 | 2 | 12 | 3 | 17 | 2 | 7
+INPUTMC | 3 | 2 | 12 | 3 | 17 | 3 | 15
 INPUTP | 13 | 87 | 89 | 90 | 92 | 21 | 20 | 83 | 86 | 88 | 65 | 84 | 44 | 1
 EXPORTS | 1 | 0 | 4
 EQ | 10 | 
@@ -603,20 +610,20 @@ EQ | 1 |
 MACROCELL | 2 | 15 | scsi_nSEL_OBUF
 ATTRIBUTES | 8651686 | 0
 INPUTS | 2 | scsi_nSEL_OBUF/scsi_nSEL_OBUF_CLKF__$INT  | scsi_nSEL_OBUF/scsi_nSEL_OBUF_SETF__$INT
-INPUTMC | 2 | 0 | 12 | 3 | 8
+INPUTMC | 2 | 0 | 12 | 2 | 4
 EQ | 3 | 
    scsi_nSEL.D = Gnd;
    scsi_nSEL.CLK = !scsi_nSEL_OBUF/scsi_nSEL_OBUF_CLKF__$INT;
    scsi_nSEL.AP = !scsi_nSEL_OBUF/scsi_nSEL_OBUF_SETF__$INT;
 
-MACROCELL | 0 | 16 | $OpTx$$OpTx$FX_DC$47_INV$70
+MACROCELL | 0 | 16 | $OpTx$$OpTx$FX_DC$11_INV$65
 ATTRIBUTES | 133888 | 0
-OUTPUTMC | 8 | 0 | 5 | 0 | 4 | 0 | 1 | 1 | 14 | 1 | 13 | 1 | 11 | 1 | 10 | 1 | 16
+OUTPUTMC | 15 | 0 | 5 | 0 | 4 | 0 | 1 | 1 | 14 | 1 | 13 | 1 | 11 | 1 | 10 | 1 | 16 | 0 | 11 | 2 | 8 | 0 | 10 | 0 | 17 | 2 | 7 | 0 | 9 | 2 | 6
 INPUTS | 8 | bbc_ADDRESS<4>  | bbc_1MHZE  | bbc_ADDRESS<7>  | bbc_ADDRESS<5>  | bbc_ADDRESS<3>  | cleanPGFC  | bbc_ADDRESS<6>  | bbc_INTnEXT
 INPUTMC | 1 | 3 | 17
 INPUTP | 7 | 87 | 20 | 83 | 86 | 88 | 84 | 1
 EQ | 4 | 
-   $OpTx$$OpTx$FX_DC$47_INV$70 = !bbc_ADDRESS<4> & bbc_1MHZE & !bbc_ADDRESS<7> & 
+   $OpTx$$OpTx$FX_DC$11_INV$65 = !bbc_ADDRESS<4> & bbc_1MHZE & !bbc_ADDRESS<7> & 
 	!bbc_ADDRESS<5> & !bbc_ADDRESS<3> & cleanPGFC & bbc_INTnEXT
 	# !bbc_ADDRESS<4> & bbc_1MHZE & !bbc_ADDRESS<7> & 
 	!bbc_ADDRESS<5> & !bbc_ADDRESS<3> & cleanPGFC & bbc_ADDRESS<6>;
@@ -637,7 +644,7 @@ EQ | 6 |
 
 MACROCELL | 0 | 15 | dataInLatchQ<7>/dataInLatchQ<7>_CLKF__$INT
 ATTRIBUTES | 133888 | 0
-OUTPUTMC | 8 | 2 | 8 | 2 | 7 | 2 | 6 | 2 | 4 | 3 | 16 | 3 | 15 | 3 | 14 | 3 | 12
+OUTPUTMC | 8 | 3 | 16 | 3 | 15 | 3 | 14 | 3 | 12 | 3 | 11 | 3 | 10 | 3 | 9 | 3 | 8
 INPUTS | 11 | bbc_ADDRESS<4>  | bbc_ADDRESS<1>  | bbc_ADDRESS<0>  | bbc_RnW  | bbc_1MHZE  | bbc_ADDRESS<7>  | bbc_ADDRESS<5>  | bbc_ADDRESS<3>  | cleanPGFC  | bbc_ADDRESS<6>  | bbc_INTnEXT
 INPUTMC | 1 | 3 | 17
 INPUTP | 10 | 87 | 90 | 92 | 21 | 20 | 83 | 86 | 88 | 84 | 1
@@ -648,20 +655,6 @@ EQ | 6 |
 	# !bbc_ADDRESS<4> & !bbc_ADDRESS<1> & !bbc_ADDRESS<0> & 
 	!bbc_RnW & bbc_1MHZE & !bbc_ADDRESS<7> & !bbc_ADDRESS<5> & 
 	!bbc_ADDRESS<3> & cleanPGFC & bbc_ADDRESS<6>;
-
-MACROCELL | 0 | 10 | status_out<7>/status_out<7>_CLKF__$INT
-ATTRIBUTES | 133888 | 0
-OUTPUTMC | 7 | 3 | 11 | 3 | 10 | 2 | 1 | 0 | 17 | 2 | 0 | 0 | 11 | 3 | 9
-INPUTS | 12 | bbc_ADDRESS<4>  | bbc_ADDRESS<2>  | bbc_ADDRESS<1>  | bbc_ADDRESS<0>  | bbc_RnW  | bbc_1MHZE  | bbc_ADDRESS<7>  | bbc_ADDRESS<5>  | bbc_ADDRESS<3>  | cleanPGFC  | bbc_ADDRESS<6>  | bbc_INTnEXT
-INPUTMC | 1 | 3 | 17
-INPUTP | 11 | 87 | 89 | 90 | 92 | 21 | 20 | 83 | 86 | 88 | 84 | 1
-EQ | 6 | 
-   status_out<7>/status_out<7>_CLKF__$INT = !bbc_ADDRESS<4> & !bbc_ADDRESS<2> & !bbc_ADDRESS<1> & 
-	bbc_ADDRESS<0> & bbc_RnW & bbc_1MHZE & !bbc_ADDRESS<7> & 
-	!bbc_ADDRESS<5> & !bbc_ADDRESS<3> & cleanPGFC & bbc_INTnEXT
-	# !bbc_ADDRESS<4> & !bbc_ADDRESS<2> & !bbc_ADDRESS<1> & 
-	bbc_ADDRESS<0> & bbc_RnW & bbc_1MHZE & !bbc_ADDRESS<7> & 
-	!bbc_ADDRESS<5> & !bbc_ADDRESS<3> & cleanPGFC & bbc_ADDRESS<6>;
 
 MACROCELL | 0 | 13 | scsi_nACK_OBUF/scsi_nACK_OBUF_CLKF__$INT
 ATTRIBUTES | 133888 | 0
@@ -691,7 +684,7 @@ EQ | 6 |
 	!bbc_ADDRESS<0> & !bbc_RnW & bbc_1MHZE & !bbc_ADDRESS<7> & 
 	!bbc_ADDRESS<5> & !bbc_ADDRESS<3> & cleanPGFC & bbc_ADDRESS<6>;
 
-MACROCELL | 3 | 8 | scsi_nSEL_OBUF/scsi_nSEL_OBUF_SETF__$INT
+MACROCELL | 2 | 4 | scsi_nSEL_OBUF/scsi_nSEL_OBUF_SETF__$INT
 ATTRIBUTES | 133888 | 0
 OUTPUTMC | 1 | 2 | 15
 INPUTS | 2 | bbc_nRST  | scsi_nBSY
@@ -716,7 +709,7 @@ MACROCELL | 0 | 2 | EXP7_
 ATTRIBUTES | 2048 | 0
 OUTPUTMC | 1 | 0 | 1
 INPUTS | 14 | bbc_ADDRESS<4>  | bbc_ADDRESS<2>  | bbc_ADDRESS<1>  | bbc_ADDRESS<0>  | bbc_RnW  | bbc_1MHZE  | bbc_ADDRESS<7>  | bbc_ADDRESS<5>  | bbc_ADDRESS<3>  | scsi_InO  | cleanPGFC  | bbc_INTnEXT  | bbc_ADDRESS<6>  | dataInLatchQ<2>
-INPUTMC | 2 | 3 | 17 | 2 | 6
+INPUTMC | 2 | 3 | 17 | 3 | 14
 INPUTP | 12 | 87 | 89 | 90 | 92 | 21 | 20 | 83 | 86 | 88 | 65 | 1 | 84
 EXPORTS | 1 | 0 | 1
 EQ | 4 | 
@@ -729,7 +722,7 @@ MACROCELL | 0 | 6 | EXP8_
 ATTRIBUTES | 2048 | 0
 OUTPUTMC | 1 | 0 | 5
 INPUTS | 15 | bbc_ADDRESS<4>  | bbc_ADDRESS<2>  | bbc_ADDRESS<1>  | bbc_ADDRESS<0>  | bbc_RnW  | bbc_1MHZE  | bbc_ADDRESS<7>  | bbc_ADDRESS<5>  | bbc_ADDRESS<3>  | scsi_InO  | cleanPGFC  | bbc_ADDRESS<6>  | scsi_nDATA<0>.PIN  | bbc_INTnEXT  | dataInLatchQ<0>
-INPUTMC | 2 | 3 | 17 | 2 | 8
+INPUTMC | 2 | 3 | 17 | 3 | 16
 INPUTP | 13 | 87 | 89 | 90 | 92 | 21 | 20 | 83 | 86 | 88 | 65 | 84 | 43 | 1
 EXPORTS | 1 | 0 | 5
 EQ | 8 | 
@@ -746,7 +739,7 @@ MACROCELL | 1 | 9 | EXP9_
 ATTRIBUTES | 2048 | 0
 OUTPUTMC | 1 | 1 | 10
 INPUTS | 15 | bbc_ADDRESS<4>  | bbc_ADDRESS<2>  | bbc_ADDRESS<1>  | bbc_ADDRESS<0>  | bbc_RnW  | bbc_1MHZE  | bbc_ADDRESS<7>  | bbc_ADDRESS<5>  | bbc_ADDRESS<3>  | scsi_InO  | cleanPGFC  | bbc_ADDRESS<6>  | scsi_nDATA<7>.PIN  | bbc_INTnEXT  | dataInLatchQ<7>
-INPUTMC | 2 | 3 | 17 | 3 | 12
+INPUTMC | 2 | 3 | 17 | 3 | 8
 INPUTP | 13 | 87 | 89 | 90 | 92 | 21 | 20 | 83 | 86 | 88 | 65 | 84 | 54 | 1
 EXPORTS | 1 | 1 | 10
 EQ | 8 | 
@@ -763,7 +756,7 @@ MACROCELL | 1 | 12 | EXP10_
 ATTRIBUTES | 2048 | 0
 OUTPUTMC | 1 | 1 | 11
 INPUTS | 15 | bbc_ADDRESS<4>  | bbc_ADDRESS<2>  | bbc_ADDRESS<1>  | bbc_ADDRESS<0>  | bbc_RnW  | bbc_1MHZE  | bbc_ADDRESS<7>  | bbc_ADDRESS<5>  | bbc_ADDRESS<3>  | scsi_InO  | cleanPGFC  | bbc_ADDRESS<6>  | scsi_nDATA<6>.PIN  | bbc_INTnEXT  | dataInLatchQ<6>
-INPUTMC | 2 | 3 | 17 | 3 | 14
+INPUTMC | 2 | 3 | 17 | 3 | 9
 INPUTP | 13 | 87 | 89 | 90 | 92 | 21 | 20 | 83 | 86 | 88 | 65 | 84 | 52 | 1
 EXPORTS | 1 | 1 | 11
 EQ | 8 | 
@@ -780,7 +773,7 @@ MACROCELL | 1 | 15 | EXP11_
 ATTRIBUTES | 2048 | 0
 OUTPUTMC | 1 | 1 | 14
 INPUTS | 15 | bbc_ADDRESS<4>  | bbc_ADDRESS<2>  | bbc_ADDRESS<1>  | bbc_ADDRESS<0>  | bbc_RnW  | bbc_1MHZE  | bbc_ADDRESS<7>  | bbc_ADDRESS<5>  | bbc_ADDRESS<3>  | scsi_InO  | cleanPGFC  | bbc_INTnEXT  | dataInLatchQ<4>  | scsi_nDATA<4>.PIN  | bbc_ADDRESS<6>
-INPUTMC | 2 | 3 | 17 | 3 | 16
+INPUTMC | 2 | 3 | 17 | 3 | 11
 INPUTP | 13 | 87 | 89 | 90 | 92 | 21 | 20 | 83 | 86 | 88 | 65 | 1 | 49 | 84
 EXPORTS | 1 | 1 | 14
 EQ | 16 | 
@@ -801,38 +794,38 @@ EQ | 16 |
 	!bbc_ADDRESS<5> & !bbc_ADDRESS<3> & scsi_InO & cleanPGFC & 
 	!bbc_INTnEXT & bbc_ADDRESS<6> & dataInLatchQ<4>
 
-PIN | bbc_ADDRESS<4> | 64 | 0 | N/A | 87 | 22 | 0 | 5 | 0 | 4 | 0 | 1 | 1 | 14 | 1 | 13 | 1 | 11 | 1 | 10 | 1 | 16 | 3 | 13 | 0 | 16 | 0 | 14 | 0 | 15 | 0 | 10 | 0 | 13 | 0 | 12 | 0 | 0 | 0 | 2 | 0 | 3 | 0 | 6 | 1 | 9 | 1 | 12 | 1 | 15
-PIN | bbc_ADDRESS<2> | 64 | 0 | N/A | 89 | 20 | 0 | 5 | 0 | 4 | 0 | 1 | 1 | 14 | 1 | 13 | 1 | 11 | 1 | 10 | 1 | 16 | 3 | 13 | 0 | 14 | 0 | 10 | 0 | 13 | 0 | 12 | 0 | 0 | 0 | 2 | 0 | 3 | 0 | 6 | 1 | 9 | 1 | 12 | 1 | 15
-PIN | bbc_ADDRESS<1> | 64 | 0 | N/A | 90 | 21 | 0 | 5 | 0 | 4 | 0 | 1 | 1 | 14 | 1 | 13 | 1 | 11 | 1 | 10 | 1 | 16 | 3 | 13 | 0 | 14 | 0 | 15 | 0 | 10 | 0 | 13 | 0 | 12 | 0 | 0 | 0 | 2 | 0 | 3 | 0 | 6 | 1 | 9 | 1 | 12 | 1 | 15
-PIN | bbc_ADDRESS<0> | 64 | 0 | N/A | 92 | 21 | 0 | 5 | 0 | 4 | 0 | 1 | 1 | 14 | 1 | 13 | 1 | 11 | 1 | 10 | 1 | 16 | 3 | 13 | 0 | 14 | 0 | 15 | 0 | 10 | 0 | 13 | 0 | 12 | 0 | 0 | 0 | 2 | 0 | 3 | 0 | 6 | 1 | 9 | 1 | 12 | 1 | 15
-PIN | bbc_RnW | 64 | 0 | N/A | 21 | 20 | 0 | 5 | 0 | 4 | 0 | 1 | 1 | 14 | 1 | 13 | 1 | 11 | 1 | 10 | 1 | 16 | 3 | 13 | 0 | 14 | 0 | 15 | 0 | 10 | 0 | 12 | 0 | 0 | 0 | 2 | 0 | 3 | 0 | 6 | 1 | 9 | 1 | 12 | 1 | 15
-PIN | bbc_1MHZE | 4160 | 0 | N/A | 20 | 23 | 0 | 5 | 0 | 4 | 0 | 1 | 1 | 14 | 1 | 13 | 1 | 11 | 1 | 10 | 1 | 16 | 3 | 13 | 0 | 16 | 0 | 14 | 0 | 15 | 0 | 10 | 0 | 13 | 0 | 12 | 0 | 0 | 0 | 2 | 0 | 3 | 0 | 6 | 1 | 9 | 1 | 12 | 1 | 15 | 3 | 17
-PIN | bbc_INTnEXT | 64 | 0 | N/A | 1 | 32 | 0 | 5 | 0 | 4 | 0 | 1 | 1 | 14 | 1 | 13 | 1 | 11 | 1 | 10 | 1 | 16 | 2 | 2 | 2 | 3 | 2 | 10 | 2 | 5 | 2 | 13 | 2 | 14 | 2 | 16 | 2 | 9 | 2 | 1 | 0 | 17 | 3 | 1 | 3 | 13 | 0 | 16 | 0 | 14 | 0 | 15 | 0 | 10 | 0 | 13 | 0 | 12 | 0 | 2 | 0 | 3 | 0 | 6 | 1 | 9 | 1 | 12 | 1 | 15
-PIN | bbc_ADDRESS<3> | 64 | 0 | N/A | 88 | 22 | 0 | 5 | 0 | 4 | 0 | 1 | 1 | 14 | 1 | 13 | 1 | 11 | 1 | 10 | 1 | 16 | 3 | 13 | 0 | 16 | 0 | 14 | 0 | 15 | 0 | 10 | 0 | 13 | 0 | 12 | 0 | 0 | 0 | 2 | 0 | 3 | 0 | 6 | 1 | 9 | 1 | 12 | 1 | 15
-PIN | bbc_ADDRESS<5> | 64 | 0 | N/A | 86 | 22 | 0 | 5 | 0 | 4 | 0 | 1 | 1 | 14 | 1 | 13 | 1 | 11 | 1 | 10 | 1 | 16 | 3 | 13 | 0 | 16 | 0 | 14 | 0 | 15 | 0 | 10 | 0 | 13 | 0 | 12 | 0 | 0 | 0 | 2 | 0 | 3 | 0 | 6 | 1 | 9 | 1 | 12 | 1 | 15
-PIN | bbc_ADDRESS<7> | 64 | 0 | N/A | 83 | 22 | 0 | 5 | 0 | 4 | 0 | 1 | 1 | 14 | 1 | 13 | 1 | 11 | 1 | 10 | 1 | 16 | 3 | 13 | 0 | 16 | 0 | 14 | 0 | 15 | 0 | 10 | 0 | 13 | 0 | 12 | 0 | 0 | 0 | 2 | 0 | 3 | 0 | 6 | 1 | 9 | 1 | 12 | 1 | 15
-PIN | bbc_ADDRESS<6> | 64 | 0 | N/A | 84 | 22 | 0 | 5 | 0 | 4 | 0 | 1 | 1 | 14 | 1 | 13 | 1 | 11 | 1 | 10 | 1 | 16 | 3 | 13 | 0 | 16 | 0 | 14 | 0 | 15 | 0 | 10 | 0 | 13 | 0 | 12 | 0 | 0 | 0 | 2 | 0 | 3 | 0 | 6 | 1 | 9 | 1 | 12 | 1 | 15
-PIN | scsi_InO | 64 | 0 | N/A | 65 | 24 | 0 | 5 | 0 | 4 | 0 | 1 | 1 | 12 | 1 | 13 | 1 | 11 | 1 | 10 | 1 | 16 | 2 | 2 | 2 | 3 | 2 | 10 | 2 | 5 | 2 | 13 | 2 | 14 | 2 | 16 | 2 | 9 | 0 | 11 | 0 | 0 | 0 | 2 | 0 | 3 | 0 | 6 | 1 | 9 | 1 | 14 | 1 | 15
-PIN | bbc_nRST | 64 | 0 | N/A | 15 | 4 | 2 | 17 | 2 | 1 | 3 | 5 | 3 | 8
+PIN | bbc_ADDRESS<4> | 64 | 0 | N/A | 87 | 21 | 0 | 5 | 0 | 4 | 0 | 1 | 1 | 14 | 1 | 13 | 1 | 11 | 1 | 10 | 1 | 16 | 3 | 13 | 0 | 16 | 0 | 14 | 0 | 15 | 0 | 13 | 0 | 12 | 0 | 0 | 0 | 2 | 0 | 3 | 0 | 6 | 1 | 9 | 1 | 12 | 1 | 15
+PIN | bbc_ADDRESS<2> | 64 | 0 | N/A | 89 | 26 | 0 | 5 | 0 | 4 | 0 | 1 | 1 | 14 | 1 | 13 | 1 | 11 | 1 | 10 | 1 | 16 | 0 | 11 | 2 | 8 | 0 | 10 | 0 | 17 | 2 | 7 | 0 | 9 | 2 | 6 | 3 | 13 | 0 | 14 | 0 | 13 | 0 | 12 | 0 | 0 | 0 | 2 | 0 | 3 | 0 | 6 | 1 | 9 | 1 | 12 | 1 | 15
+PIN | bbc_ADDRESS<1> | 64 | 0 | N/A | 90 | 27 | 0 | 5 | 0 | 4 | 0 | 1 | 1 | 14 | 1 | 13 | 1 | 11 | 1 | 10 | 1 | 16 | 0 | 11 | 2 | 8 | 0 | 10 | 0 | 17 | 2 | 7 | 0 | 9 | 2 | 6 | 3 | 13 | 0 | 14 | 0 | 15 | 0 | 13 | 0 | 12 | 0 | 0 | 0 | 2 | 0 | 3 | 0 | 6 | 1 | 9 | 1 | 12 | 1 | 15
+PIN | bbc_ADDRESS<0> | 64 | 0 | N/A | 92 | 27 | 0 | 5 | 0 | 4 | 0 | 1 | 1 | 14 | 1 | 13 | 1 | 11 | 1 | 10 | 1 | 16 | 0 | 11 | 2 | 8 | 0 | 10 | 0 | 17 | 2 | 7 | 0 | 9 | 2 | 6 | 3 | 13 | 0 | 14 | 0 | 15 | 0 | 13 | 0 | 12 | 0 | 0 | 0 | 2 | 0 | 3 | 0 | 6 | 1 | 9 | 1 | 12 | 1 | 15
+PIN | bbc_RnW | 64 | 0 | N/A | 21 | 26 | 0 | 5 | 0 | 4 | 0 | 1 | 1 | 14 | 1 | 13 | 1 | 11 | 1 | 10 | 1 | 16 | 0 | 11 | 2 | 8 | 0 | 10 | 0 | 17 | 2 | 7 | 0 | 9 | 2 | 6 | 3 | 13 | 0 | 14 | 0 | 15 | 0 | 12 | 0 | 0 | 0 | 2 | 0 | 3 | 0 | 6 | 1 | 9 | 1 | 12 | 1 | 15
+PIN | bbc_1MHZE | 4160 | 0 | N/A | 20 | 22 | 0 | 5 | 0 | 4 | 0 | 1 | 1 | 14 | 1 | 13 | 1 | 11 | 1 | 10 | 1 | 16 | 3 | 13 | 0 | 16 | 0 | 14 | 0 | 15 | 0 | 13 | 0 | 12 | 0 | 0 | 0 | 2 | 0 | 3 | 0 | 6 | 1 | 9 | 1 | 12 | 1 | 15 | 3 | 17
+PIN | bbc_INTnEXT | 64 | 0 | N/A | 1 | 31 | 0 | 5 | 0 | 4 | 0 | 1 | 1 | 14 | 1 | 13 | 1 | 11 | 1 | 10 | 1 | 16 | 2 | 2 | 2 | 3 | 2 | 10 | 2 | 5 | 2 | 13 | 2 | 14 | 2 | 16 | 2 | 9 | 0 | 10 | 0 | 17 | 3 | 1 | 3 | 13 | 0 | 16 | 0 | 14 | 0 | 15 | 0 | 13 | 0 | 12 | 0 | 2 | 0 | 3 | 0 | 6 | 1 | 9 | 1 | 12 | 1 | 15
+PIN | bbc_ADDRESS<3> | 64 | 0 | N/A | 88 | 21 | 0 | 5 | 0 | 4 | 0 | 1 | 1 | 14 | 1 | 13 | 1 | 11 | 1 | 10 | 1 | 16 | 3 | 13 | 0 | 16 | 0 | 14 | 0 | 15 | 0 | 13 | 0 | 12 | 0 | 0 | 0 | 2 | 0 | 3 | 0 | 6 | 1 | 9 | 1 | 12 | 1 | 15
+PIN | bbc_ADDRESS<5> | 64 | 0 | N/A | 86 | 21 | 0 | 5 | 0 | 4 | 0 | 1 | 1 | 14 | 1 | 13 | 1 | 11 | 1 | 10 | 1 | 16 | 3 | 13 | 0 | 16 | 0 | 14 | 0 | 15 | 0 | 13 | 0 | 12 | 0 | 0 | 0 | 2 | 0 | 3 | 0 | 6 | 1 | 9 | 1 | 12 | 1 | 15
+PIN | bbc_ADDRESS<7> | 64 | 0 | N/A | 83 | 21 | 0 | 5 | 0 | 4 | 0 | 1 | 1 | 14 | 1 | 13 | 1 | 11 | 1 | 10 | 1 | 16 | 3 | 13 | 0 | 16 | 0 | 14 | 0 | 15 | 0 | 13 | 0 | 12 | 0 | 0 | 0 | 2 | 0 | 3 | 0 | 6 | 1 | 9 | 1 | 12 | 1 | 15
+PIN | bbc_ADDRESS<6> | 64 | 0 | N/A | 84 | 21 | 0 | 5 | 0 | 4 | 0 | 1 | 1 | 14 | 1 | 13 | 1 | 11 | 1 | 10 | 1 | 16 | 3 | 13 | 0 | 16 | 0 | 14 | 0 | 15 | 0 | 13 | 0 | 12 | 0 | 0 | 0 | 2 | 0 | 3 | 0 | 6 | 1 | 9 | 1 | 12 | 1 | 15
+PIN | scsi_InO | 64 | 0 | N/A | 65 | 24 | 0 | 5 | 0 | 4 | 0 | 1 | 1 | 12 | 1 | 13 | 1 | 11 | 1 | 10 | 1 | 16 | 2 | 2 | 2 | 3 | 2 | 10 | 2 | 5 | 2 | 13 | 2 | 14 | 2 | 16 | 2 | 9 | 0 | 9 | 0 | 0 | 0 | 2 | 0 | 3 | 0 | 6 | 1 | 9 | 1 | 14 | 1 | 15
+PIN | bbc_nRST | 64 | 0 | N/A | 15 | 4 | 2 | 17 | 0 | 10 | 3 | 5 | 2 | 4
 PIN | bbc_nPGFC | 64 | 0 | N/A | 16 | 1 | 3 | 17
-PIN | scsi_nREQ | 64 | 0 | N/A | 66 | 3 | 2 | 12 | 2 | 0 | 2 | 11
-PIN | scsi_nMSG | 64 | 0 | N/A | 68 | 1 | 3 | 11
-PIN | scsi_nBSY | 64 | 0 | N/A | 67 | 2 | 3 | 10 | 3 | 8
-PIN | scsi_CnD | 64 | 0 | N/A | 63 | 1 | 3 | 9
+PIN | scsi_nREQ | 64 | 0 | N/A | 66 | 3 | 2 | 12 | 2 | 7 | 2 | 11
+PIN | scsi_nMSG | 64 | 0 | N/A | 68 | 1 | 0 | 11
+PIN | scsi_nBSY | 64 | 0 | N/A | 67 | 2 | 2 | 8 | 2 | 4
+PIN | scsi_CnD | 64 | 0 | N/A | 63 | 1 | 2 | 6
 PIN | bbc_nIRQ | 536871040 | 0 | N/A | 17
 PIN | scsi_INTnEXT | 536871040 | 0 | N/A | 62
 PIN | scsi_nACK | 536871040 | 0 | N/A | 55
 PIN | scsi_nCONF | 536871040 | 0 | N/A | 72
 PIN | scsi_nRST | 536871040 | 0 | N/A | 70
 PIN | scsi_nSEL | 536871040 | 0 | N/A | 59
-PIN | bbc_DATA<0> | 536870976 | 0 | N/A | 13 | 2 | 2 | 17 | 2 | 8
-PIN | bbc_DATA<1> | 536870976 | 0 | N/A | 12 | 1 | 2 | 7
-PIN | bbc_DATA<2> | 536870976 | 0 | N/A | 11 | 1 | 2 | 6
-PIN | bbc_DATA<4> | 536870976 | 0 | N/A | 9 | 1 | 3 | 16
-PIN | bbc_DATA<5> | 536870976 | 0 | N/A | 7 | 1 | 3 | 15
-PIN | bbc_DATA<6> | 536870976 | 0 | N/A | 5 | 1 | 3 | 14
-PIN | bbc_DATA<7> | 536870976 | 0 | N/A | 3 | 1 | 3 | 12
-PIN | bbc_DATA<3> | 536870976 | 0 | N/A | 10 | 1 | 2 | 4
+PIN | bbc_DATA<0> | 536870976 | 0 | N/A | 13 | 2 | 2 | 17 | 3 | 16
+PIN | bbc_DATA<1> | 536870976 | 0 | N/A | 12 | 1 | 3 | 15
+PIN | bbc_DATA<2> | 536870976 | 0 | N/A | 11 | 1 | 3 | 14
+PIN | bbc_DATA<4> | 536870976 | 0 | N/A | 9 | 1 | 3 | 11
+PIN | bbc_DATA<5> | 536870976 | 0 | N/A | 7 | 1 | 3 | 10
+PIN | bbc_DATA<6> | 536870976 | 0 | N/A | 5 | 1 | 3 | 9
+PIN | bbc_DATA<7> | 536870976 | 0 | N/A | 3 | 1 | 3 | 8
+PIN | bbc_DATA<3> | 536870976 | 0 | N/A | 10 | 1 | 3 | 12
 PIN | scsi_nDATA<0> | 536870976 | 0 | N/A | 43 | 2 | 0 | 5 | 0 | 6
 PIN | scsi_nDATA<1> | 536870976 | 0 | N/A | 44 | 2 | 0 | 4 | 0 | 3
 PIN | scsi_nDATA<2> | 536870976 | 0 | N/A | 46 | 2 | 0 | 1 | 0 | 0
