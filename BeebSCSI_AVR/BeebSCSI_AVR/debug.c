@@ -37,20 +37,20 @@
 // need to be volatile variables
 
 // Default debug settings for use during development
-volatile bool debugFlag_filesystem = true;
-volatile bool debugFlag_scsiCommands = true;
-volatile bool debugFlag_scsiBlocks = false;
-volatile bool debugFlag_scsiFcodes = true;
-volatile bool debugFlag_scsiState = true;
-volatile bool debugFlag_fatfs = true;
+//volatile bool debugFlag_filesystem = true;
+//volatile bool debugFlag_scsiCommands = true;
+//volatile bool debugFlag_scsiBlocks = false;
+//volatile bool debugFlag_scsiFcodes = true;
+//volatile bool debugFlag_scsiState = true;
+//volatile bool debugFlag_fatfs = true;
 
 // Default debug settings for general use
-//volatile bool debugFlag_filesystem = false;
-//volatile bool debugFlag_scsiCommands = false;
-//volatile bool debugFlag_scsiBlocks = false;
-//volatile bool debugFlag_scsiFcodes = false;
-//volatile bool debugFlag_scsiState = false;
-//volatile bool debugFlag_fatfs = false;
+volatile bool debugFlag_filesystem = false;
+volatile bool debugFlag_scsiCommands = false;
+volatile bool debugFlag_scsiBlocks = false;
+volatile bool debugFlag_scsiFcodes = false;
+volatile bool debugFlag_scsiState = false;
+volatile bool debugFlag_fatfs = false;
 
 // This function outputs a string stored in program space to the UART
 // It should be called with a statement such as:
