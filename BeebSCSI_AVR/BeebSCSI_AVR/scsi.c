@@ -3,7 +3,7 @@
 
 	BeebSCSI SCSI emulation functions
     BeebSCSI - BBC Micro SCSI Drive Emulator
-    Copyright (C) 2016 Simon Inns
+    Copyright (C) 2018 Simon Inns
 
 	This file is part of BeebSCSI.
 
@@ -43,7 +43,7 @@
 // Define the major and minor firmware version number returned
 // by the BSSENSE command
 #define FIRMWARE_MAJOR		0x02
-#define FIRMWARE_MINOR		0x00
+#define FIRMWARE_MINOR		0x01
 
 // Global for the emulation mode (fixed or removable drive)
 // Note: The fixed mode emulates SCSI-1 compliant hard drives for the Beeb
@@ -885,19 +885,34 @@ uint8_t scsiCommandRead6(void)
 	// Make sure the target LUN is started
 	if (!filesystemReadLunStatus(commandDataBlock.targetLUN))
 	{
-		// LUN unavailable... return with error status
-		if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("\r\nSCSI Commands: Unavailable LUN #"), commandDataBlock.targetLUN, true);
-		commandDataBlock.status = (commandDataBlock.targetLUN << 5) | 0x02; // 0x02 = Bad
-		commandDataBlock.message = 0x00;
+		// Target LUN is not started.  If the LUN is present, then start it, otherwise
+		// return an error.  Note: The original Adaptec SCSI host adapter would always
+		// auto-start a LUN if it was present, so we duplicate that behavior here even 
+		// though it is 'more correct' (according to the specs) to return with error
 		
-		// Set request sense error globals
-		requestSenseData[commandDataBlock.targetLUN].errorFlag = true;
-		requestSenseData[commandDataBlock.targetLUN].validAddressFlag = false;
-		requestSenseData[commandDataBlock.targetLUN].errorClass = 0x02; // Class 02 error code
-		requestSenseData[commandDataBlock.targetLUN].errorCode = 0x1C; // 1C Bad format
-		requestSenseData[commandDataBlock.targetLUN].logicalBlockAddress = 0x00;
+		// Is the requested LUN available?
 		
-		return SCSI_STATUS;
+		if (debugFlag_scsiCommands) debugString_P(PSTR("\r\nSCSI Commands: Attempting to Auto-Start LUN (as it is currently STOPped)\r\n"));
+		
+		// Auto-start the LUN
+		if (!filesystemSetLunStatus(commandDataBlock.targetLUN, true))
+		{
+			// Could not start LUN... return with error status
+			if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("SCSI Commands: Could not auto-start LUN #"), commandDataBlock.targetLUN,true);
+			commandDataBlock.status = (commandDataBlock.targetLUN << 5) | 0x02; // 0x02 = Bad
+			commandDataBlock.message = 0x00;
+			
+			// Set request sense error globals
+			requestSenseData[commandDataBlock.targetLUN].errorFlag = true;
+			requestSenseData[commandDataBlock.targetLUN].validAddressFlag = false;
+			requestSenseData[commandDataBlock.targetLUN].errorClass = 0x02; // Class 02 error code
+			requestSenseData[commandDataBlock.targetLUN].errorCode = 0x1C; // 1C Bad format
+			requestSenseData[commandDataBlock.targetLUN].logicalBlockAddress = 0x00;
+			
+			return SCSI_STATUS;
+		}
+		
+		debugString_P(PSTR("SCSI Commands: Requested LUN has been auto-started\r\n"));
 	}
 	
 	// Get the starting logical block address from the CDB
@@ -1042,19 +1057,34 @@ uint8_t scsiCommandWrite6(void)
 	// Make sure the target LUN is started
 	if (!filesystemReadLunStatus(commandDataBlock.targetLUN))
 	{
-		// LUN unavailable... return with error status
-		if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("\r\nSCSI Commands: Unavailable LUN #"), commandDataBlock.targetLUN, true);
-		commandDataBlock.status = (commandDataBlock.targetLUN << 5) | 0x02; // 0x02 = Bad
-		commandDataBlock.message = 0x00;
+		// Target LUN is not started.  If the LUN is present, then start it, otherwise
+		// return an error.  Note: The original Adaptec SCSI host adapter would always
+		// auto-start a LUN if it was present, so we duplicate that behavior here even
+		// though it is 'more correct' (according to the specs) to return with error
 		
-		// Set request sense error globals
-		requestSenseData[commandDataBlock.targetLUN].errorFlag = true;
-		requestSenseData[commandDataBlock.targetLUN].validAddressFlag = false;
-		requestSenseData[commandDataBlock.targetLUN].errorClass = 0x02; // Class 02 error code
-		requestSenseData[commandDataBlock.targetLUN].errorCode = 0x1C; // Bad format
-		requestSenseData[commandDataBlock.targetLUN].logicalBlockAddress = 0x00;
+		// Is the requested LUN available?
 		
-		return SCSI_STATUS;
+		if (debugFlag_scsiCommands) debugString_P(PSTR("\r\nSCSI Commands: Attempting to Auto-Start LUN (as it is currently STOPped)\r\n"));
+		
+		// Auto-start the LUN
+		if (!filesystemSetLunStatus(commandDataBlock.targetLUN, true))
+		{
+			// Could not start LUN... return with error status
+			if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("SCSI Commands: Could not auto-start LUN #"), commandDataBlock.targetLUN,true);
+			commandDataBlock.status = (commandDataBlock.targetLUN << 5) | 0x02; // 0x02 = Bad
+			commandDataBlock.message = 0x00;
+			
+			// Set request sense error globals
+			requestSenseData[commandDataBlock.targetLUN].errorFlag = true;
+			requestSenseData[commandDataBlock.targetLUN].validAddressFlag = false;
+			requestSenseData[commandDataBlock.targetLUN].errorClass = 0x02; // Class 02 error code
+			requestSenseData[commandDataBlock.targetLUN].errorCode = 0x1C; // 1C Bad format
+			requestSenseData[commandDataBlock.targetLUN].logicalBlockAddress = 0x00;
+			
+			return SCSI_STATUS;
+		}
+		
+		debugString_P(PSTR("SCSI Commands: Requested LUN has been auto-started\r\n"));
 	}
 	
 	// Get the starting logical block address from the CDB

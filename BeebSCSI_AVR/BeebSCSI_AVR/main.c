@@ -3,7 +3,7 @@
 
 	Main BeebSCSI functions
     BeebSCSI - BBC Micro SCSI Drive Emulator
-    Copyright (C) 2016 Simon Inns
+    Copyright (C) 2018 Simon Inns
 
 	This file is part of BeebSCSI.
 
