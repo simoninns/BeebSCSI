@@ -3,7 +3,7 @@
 
     BeebSCSI BootLoader main functions
     BeebSCSI_BootLoader
-    Copyright (C) 2017 Simon Inns
+    Copyright (C) 2018 Simon Inns
 
     This file is part of BeebSCSI_BootLoader.
 
