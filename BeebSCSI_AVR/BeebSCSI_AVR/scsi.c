@@ -891,7 +891,6 @@ uint8_t scsiCommandRead6(void)
 		// though it is 'more correct' (according to the specs) to return with error
 		
 		// Is the requested LUN available?
-		
 		if (debugFlag_scsiCommands) debugString_P(PSTR("\r\nSCSI Commands: Attempting to Auto-Start LUN (as it is currently STOPped)\r\n"));
 		
 		// Auto-start the LUN
@@ -912,7 +911,7 @@ uint8_t scsiCommandRead6(void)
 			return SCSI_STATUS;
 		}
 		
-		debugString_P(PSTR("SCSI Commands: Requested LUN has been auto-started\r\n"));
+		if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: Requested LUN has been auto-started\r\n"));
 	}
 	
 	// Get the starting logical block address from the CDB
@@ -1063,7 +1062,6 @@ uint8_t scsiCommandWrite6(void)
 		// though it is 'more correct' (according to the specs) to return with error
 		
 		// Is the requested LUN available?
-		
 		if (debugFlag_scsiCommands) debugString_P(PSTR("\r\nSCSI Commands: Attempting to Auto-Start LUN (as it is currently STOPped)\r\n"));
 		
 		// Auto-start the LUN
@@ -1084,7 +1082,7 @@ uint8_t scsiCommandWrite6(void)
 			return SCSI_STATUS;
 		}
 		
-		debugString_P(PSTR("SCSI Commands: Requested LUN has been auto-started\r\n"));
+		if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: Requested LUN has been auto-started\r\n"));
 	}
 	
 	// Get the starting logical block address from the CDB
