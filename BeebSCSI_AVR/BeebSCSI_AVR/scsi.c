@@ -43,7 +43,7 @@
 // Define the major and minor firmware version number returned
 // by the BSSENSE command
 #define FIRMWARE_MAJOR		0x02
-#define FIRMWARE_MINOR		0x02
+#define FIRMWARE_MINOR		0x03
 
 // Global for the emulation mode (fixed or removable drive)
 // Note: The fixed mode emulates SCSI-1 compliant hard drives for the Beeb
@@ -223,6 +223,18 @@ void scsiProcessEmulation(void)
 		
 		case SCSI_BEEBSCSI_SELECT:
 		scsiState = scsiBeebScsiSelect();
+		break;
+		
+		case SCSI_BEEBSCSI_FATDIR:
+		scsiState = scsiBeebScsiFatDir();
+		break;
+		
+		case SCSI_BEEBSCSI_FATREAD:
+		scsiState = scsiBeebScsiFatRead();
+		break;
+		
+		case SCSI_BEEBSCSI_FATWRITE:
+		scsiState = scsiBeebScsiFatWrite();
 		break;
 		
 		default:
@@ -483,6 +495,18 @@ uint8_t scsiEmulationCommand(void)
 			
 			case 0x11:
 			return SCSI_BEEBSCSI_SELECT;
+			break;
+			
+			case 0x12:
+			return SCSI_BEEBSCSI_FATDIR;
+			break;
+			
+			case 0x13:
+			return SCSI_BEEBSCSI_FATREAD;
+			break;
+			
+			case 0x14:
+			return SCSI_BEEBSCSI_FATWRITE;
 			break;
 		}
 	}
@@ -2035,6 +2059,171 @@ uint8_t scsiBeebScsiSelect(void)
 	
 	// Indicate successful command in status and message
 	if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: BSSELECT command successful\r\n"));
+	commandDataBlock.status = 0x00; // 0x00 = Good
+	commandDataBlock.message = 0x00;
+	
+	return SCSI_STATUS;
+}
+
+// SCSI Command BeebSCSI FATDIR (group 6 - command 0x12)
+//
+// This is a BeebSCSI vendor specific command.
+uint8_t scsiBeebScsiFatDir(void)
+{
+	if (debugFlag_scsiCommands)
+	{
+		debugString_P(PSTR("SCSI Commands: BSFATDIR command (G6 0x12) received\r\n"));
+		debugStringInt16_P(PSTR("SCSI Commands: Target LUN = "), commandDataBlock.targetLUN, true);
+	}
+	
+	// This command does not use the LUN number
+	
+	// The parameter list must be 8 bytes
+	if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("SCSI Commands: List length = "), commandDataBlock.data[4],true);
+	if (commandDataBlock.data[4] != 8)
+	{
+		if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: Bad Argument error\r\n"));
+		// Indicate unsuccessful command in status and message
+		commandDataBlock.status = (commandDataBlock.targetLUN << 5) | 0x02; // 0x02 = Bad
+		commandDataBlock.message = 0x00;
+		
+		// Set request sense error globals
+		requestSenseData[commandDataBlock.targetLUN].errorFlag = true;
+		requestSenseData[commandDataBlock.targetLUN].validAddressFlag = false;
+		requestSenseData[commandDataBlock.targetLUN].errorClass = 0x02; // Class 02 error code
+		requestSenseData[commandDataBlock.targetLUN].errorCode = 0x24; // Bad argument
+		requestSenseData[commandDataBlock.targetLUN].logicalBlockAddress = 0x00;
+		
+		return SCSI_STATUS;
+	}
+	
+	// Set up the control signals ready for the data in phase
+	scsiInformationTransferPhase(ITPHASE_DATAIN);
+	
+	// Transfer the BSSENSE status bytes
+	if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: Sending BSFATDIR descriptor to host\r\n"));
+	
+	// Dummy write of 8 bytes for test
+	hostadapterWriteByte(0x00);
+	hostadapterWriteByte(0x00);
+	hostadapterWriteByte(0x00);
+	hostadapterWriteByte(0x00);
+	hostadapterWriteByte(0x00);
+	hostadapterWriteByte(0x00);
+	hostadapterWriteByte(0x00);
+	hostadapterWriteByte(0x00);
+	
+	// Indicate successful command in status and message
+	commandDataBlock.status = 0x00; // 0x00 = Good
+	commandDataBlock.message = 0x00;
+	
+	return SCSI_STATUS;
+}
+
+// SCSI Command BeebSCSI FATREAD (group 6 - command 0x13)
+//
+// This is a BeebSCSI vendor specific command.
+uint8_t scsiBeebScsiFatRead(void)
+{
+	if (debugFlag_scsiCommands)
+	{
+		debugString_P(PSTR("SCSI Commands: BSFATREAD command (G6 0x13) received\r\n"));
+		debugStringInt16_P(PSTR("SCSI Commands: Target LUN = "), commandDataBlock.targetLUN, true);
+	}
+	
+	// This command does not use the LUN number
+	
+	// The parameter list must be 8 bytes
+	if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("SCSI Commands: List length = "), commandDataBlock.data[4],true);
+	if (commandDataBlock.data[4] != 8)
+	{
+		if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: Bad Argument error\r\n"));
+		// Indicate unsuccessful command in status and message
+		commandDataBlock.status = (commandDataBlock.targetLUN << 5) | 0x02; // 0x02 = Bad
+		commandDataBlock.message = 0x00;
+		
+		// Set request sense error globals
+		requestSenseData[commandDataBlock.targetLUN].errorFlag = true;
+		requestSenseData[commandDataBlock.targetLUN].validAddressFlag = false;
+		requestSenseData[commandDataBlock.targetLUN].errorClass = 0x02; // Class 02 error code
+		requestSenseData[commandDataBlock.targetLUN].errorCode = 0x24; // Bad argument
+		requestSenseData[commandDataBlock.targetLUN].logicalBlockAddress = 0x00;
+		
+		return SCSI_STATUS;
+	}
+	
+	// Set up the control signals ready for the data in phase
+	scsiInformationTransferPhase(ITPHASE_DATAIN);
+	
+	// Transfer the BSSENSE status bytes
+	if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: Sending BSFATREAD descriptor to host\r\n"));
+	
+	// Dummy write of 8 bytes for test
+	hostadapterWriteByte(0x00);
+	hostadapterWriteByte(0x00);
+	hostadapterWriteByte(0x00);
+	hostadapterWriteByte(0x00);
+	hostadapterWriteByte(0x00);
+	hostadapterWriteByte(0x00);
+	hostadapterWriteByte(0x00);
+	hostadapterWriteByte(0x00);
+	
+	// Indicate successful command in status and message
+	commandDataBlock.status = 0x00; // 0x00 = Good
+	commandDataBlock.message = 0x00;
+	
+	return SCSI_STATUS;
+}
+
+// SCSI Command BeebSCSI FATWRITE (group 6 - command 0x14)
+//
+// This is a BeebSCSI vendor specific command.
+uint8_t scsiBeebScsiFatWrite(void)
+{
+	if (debugFlag_scsiCommands)
+	{
+		debugString_P(PSTR("SCSI Commands: BSFATWRITE command (G6 0x14) received\r\n"));
+		debugStringInt16_P(PSTR("SCSI Commands: Target LUN = "), commandDataBlock.targetLUN, true);
+	}
+	
+	// This command does not use the LUN number
+	
+	// The parameter list must be 8 bytes
+	if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("SCSI Commands: List length = "), commandDataBlock.data[4],true);
+	if (commandDataBlock.data[4] != 8)
+	{
+		if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: Bad Argument error\r\n"));
+		// Indicate unsuccessful command in status and message
+		commandDataBlock.status = (commandDataBlock.targetLUN << 5) | 0x02; // 0x02 = Bad
+		commandDataBlock.message = 0x00;
+		
+		// Set request sense error globals
+		requestSenseData[commandDataBlock.targetLUN].errorFlag = true;
+		requestSenseData[commandDataBlock.targetLUN].validAddressFlag = false;
+		requestSenseData[commandDataBlock.targetLUN].errorClass = 0x02; // Class 02 error code
+		requestSenseData[commandDataBlock.targetLUN].errorCode = 0x24; // Bad argument
+		requestSenseData[commandDataBlock.targetLUN].logicalBlockAddress = 0x00;
+		
+		return SCSI_STATUS;
+	}
+	
+	// Set up the control signals ready for the data in phase
+	scsiInformationTransferPhase(ITPHASE_DATAIN);
+	
+	// Transfer the BSSENSE status bytes
+	if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: Sending BSFATWRITE descriptor to host\r\n"));
+	
+	// Dummy write of 8 bytes for test
+	hostadapterWriteByte(0x00);
+	hostadapterWriteByte(0x00);
+	hostadapterWriteByte(0x00);
+	hostadapterWriteByte(0x00);
+	hostadapterWriteByte(0x00);
+	hostadapterWriteByte(0x00);
+	hostadapterWriteByte(0x00);
+	hostadapterWriteByte(0x00);
+	
+	// Indicate successful command in status and message
 	commandDataBlock.status = 0x00; // 0x00 = Good
 	commandDataBlock.message = 0x00;
 	

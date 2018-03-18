@@ -35,22 +35,23 @@
 // Define default debug output flags (all debug off)
 // Note: these are modified by the configure interrupt, so they all
 // need to be volatile variables
-
-// Default debug settings for use during development
-//volatile bool debugFlag_filesystem = true;
-//volatile bool debugFlag_scsiCommands = true;
-//volatile bool debugFlag_scsiBlocks = false;
-//volatile bool debugFlag_scsiFcodes = true;
-//volatile bool debugFlag_scsiState = true;
-//volatile bool debugFlag_fatfs = true;
-
-// Default debug settings for general use
-volatile bool debugFlag_filesystem = false;
-volatile bool debugFlag_scsiCommands = false;
-volatile bool debugFlag_scsiBlocks = false;
-volatile bool debugFlag_scsiFcodes = false;
-volatile bool debugFlag_scsiState = false;
-volatile bool debugFlag_fatfs = false;
+#ifdef DEBUG
+	// Default debug settings for debug builds
+	volatile bool debugFlag_filesystem = true;
+	volatile bool debugFlag_scsiCommands = true;
+	volatile bool debugFlag_scsiBlocks = false;
+	volatile bool debugFlag_scsiFcodes = true;
+	volatile bool debugFlag_scsiState = true;
+	volatile bool debugFlag_fatfs = true;
+#else
+	// Default debug settings for release builds
+	volatile bool debugFlag_filesystem = false;
+	volatile bool debugFlag_scsiCommands = false;
+	volatile bool debugFlag_scsiBlocks = false;
+	volatile bool debugFlag_scsiFcodes = false;
+	volatile bool debugFlag_scsiState = false;
+	volatile bool debugFlag_fatfs = false;
+#endif
 
 // This function outputs a string stored in program space to the UART
 // It should be called with a statement such as:
