@@ -130,6 +130,12 @@
     <Compile Include="debug.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="fat.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="fat.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="fatfs\diskio.c">
       <SubType>compile</SubType>
     </Compile>

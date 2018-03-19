@@ -1431,3 +1431,118 @@ bool filesystemCloseLunForWrite(void)
 	if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemCloseLunForWrite(): Completed\r\n"));
 	return false;
 }
+
+
+
+
+// Check that the FAT directory exists (and, if not, create it)
+bool filesystemCheckFatDirectory(void)
+{
+	// Is the file system mounted?
+	if (filesystemState.fsMountState == false)
+	{
+		if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemCheckFatDirectory(): ERROR: No file system mounted\r\n"));
+		return false;
+	}
+	
+	// Does a directory exist for the currently selected LUN directory - if not, create it
+	sprintf(fileName, "/Transfer");
+	
+	filesystemState.fsResult = f_opendir(&filesystemState.dirObject, fileName);
+	
+	// Check the result
+	if (filesystemState.fsResult != FR_OK)
+	{
+		switch(filesystemState.fsResult)
+		{
+			case FR_NO_PATH:
+			if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemCheckFatDirectory(): f_opendir returned FR_NO_PATH - Directory does not exist\r\n"));
+			break;
+			
+			case FR_DISK_ERR:
+			if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemCheckFatDirectory(): ERROR: f_opendir returned FR_DISK_ERR\r\n"));
+			return false;
+			break;
+			
+			case FR_INT_ERR:
+			if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemCheckFatDirectory(): ERROR: f_opendir returned FR_INT_ERR\r\n"));
+			return false;
+			break;
+			
+			case FR_INVALID_NAME:
+			if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemCheckFatDirectory(): ERROR: f_opendir returned FR_INVALID_NAME\r\n"));
+			return false;
+			break;
+			
+			case FR_INVALID_OBJECT:
+			if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemCheckFatDirectory(): ERROR: f_opendir returned FR_INVALID_OBJECT\r\n"));
+			return false;
+			break;
+			
+			case FR_INVALID_DRIVE:
+			if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemCheckFatDirectory(): ERROR: f_opendir returned FR_INVALID_DRIVE\r\n"));
+			return false;
+			break;
+			
+			case FR_NOT_ENABLED:
+			if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemCheckFatDirectory(): ERROR: f_opendir returned FR_NOT_ENABLED\r\n"));
+			return false;
+			break;
+			
+			case FR_NO_FILESYSTEM:
+			if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemCheckFatDirectory(): ERROR: f_opendir returned FR_NO_FILESYSTEM\r\n"));
+			return false;
+			break;
+			
+			case FR_TIMEOUT:
+			if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemCheckFatDirectory(): ERROR: f_opendir returned FR_TIMEOUT\r\n"));
+			return false;
+			break;
+			
+			case FR_NOT_ENOUGH_CORE:
+			if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemCheckFatDirectory(): ERROR: f_opendir returned FR_NOT_ENOUGH_CORE\r\n"));
+			return false;
+			break;
+			
+			case FR_TOO_MANY_OPEN_FILES:
+			if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemCheckFatDirectory(): ERROR: f_opendir returned FR_TOO_MANY_OPEN_FILES\r\n"));
+			return false;
+			break;
+			
+			default:
+			if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemCheckFatDirectory(): ERROR: f_opendir returned unknown error\r\n"));
+			return false;
+			break;
+		}
+	}
+	
+	// Did a directory exist?
+	if (filesystemState.fsResult == FR_NO_PATH)
+	{
+		f_closedir(&filesystemState.dirObject);
+		
+		// Create the FAT transfer directory - it's not present on the SD card
+		filesystemState.fsResult = f_mkdir(fileName);
+		
+		// Now open the directory
+		filesystemState.fsResult = f_opendir(&filesystemState.dirObject, fileName);
+		
+		// Check the result
+		if (filesystemState.fsResult != FR_OK)
+		{
+			if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemCheckLunDirectory(): ERROR: Unable to create FAT transfer directory\r\n"));
+			f_closedir(&filesystemState.dirObject);
+			return false;
+		}
+		
+		if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemCheckFatDirectory(): Created FAT transfer directory entry\r\n"));
+		f_closedir(&filesystemState.dirObject);
+	}
+	else
+	{
+		if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemCheckFatDirectory(): FAT transfer directory found\r\n"));
+		f_closedir(&filesystemState.dirObject);
+	}
+	
+	return true;
+}

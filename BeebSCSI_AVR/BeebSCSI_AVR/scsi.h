@@ -59,9 +59,8 @@ extern uint8_t emulationMode;
 // SCSI emulation command states (BeebSCSI Group 6 commands)
 #define SCSI_BEEBSCSI_SENSE		40
 #define SCSI_BEEBSCSI_SELECT	41
-#define SCSI_BEEBSCSI_FATDIR	42
+#define SCSI_BEEBSCSI_FATINFO	42
 #define SCSI_BEEBSCSI_FATREAD	43
-#define SCSI_BEEBSCSI_FATWRITE	44
 
 // SCSI Information transfer phases
 #define ITPHASE_DATAOUT		0
@@ -106,8 +105,7 @@ uint8_t scsiReadFCode(void);
 uint8_t scsiBeebScsiSense(void);
 uint8_t scsiBeebScsiSelect(void);
 
-uint8_t scsiBeebScsiFatDir(void);
+uint8_t scsiBeebScsiFatInfo(void);
 uint8_t scsiBeebScsiFatRead(void);
-uint8_t scsiBeebScsiFatWrite(void);
 
 #endif /* SCSI_H_ */
