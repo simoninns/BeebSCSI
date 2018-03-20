@@ -34,9 +34,11 @@ extern volatile bool debugFlag_scsiBlocks;
 extern volatile bool debugFlag_scsiFcodes;
 extern volatile bool debugFlag_scsiState;
 extern volatile bool debugFlag_fatfs;
+extern volatile bool debugFlag_fatTransfer;
 
 // Function prototypes
 void debugString_P(const char *addr);
+void debugString(char *string);
 void debugStringInt8Hex_P(const char *addr, uint8_t integerValue, bool newLine);
 void debugStringInt16_P(const char *addr, uint16_t integerValue, bool newLine);
 void debugStringInt32_P(const char *addr, uint32_t integerValue, bool newLine);

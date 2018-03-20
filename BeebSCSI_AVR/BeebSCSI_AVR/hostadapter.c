@@ -75,6 +75,7 @@ ISR(NCONF_INT_VECT)
 		debugFlag_scsiFcodes = false;
 		debugFlag_scsiState = false;
 		debugFlag_fatfs = false;
+		debugFlag_fatTransfer = false;
 	}
 	
 	// All debug on (Command 1)
@@ -86,6 +87,7 @@ ISR(NCONF_INT_VECT)
 		debugFlag_scsiFcodes = true;
 		debugFlag_scsiState = true;
 		debugFlag_fatfs = true;
+		debugFlag_fatTransfer = true;
 	}
 	
 	// File system debug on/off (Command 10/11)
@@ -111,6 +113,10 @@ ISR(NCONF_INT_VECT)
 	// FAT FS debug on/off (Command 20/21)
 	if (databusValue == 20) debugFlag_fatfs = true;
 	if (databusValue == 21) debugFlag_fatfs = false;
+	
+	// FAT Transfer debug on/off (Command 22/23)
+	if (databusValue == 22) debugFlag_fatTransfer = true;
+	if (databusValue == 23) debugFlag_fatTransfer = false;
 }
 
 // This ISR is really only for debug.  If an unhandled interrupt is

@@ -2066,10 +2066,10 @@ uint8_t scsiBeebScsiSelect(void)
 // and returns a 256 byte buffer containing information about the FAT file.
 //
 // The buffer format is as follows:
-// Byte 0: Status of file (0 does not exist, 1 exists)
-// Byte 1 - 4: Size of file in number of 256 byte blocks
+// Byte 0: Status of file (0 = does not exist, 1 = file exists, 2 = directory)
+// Byte 1 - 4: Size of file in number of bytes (32-bit)
 // Byte 5 - 126: Reserved (0)
-// Byte 127- 255: File name string terminated with 0x0D (CR)
+// Byte 127- 255: File name string terminated with 0x00 (NULL)
 //
 uint8_t scsiBeebScsiFatInfo(void)
 {

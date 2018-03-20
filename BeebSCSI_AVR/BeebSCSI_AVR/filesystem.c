@@ -1433,7 +1433,7 @@ bool filesystemCloseLunForWrite(void)
 }
 
 
-
+// Functions for FAT Transfer support --------------
 
 // Check that the FAT directory exists (and, if not, create it)
 bool filesystemCheckFatDirectory(void)
@@ -1445,7 +1445,7 @@ bool filesystemCheckFatDirectory(void)
 		return false;
 	}
 	
-	// Does a directory exist for the currently selected LUN directory - if not, create it
+	// Does the FAT transfer directory exist? - if not, create it
 	sprintf(fileName, "/Transfer");
 	
 	filesystemState.fsResult = f_opendir(&filesystemState.dirObject, fileName);
@@ -1544,5 +1544,127 @@ bool filesystemCheckFatDirectory(void)
 		f_closedir(&filesystemState.dirObject);
 	}
 	
+	return true;
+}
+
+// Read an entry from the FAT directory and place the information about the entry into the buffer
+//
+// The buffer format is as follows:
+// Byte 0: Status of file (0 = does not exist, 1 = file exists, 2 = directory)
+// Byte 1 - 4: Size of file in number of bytes (32-bit)
+// Byte 5 - 126: Reserved (0)
+// Byte 127- 255: File name string terminated with 0x00 (NULL)
+//
+bool filesystemGetFatFileInfo(uint32_t fileNumber, uint8_t *buffer)
+{
+	// Is the file system mounted?
+	if (filesystemState.fsMountState == false)
+	{
+		if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemGetFatFileInfo(): ERROR: No file system mounted\r\n"));
+		return false;
+	}
+	
+	char fileName[16];
+	
+	// Does the FAT transfer directory exist?
+	sprintf(fileName, "/Transfer");
+	
+	filesystemState.fsResult = f_opendir(&filesystemState.dirObject, fileName);
+	
+	// Check the open directory action's result
+	if (filesystemState.fsResult == FR_OK)
+	{
+		uint32_t fileEntryNumber;
+		
+		for (fileEntryNumber = 0; fileEntryNumber <= fileNumber; fileEntryNumber++)
+		{
+			filesystemState.fsResult = f_readdir(&filesystemState.dirObject, &filesystemState.fsInfo);
+			
+			// Exit on error or end of directory object entries
+			if (filesystemState.fsResult != FR_OK || filesystemState.fsInfo.fname[0] == 0)
+			{
+				// The requested directory entry does not exist
+				if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemGetFatFileInfo(): Requested directory entry does not exist\r\n"));
+				buffer[0] = 0; // file does not exist
+				f_closedir(&filesystemState.dirObject);
+				return false;
+			}
+		}
+		
+		if (debugFlag_filesystem) debugStringInt32_P(PSTR("File system: filesystemGetFatFileInfo(): Requested directory entry found for entry number "), fileNumber, true);
+		
+		// Is the entry a file or sub-directory?
+		if (filesystemState.fsInfo.fattrib & AM_DIR)
+		{
+			// Directory
+			buffer[0] = 2; // directory entry is a directory
+			if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemGetFatFileInfo(): Directory entry is a directory called "));
+			if (debugFlag_filesystem) debugString(filesystemState.fsInfo.fname);
+			if (debugFlag_filesystem) debugString_P(PSTR("\r\n"));
+			
+			// Directories always have a file size of 0
+			buffer[1] = 0;
+			buffer[2] = 0;
+			buffer[3] = 0;
+			buffer[4] = 0;
+			
+			// Store the file name of the directory entry in the buffer (limited to 126 characters and NULL (0x00) terminated)
+			
+			// Truncate the string to 127 bytes
+			if (strlen(filesystemState.fsInfo.fname) > 125) filesystemState.fsInfo.fname[126] = '\0';
+			
+			// Copy the string into the buffer - starting from byte 127
+			strcpy((char*)buffer+127, filesystemState.fsInfo.fname);
+		}
+		else
+		{
+			// File
+			buffer[0] = 1; // directory entry is a file
+			if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemGetFatFileInfo(): Directory entry is a file called "));
+			if (debugFlag_filesystem) debugString(filesystemState.fsInfo.fname);
+			if (debugFlag_filesystem) debugString_P(PSTR("\r\n"));
+			
+			// Get the directory entry's file size in bytes (64-bit as we have exFAT configured)
+			//uint64_t fileSize = filesystemState.fsInfo.fsize;
+			uint64_t fileSize = (uint64_t)filesystemState.fsInfo.fsize;
+			
+			// The maximum supported file size in ADFS is 512Mbytes (524,288 Kbytes or 536,870,912)
+			// If the file size is bigger than this, the file must be truncated.
+			if (fileSize > 536870912)
+			{
+				if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemGetFatFileInfo(): Directory entry is > 536870912 bytes... it will be truncated.\r\n"));
+				fileSize = 536870912; // Perhaps this limit should be ~500Mbytes, as file-system overhead will prevent 512Mb files being stored? Should be stress-tested...
+			}
+			else
+			{
+				if (debugFlag_filesystem) debugStringInt32_P(PSTR("File system: filesystemGetFatFileInfo(): Directory entry file size (in bytes) is "), (uint32_t)fileSize, true);
+			}
+			
+			// Convert the file size into a 32 bit number and place it in 4 bytes of the buffer (1-4)
+			buffer[1] = (fileSize & 0xFF000000UL) >> 24;
+			buffer[2] = (fileSize & 0x00FF0000UL) >> 16;
+			buffer[3] = (fileSize & 0x0000FF00UL) >>  8;
+			buffer[4] = (fileSize & 0x000000FFUL);
+			
+			// Store the file name of the directory entry in the buffer (limited to 126 characters and NULL (0x00) terminated)
+			
+			// Truncate the string to 127 bytes
+			if (strlen(filesystemState.fsInfo.fname) > 125) filesystemState.fsInfo.fname[126] = '\0';
+			
+			// Copy the string into the buffer - starting from byte 127
+			strcpy((char*)buffer+127, filesystemState.fsInfo.fname);
+		}
+	}
+	else
+	{
+		// Couldn't open directory object
+		if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemGetFatFileInfo(): Could not open transfer directory!\r\n"));
+		f_closedir(&filesystemState.dirObject);
+		return false;
+	}
+	
+	// Close the directory object
+	f_closedir(&filesystemState.dirObject);
+		
 	return true;
 }

@@ -47,25 +47,26 @@ void fatInfoBuffer(uint32_t fatFileId)
 	// Check that the transfer directory exists
 	if (!filesystemCheckFatDirectory())
 	{
-		if (debugFlag_filesystem) debugString_P(PSTR("File system: Could not access or create transfer directory... returning empty buffer\r\n"));
+		if (debugFlag_fatTransfer) debugString_P(PSTR("FAT Transfer: Could not access or create transfer directory... returning empty buffer\r\n"));
 		// Something went badly wrong, fill the buffer with zeros to ensure
 		// the transfer doesn't fail (or the host could hang)
 		for (byteCounter = 0; byteCounter < 256; byteCounter++) scsiFatBuffer[byteCounter] = 0;
 		return;
 	}
 	
-	// Check that the required file exists
-	
-	// Get the file info and fill the buffer
-	
 	// Clear the FAT buffer
 	for (byteCounter = 0; byteCounter < 256; byteCounter++) scsiFatBuffer[byteCounter] = 0;
 	
-	// Fill the FAT buffer with test data
-	for (byteCounter = 0; byteCounter < 256; byteCounter++)
+	// Check that the required file exists
+	if (!filesystemGetFatFileInfo(fatFileId, scsiFatBuffer))
 	{
-		scsiFatBuffer[byteCounter] = 255 - (char)byteCounter;
+		// Requested file does not exist
+		if (debugFlag_fatTransfer) debugString_P(PSTR("FAT Transfer: Requested FAT file does not exist\r\n"));
+		for (byteCounter = 0; byteCounter < 256; byteCounter++) scsiFatBuffer[byteCounter] = 0;
+		return;
 	}
+	
+	if (debugFlag_fatTransfer) debugString_P(PSTR("FAT Transfer: Requested FAT file information placed in buffer\r\n"));
 }
 
 // Function to fill the FAT buffer ready for reading by the host
