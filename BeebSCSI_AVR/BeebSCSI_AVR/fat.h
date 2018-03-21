@@ -32,6 +32,6 @@ extern uint8_t scsiFatBuffer[256];
 
 // Function prototypes
 void fatInfoBuffer(uint32_t fatFileId);
-void fatReadBuffer(void);
+bool fatReadBuffer(uint32_t fatFileId, uint32_t blockNumber);
 
 #endif /* FAT_H_ */

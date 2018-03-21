@@ -69,8 +69,9 @@ void fatInfoBuffer(uint32_t fatFileId)
 	if (debugFlag_fatTransfer) debugString_P(PSTR("FAT Transfer: Requested FAT file information placed in buffer\r\n"));
 }
 
-// Function to fill the FAT buffer ready for reading by the host
-void fatReadBuffer(void)
+// Function to fill the FAT buffer with a block of data ready for reading by the host
+// Note: blockNumber is the position in the file to read from (in number of 256 byte blocks from the start of file)
+bool fatReadBuffer(uint32_t fatFileId, uint32_t blockNumber)
 {
 	uint16_t byteCounter = 0;
 	
@@ -82,4 +83,6 @@ void fatReadBuffer(void)
 	{
 		scsiFatBuffer[byteCounter] = 255 - (char)byteCounter;
 	}
+	
+	return true;
 }
