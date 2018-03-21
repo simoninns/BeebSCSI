@@ -78,10 +78,13 @@ bool fatReadBuffer(uint32_t fatFileId, uint32_t blockNumber)
 	// Clear the FAT buffer
 	for (byteCounter = 0; byteCounter < 256; byteCounter++) scsiFatBuffer[byteCounter] = 0;
 	
-	// Fill the FAT buffer with test data
-	for (byteCounter = 0; byteCounter < 256; byteCounter++)
+	// Get the data from the FAT file
+	if (!filesystemFatFileRead(fatFileId, blockNumber, scsiFatBuffer))
 	{
-		scsiFatBuffer[byteCounter] = 255 - (char)byteCounter;
+		// Requested file could not be read
+		if (debugFlag_fatTransfer) debugString_P(PSTR("FAT Transfer: Requested FAT file read operation failed\r\n"));
+		for (byteCounter = 0; byteCounter < 256; byteCounter++) scsiFatBuffer[byteCounter] = 0;
+		return false;
 	}
 	
 	return true;

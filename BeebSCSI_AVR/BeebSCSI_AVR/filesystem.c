@@ -1665,3 +1665,173 @@ bool filesystemGetFatFileInfo(uint32_t fileNumber, uint8_t *buffer)
 		
 	return true;
 }
+
+// Read a block of data from a FAT file
+bool filesystemFatFileRead(uint32_t fileNumber, uint32_t blockNumber, uint8_t *buffer)
+{
+	// Is the file system mounted?
+	if (filesystemState.fsMountState == false)
+	{
+		if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemFatFileRead(): ERROR: No file system mounted\r\n"));
+		return false;
+	}
+	
+	char fileName[256 + 16];
+	
+	// Does the FAT transfer directory exist?
+	sprintf(fileName, "/Transfer");
+	
+	filesystemState.fsResult = f_opendir(&filesystemState.dirObject, fileName);
+	
+	// Check the open directory action's result
+	if (filesystemState.fsResult == FR_OK)
+	{
+		uint32_t fileEntryNumber;
+		
+		for (fileEntryNumber = 0; fileEntryNumber <= fileNumber; fileEntryNumber++)
+		{
+			filesystemState.fsResult = f_readdir(&filesystemState.dirObject, &filesystemState.fsInfo);
+			
+			// Exit on error or end of directory object entries
+			if (filesystemState.fsResult != FR_OK || filesystemState.fsInfo.fname[0] == 0)
+			{
+				// The requested directory entry does not exist
+				if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemFatFileRead(): Requested directory entry does not exist\r\n"));
+				f_closedir(&filesystemState.dirObject);
+				return false;
+			}
+		}
+		
+		// Is the entry a file or sub-directory?
+		if (filesystemState.fsInfo.fattrib & AM_DIR)
+		{
+			// Directory
+			if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemFatFileRead(): Requested directory entry was a directory - can not read!\r\n"));
+			f_closedir(&filesystemState.dirObject);
+			return false;
+		}
+		else
+		{
+			// Assemble the full path name and file name for the requested file
+			sprintf(fileName, "%s/%s", fileName, filesystemState.fsInfo.fname);
+			f_closedir(&filesystemState.dirObject);
+
+			// Open the requested file for reading
+			filesystemState.fsResult = f_open(&filesystemState.fileObject, fileName, FA_READ);
+			if (filesystemState.fsResult != FR_OK)
+			{
+				if (debugFlag_filesystem)
+				{
+					switch(filesystemState.fsResult)
+					{
+						case FR_DISK_ERR:
+						debugString_P(PSTR("File system: filesystemFatFileRead(): ERROR: f_open on FAT file returned FR_DISK_ERR\r\n"));
+						break;
+						
+						case FR_INT_ERR:
+						debugString_P(PSTR("File system: filesystemFatFileRead(): ERROR: f_open on FAT file returned FR_INT_ERR\r\n"));
+						break;
+						
+						case FR_NOT_READY:
+						debugString_P(PSTR("File system: filesystemFatFileRead(): ERROR: f_open on FAT file returned FR_NOT_READY\r\n"));
+						break;
+
+						case FR_NO_FILE:
+						debugString_P(PSTR("File system: filesystemFatFileRead(): FAT file not found\r\n"));
+						break;
+						
+						case FR_NO_PATH:
+						debugString_P(PSTR("File system: filesystemFatFileRead(): ERROR: f_open on FAT file returned FR_NO_PATH\r\n"));
+						break;
+
+						case FR_INVALID_NAME:
+						debugString_P(PSTR("File system: filesystemFatFileRead(): ERROR: f_open on FAT file returned FR_INVALID_NAME\r\n"));
+						break;
+
+						case FR_DENIED:
+						debugString_P(PSTR("File system: filesystemFatFileRead(): ERROR: f_open on FAT file returned FR_DENIED\r\n"));
+						break;
+						
+						case FR_EXIST:
+						debugString_P(PSTR("File system: filesystemFatFileRead(): ERROR: f_open on FAT file returned FR_EXIST\r\n"));
+						break;
+						
+						case FR_INVALID_OBJECT:
+						debugString_P(PSTR("File system: filesystemFatFileRead(): ERROR: f_open on FAT file returned FR_INVALID_OBJECT\r\n"));
+						break;
+						
+						case FR_WRITE_PROTECTED:
+						debugString_P(PSTR("File system: filesystemFatFileRead(): ERROR: f_open on FAT file returned FR_WRITE_PROTECTED\r\n"));
+						break;
+						
+						case FR_INVALID_DRIVE:
+						debugString_P(PSTR("File system: filesystemFatFileRead(): ERROR: f_open on FAT file returned FR_INVALID_DRIVE\r\n"));
+						break;
+						
+						case FR_NOT_ENABLED:
+						debugString_P(PSTR("File system: filesystemFatFileRead(): ERROR: f_open on FAT file returned FR_NOT_ENABLED\r\n"));
+						break;
+						
+						case FR_NO_FILESYSTEM:
+						debugString_P(PSTR("File system: filesystemFatFileRead(): ERROR: f_open on FAT file returned FR_NO_FILESYSTEM\r\n"));
+						break;
+						
+						case FR_TIMEOUT:
+						debugString_P(PSTR("File system: filesystemFatFileRead(): ERROR: f_open on FAT file returned FR_TIMEOUT\r\n"));
+						break;
+						
+						case FR_LOCKED:
+						debugString_P(PSTR("File system: filesystemFatFileRead(): ERROR: f_open on FAT file returned FR_LOCKED\r\n"));
+						break;
+						
+						case FR_NOT_ENOUGH_CORE:
+						debugString_P(PSTR("File system: filesystemFatFileRead(): ERROR: f_open on FAT file returned FR_NOT_ENOUGH_CORE\r\n"));
+						break;
+						
+						case FR_TOO_MANY_OPEN_FILES:
+						debugString_P(PSTR("File system: filesystemFatFileRead(): ERROR: f_open on FAT file returned FR_TOO_MANY_OPEN_FILES\r\n"));
+						break;
+						
+						default:
+						debugString_P(PSTR("File system: filesystemFatFileRead(): ERROR: f_open on FAT file returned unknown error\r\n"));
+						break;
+					}
+				}
+				
+				f_close(&filesystemState.fileObject);
+				return false;
+			}
+			
+			// Seek to the correct point in the file
+			filesystemState.fsResult  = f_lseek(&filesystemState.fileObject, blockNumber * 256);
+			if (filesystemState.fsResult != FR_OK)
+			{
+				if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemFatFileRead(): Could not seek to required block number!\r\n"));
+				f_close(&filesystemState.fileObject);
+				return false;
+			}
+			
+			// Read 256 bytes of data into the buffer
+			uint16_t bytesRead = 0;
+			filesystemState.fsResult  = f_read(&filesystemState.fileObject, buffer, 256, &bytesRead);
+			if (filesystemState.fsResult != FR_OK || bytesRead != 256)
+			{
+				if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemFatFileRead(): Could not read 256 bytes of data from the target file!\r\n"));
+				f_close(&filesystemState.fileObject);
+				return false;
+			}
+			
+			// Close the file
+			f_close(&filesystemState.fileObject);
+		}
+	}
+	else
+	{
+		// Couldn't open directory object
+		if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemFatFileRead(): Could not open transfer directory!\r\n"));
+		f_closedir(&filesystemState.dirObject);
+		return false;
+	}
+	
+	return true;
+}

@@ -2070,8 +2070,6 @@ uint8_t scsiBeebScsiSelect(void)
 // Byte 1 - 4: Size of file in number of bytes (32-bit)
 // Byte 5 - 126: Reserved (0)
 // Byte 127- 255: File name string terminated with 0x00 (NULL)
-//
-// To-Do: Hex block debug is missing from this command
 uint8_t scsiBeebScsiFatInfo(void)
 {
 	uint32_t blockOffset = 0;
@@ -2118,6 +2116,13 @@ uint8_t scsiBeebScsiFatInfo(void)
 		if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("SCSI Commands: Read DMA interrupted by host reset at byte #"), bytesTransferred, true);
 		
 		return SCSI_BUSFREE;
+	}
+	
+	// Show debug
+	if (debugFlag_scsiBlocks)
+	{
+		debugString_P(PSTR("Hex dump for FAT info block:\r\n"));
+		debugSectorBufferHex(scsiFatBuffer, 256);
 	}
 	
 	// Indicate successful transfer in status and message

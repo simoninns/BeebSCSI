@@ -73,5 +73,6 @@ bool filesystemCloseLunForWrite(void);
 
 bool filesystemCheckFatDirectory(void);
 bool filesystemGetFatFileInfo(uint32_t fileNumber, uint8_t *buffer);
+bool filesystemFatFileRead(uint32_t fileNumber, uint32_t blockNumber, uint8_t *buffer);
 
 #endif /* FILESYSTEM_H_ */
