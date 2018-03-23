@@ -2062,7 +2062,7 @@ uint8_t scsiBeebScsiSelect(void)
 //
 // This is a BeebSCSI vendor specific command.
 //
-// This function accepts a FAT file identification number (in the LBA field of the command)
+// This function accepts a FAT file identification number (in the 5th field of the command)
 // and returns a 256 byte buffer containing information about the FAT file.
 //
 // The buffer format is as follows:
@@ -2072,9 +2072,7 @@ uint8_t scsiBeebScsiSelect(void)
 // Byte 127- 255: File name string terminated with 0x00 (NULL)
 uint8_t scsiBeebScsiFatInfo(void)
 {
-	uint32_t blockOffset = 0;
 	uint32_t fatFileId = 0;
-	
 	uint16_t bytesTransferred = 0;
 	
 	if (debugFlag_scsiCommands)
@@ -2083,19 +2081,11 @@ uint8_t scsiBeebScsiFatInfo(void)
 		debugStringInt16_P(PSTR("SCSI Commands: Target LUN = "), commandDataBlock.targetLUN, true);
 	}
 	
-	// This command does not use the LUN number
-	
-	// Get block offset (should be 0 for this command)
-	blockOffset = (((uint32_t)commandDataBlock.data[1] & 0x1F) << 16) |
-	((uint32_t)commandDataBlock.data[2] << 8) |
-	((uint32_t)commandDataBlock.data[3]);
-	
 	// Get the requested FAT file ID
-	fatFileId = (uint32_t)commandDataBlock.data[4];
+	fatFileId = (uint32_t)commandDataBlock.data[5];
 	
 	// Show the command debug information
 	if (debugFlag_scsiCommands) debugStringInt32_P(PSTR("SCSI Commands: FAT file ID = "), fatFileId, true);
-	if (debugFlag_scsiCommands) debugStringInt32_P(PSTR("SCSI Commands: Block offset = "), blockOffset, true);
 	
 	// Set up the control signals ready for the data in phase
 	scsiInformationTransferPhase(ITPHASE_DATAIN);
@@ -2137,6 +2127,12 @@ uint8_t scsiBeebScsiFatInfo(void)
 // SCSI Command BeebSCSI FATREAD (group 6 - command 0x13)
 //
 // This is a BeebSCSI vendor specific command.
+//
+// This function accepts a FAT file identification number (in the 5th field of the command),
+// a block offset (the block to start reading from) and a number of blocks.
+//
+// The requested number of blocks from the FAT file are transfered to the host
+//
 uint8_t scsiBeebScsiFatRead(void)
 {
 	uint32_t blockOffset = 0;
@@ -2160,35 +2156,36 @@ uint8_t scsiBeebScsiFatRead(void)
 	((uint32_t)commandDataBlock.data[3]);
 	
 	// Get the requested FAT file ID
-	fatFileId = (uint32_t)commandDataBlock.data[4];
+	fatFileId = (uint32_t)commandDataBlock.data[5];
 	
 	// Get the number of blocks requested (1-255)
-	numberOfBlocks = (uint32_t)commandDataBlock.data[5];
+	numberOfBlocks = (uint32_t)commandDataBlock.data[4];
 	
 	// Show the command debug information
 	if (debugFlag_scsiCommands) debugStringInt32_P(PSTR("SCSI Commands: FAT file ID = "), fatFileId, true);
 	if (debugFlag_scsiCommands) debugStringInt32_P(PSTR("SCSI Commands: Block offset = "), blockOffset, true);
 	if (debugFlag_scsiCommands) debugStringInt32_P(PSTR("SCSI Commands: Number of requested blocks = "), numberOfBlocks, true);
 	
+	// Set up the control signals ready for the data in phase
+	scsiInformationTransferPhase(ITPHASE_DATAIN);
+	
 	// Transfer the requested blocks from the FAT file to the host
-	if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: Transferring requested FAT file blocks to the host...\r\n"));
 	for (currentBlock = 0; currentBlock < numberOfBlocks; currentBlock++)
 	{
-		// Read the requested block from the LUN image
 		if(!fatReadBuffer(fatFileId, blockOffset + currentBlock))
 		{
 			// Reading from the FAT image failed... try to recover with a little grace...
 			if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: ERROR: Could not read next block from FAT image!\r\n"));
 			commandDataBlock.status = (commandDataBlock.targetLUN << 5) | 0x02; // 0x02 = Bad
 			commandDataBlock.message = 0x00;
-			
+		
 			// Set request sense error globals
 			requestSenseData[commandDataBlock.targetLUN].errorFlag = true;
 			requestSenseData[commandDataBlock.targetLUN].validAddressFlag = false;
 			requestSenseData[commandDataBlock.targetLUN].errorClass = 0x00; // Class 00 error code
 			requestSenseData[commandDataBlock.targetLUN].errorCode = 0x04; // Drive not ready
 			requestSenseData[commandDataBlock.targetLUN].logicalBlockAddress = 0x00;
-			
+		
 			return SCSI_STATUS;
 		}
 		
@@ -2207,30 +2204,19 @@ uint8_t scsiBeebScsiFatRead(void)
 		}
 		
 		// Show debug
-		if (!debugFlag_scsiBlocks)
+		if (debugFlag_scsiBlocks)
+		{
+			debugStringInt32_P(PSTR("Hex dump for block #"), currentBlock, true);
+			debugSectorBufferHex(scsiFatBuffer, 256);
+		}
+		else
 		{
 			if (debugFlag_scsiCommands) debugStringInt32_P(PSTR(""), currentBlock, false);
 			if (debugFlag_scsiCommands) debugString_P(PSTR(" "));
 		}
-		else
-		{
-			if (debugFlag_scsiBlocks)
-			{
-				debugStringInt32_P(PSTR("Hex dump for block #"), currentBlock, true);
-				debugSectorBufferHex(scsiFatBuffer, 256);
-			}
-		}
 	}
-	if (debugFlag_scsiCommands || debugFlag_scsiBlocks) debugString_P(PSTR("\r\n"));
 	
-	// Check for a host reset condition
-	if (hostadapterReadResetFlag())
-	{
-		sei();
-		if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("SCSI Commands: Read DMA interrupted by host reset at byte #"), bytesTransferred, true);
-		
-		return SCSI_BUSFREE;
-	}
+	if (debugFlag_scsiCommands || debugFlag_scsiBlocks) debugString_P(PSTR("\r\n"));
 	
 	// Indicate successful transfer in status and message
 	commandDataBlock.status = 0x00; // 0x00 = Good
@@ -2238,5 +2224,5 @@ uint8_t scsiBeebScsiFatRead(void)
 	if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: BSFATREAD command successful\r\n"));
 	
 	// Transition to the successful state
-	return SCSI_STATUS;
+	return SCSI_STATUS;	
 }

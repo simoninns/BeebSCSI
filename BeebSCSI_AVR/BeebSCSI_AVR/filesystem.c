@@ -1814,9 +1814,9 @@ bool filesystemFatFileRead(uint32_t fileNumber, uint32_t blockNumber, uint8_t *b
 			// Read 256 bytes of data into the buffer
 			uint16_t bytesRead = 0;
 			filesystemState.fsResult  = f_read(&filesystemState.fileObject, buffer, 256, &bytesRead);
-			if (filesystemState.fsResult != FR_OK || bytesRead != 256)
+			if (filesystemState.fsResult != FR_OK)
 			{
-				if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemFatFileRead(): Could not read 256 bytes of data from the target file!\r\n"));
+				if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemFatFileRead(): Could not read data from the target file!\r\n"));
 				f_close(&filesystemState.fileObject);
 				return false;
 			}
