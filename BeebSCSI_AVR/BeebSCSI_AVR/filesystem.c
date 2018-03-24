@@ -56,6 +56,7 @@ struct filesystemStateStruct
 } filesystemState;
 
 char fileName[255];			// String for storing LFN filename
+char fatDirectory[255];		// String for storing FAT directory (for FAT transfer operations)
 
 uint8_t sectorBuffer[SECTOR_BUFFER_SIZE];	// Buffer for reading sectors
 bool lunOpenFlag = false; // Flag to track when a LUN is open for read/write (to prevent multiple file opens)
@@ -89,6 +90,9 @@ void filesystemInitialise(void)
 	
 	// Mount the file system
 	filesystemMount();
+	
+	// Set the default FAT transfer directory
+	sprintf(fatDirectory, "/Transfer");
 }
 
 // Reset the file system (called when the host signals reset)
@@ -98,6 +102,9 @@ void filesystemReset(void)
 	bool errorFlag = false;
 	
 	if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemReset(): Resetting file system\r\n"));
+	
+	// Reset the default FAT transfer directory
+	sprintf(fatDirectory, "/Transfer");
 	
 	// Is the SD card/FAT file system  mounted?
 	if (filesystemState.fsMountState == true)
@@ -1435,6 +1442,18 @@ bool filesystemCloseLunForWrite(void)
 
 // Functions for FAT Transfer support --------------
 
+// Change the filesystem's FAT transfer directory
+bool filesystemSetFatDirectory(uint8_t *buffer)
+{
+	sprintf(fatDirectory, "%s", buffer);
+	if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemSetFatDirectory(): FAT transfer directory changed to: "));
+	if (debugFlag_filesystem) debugString(fatDirectory);
+	if (debugFlag_filesystem) debugString_P(PSTR("\r\n"));
+	
+	return true;
+}
+
+
 // Read an entry from the FAT directory and place the information about the entry into the buffer
 //
 // The buffer format is as follows:
@@ -1447,7 +1466,6 @@ bool filesystemGetFatFileInfo(uint32_t fileNumber, uint8_t *buffer)
 {
 	uint16_t byteCounter;
 	uint32_t fileEntryNumber;
-	char fileName[16];
 	
 	// Is the file system mounted?
 	if (filesystemState.fsMountState == false)
@@ -1459,10 +1477,8 @@ bool filesystemGetFatFileInfo(uint32_t fileNumber, uint8_t *buffer)
 	// Clear the buffer
 	for (byteCounter = 0; byteCounter < 256; byteCounter++) buffer[byteCounter] = 0;
 	
-	// Does the FAT transfer directory exist?
-	sprintf(fileName, "/Transfer");
-	
-	filesystemState.fsResult = f_opendir(&filesystemState.dirObject, fileName);
+	// Open the FAT transfer directory
+	filesystemState.fsResult = f_opendir(&filesystemState.dirObject, fatDirectory);
 	
 	// Check the result
 	if (filesystemState.fsResult != FR_OK)
@@ -1536,10 +1552,10 @@ bool filesystemGetFatFileInfo(uint32_t fileNumber, uint8_t *buffer)
 		f_closedir(&filesystemState.dirObject);
 		
 		// Create the FAT transfer directory - it's not present on the SD card
-		filesystemState.fsResult = f_mkdir(fileName);
+		filesystemState.fsResult = f_mkdir(fatDirectory);
 		
 		// Now open the directory
-		filesystemState.fsResult = f_opendir(&filesystemState.dirObject, fileName);
+		filesystemState.fsResult = f_opendir(&filesystemState.dirObject, fatDirectory);
 		
 		// Check the result
 		if (filesystemState.fsResult != FR_OK)
@@ -1641,6 +1657,8 @@ bool filesystemGetFatFileInfo(uint32_t fileNumber, uint8_t *buffer)
 // Open a FAT file ready for reading
 bool filesystemOpenFatForRead(uint32_t fileNumber, uint32_t blockNumber)
 {
+	char fileName[512];
+	
 	// Is the file system mounted?
 	if (filesystemState.fsMountState == false)
 	{
@@ -1648,12 +1666,8 @@ bool filesystemOpenFatForRead(uint32_t fileNumber, uint32_t blockNumber)
 		return false;
 	}
 	
-	char fileName[256 + 16];
-	
-	// Does the FAT transfer directory exist?
-	sprintf(fileName, "/Transfer");
-	
-	filesystemState.fsResult = f_opendir(&filesystemState.dirObject, fileName);
+	// Open the FAT transfer directory
+	filesystemState.fsResult = f_opendir(&filesystemState.dirObject, fatDirectory);
 	
 	// Check the open directory action's result
 	if (filesystemState.fsResult == FR_OK)
@@ -1685,7 +1699,7 @@ bool filesystemOpenFatForRead(uint32_t fileNumber, uint32_t blockNumber)
 		else
 		{
 			// Assemble the full path name and file name for the requested file
-			sprintf(fileName, "%s/%s", fileName, filesystemState.fsInfo.fname);
+			sprintf(fileName, "%s/%s", fatDirectory, filesystemState.fsInfo.fname);
 			f_closedir(&filesystemState.dirObject);
 
 			// Open the requested file for reading

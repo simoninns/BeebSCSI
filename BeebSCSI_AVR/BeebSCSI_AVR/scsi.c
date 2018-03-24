@@ -225,6 +225,10 @@ void scsiProcessEmulation(void)
 		scsiState = scsiBeebScsiSelect();
 		break;
 		
+		case SCSI_BEEBSCSI_FATPATH:
+		scsiState = scsiBeebScsiFatPath();
+		break;
+		
 		case SCSI_BEEBSCSI_FATINFO:
 		scsiState = scsiBeebScsiFatInfo();
 		break;
@@ -494,10 +498,14 @@ uint8_t scsiEmulationCommand(void)
 			break;
 			
 			case 0x12:
-			return SCSI_BEEBSCSI_FATINFO;
+			return SCSI_BEEBSCSI_FATPATH;
 			break;
 			
 			case 0x13:
+			return SCSI_BEEBSCSI_FATINFO;
+			break;
+			
+			case 0x14:
 			return SCSI_BEEBSCSI_FATREAD;
 			break;
 		}
@@ -2057,7 +2065,64 @@ uint8_t scsiBeebScsiSelect(void)
 	return SCSI_STATUS;
 }
 
-// SCSI Command BeebSCSI FATINFO (group 6 - command 0x12)
+
+// Vendor-specific FAT file manipulation functions --------------
+
+// SCSI Command BeebSCSI FATPATH (group 6 - command 0x12)
+//
+// This is a BeebSCSI vendor specific command.
+//
+uint8_t scsiBeebScsiFatPath(void)
+{
+	uint16_t bytesTransferred = 0;
+
+	if (debugFlag_scsiCommands)
+	{
+		debugString_P(PSTR("SCSI Commands: BSFATPATH command (G6 0x12) received\r\n"));
+		debugStringInt16_P(PSTR("SCSI Commands: Target LUN = "), commandDataBlock.targetLUN, true);
+	}
+
+	// This command does not use the LUN number
+
+	// Set up the control signals ready for the data out phase
+	scsiInformationTransferPhase(ITPHASE_DATAOUT);
+
+	// Transfer a single block from the file system to the host
+	// Note: Since VFS is slower than ADFS we do not disable interrupts here as
+	// disabling interrupts can cause incoming serial bytes to be lost
+	if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: Transferring FAT path buffer from the host...\r\n"));
+	cli();
+	bytesTransferred = hostadapterPerformWriteDMA(scsiSectorBuffer);
+	sei();
+	
+	// Check for a host reset condition
+	if (hostadapterReadResetFlag())
+	{
+		sei();
+		if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("SCSI Commands: Write DMA interrupted by host reset at byte #"), bytesTransferred, true);
+		return SCSI_BUSFREE;
+	}
+
+	// Change the filesystem's FAT transfer directory
+	filesystemSetFatDirectory(scsiSectorBuffer);
+
+	// Show debug
+	if (debugFlag_scsiBlocks)
+	{
+		debugString_P(PSTR("Hex dump for FAT path block:\r\n"));
+		debugSectorBufferHex(scsiSectorBuffer, 256);
+	}
+
+	// Indicate successful transfer in status and message
+	commandDataBlock.status = 0x00; // 0x00 = Good
+	commandDataBlock.message = 0x00;
+	if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: BSFATPATH command successful\r\n"));
+
+	// Transition to the successful state
+	return SCSI_STATUS;
+}
+
+// SCSI Command BeebSCSI FATINFO (group 6 - command 0x13)
 //
 // This is a BeebSCSI vendor specific command.
 //
@@ -2076,7 +2141,7 @@ uint8_t scsiBeebScsiFatInfo(void)
 	
 	if (debugFlag_scsiCommands)
 	{
-		debugString_P(PSTR("SCSI Commands: BSFATINFO command (G6 0x12) received\r\n"));
+		debugString_P(PSTR("SCSI Commands: BSFATINFO command (G6 0x13) received\r\n"));
 		debugStringInt16_P(PSTR("SCSI Commands: Target LUN = "), commandDataBlock.targetLUN, true);
 	}
 	
@@ -2138,7 +2203,7 @@ uint8_t scsiBeebScsiFatInfo(void)
 	return SCSI_STATUS;
 }
 
-// SCSI Command BeebSCSI FATREAD (group 6 - command 0x13)
+// SCSI Command BeebSCSI FATREAD (group 6 - command 0x14)
 //
 // This is a BeebSCSI vendor specific command.
 //
@@ -2158,7 +2223,7 @@ uint8_t scsiBeebScsiFatRead(void)
 	
 	if (debugFlag_scsiCommands)
 	{
-		debugString_P(PSTR("SCSI Commands: BSFATREAD command (G6 0x13) received\r\n"));
+		debugString_P(PSTR("SCSI Commands: BSFATREAD command (G6 0x14) received\r\n"));
 		debugStringInt16_P(PSTR("SCSI Commands: Target LUN = "), commandDataBlock.targetLUN, true);
 	}
 	

@@ -71,6 +71,7 @@ bool filesystemOpenLunForWrite(uint8_t lunNumber, uint32_t startSector, uint32_t
 bool filesystemWriteNextSector(uint8_t buffer[]);
 bool filesystemCloseLunForWrite(void);
 
+bool filesystemSetFatDirectory(uint8_t *buffer);
 bool filesystemGetFatFileInfo(uint32_t fileNumber, uint8_t *buffer);
 bool filesystemOpenFatForRead(uint32_t fileNumber, uint32_t blockNumber);
 bool filesystemReadNextFatBlock(uint8_t *buffer);
