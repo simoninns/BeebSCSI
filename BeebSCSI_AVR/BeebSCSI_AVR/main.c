@@ -70,8 +70,6 @@
 	 19 = SCSI state debug off
 	 20 = FAT FS debug on
 	 21 = FAT FS debug off
-	 22 = FAT Transfer debug on
-	 23 = FAT Transfer debug off
 */
 
 int main(void)

@@ -34,7 +34,6 @@ extern volatile bool debugFlag_scsiBlocks;
 extern volatile bool debugFlag_scsiFcodes;
 extern volatile bool debugFlag_scsiState;
 extern volatile bool debugFlag_fatfs;
-extern volatile bool debugFlag_fatTransfer;
 
 // Function prototypes
 void debugString_P(const char *addr);

@@ -39,7 +39,6 @@
 #include "statusled.h"
 #include "scsi.h"
 #include "fcode.h"
-#include "fat.h"
 
 // Define the major and minor firmware version number returned
 // by the BSSENSE command
@@ -2090,13 +2089,28 @@ uint8_t scsiBeebScsiFatInfo(void)
 	// Set up the control signals ready for the data in phase
 	scsiInformationTransferPhase(ITPHASE_DATAIN);
 	
-	// Ensure the buffer is ready for the host to read
-	fatInfoBuffer(fatFileId);
+	// Get the FAT file information into the buffer for the host to read
+	if(!filesystemGetFatFileInfo(fatFileId, scsiSectorBuffer))
+	{
+		// Reading from the FAT image failed... try to recover with a little grace...
+		if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: ERROR: Could not read FAT file information!\r\n"));
+		commandDataBlock.status = (commandDataBlock.targetLUN << 5) | 0x02; // 0x02 = Bad
+		commandDataBlock.message = 0x00;
+		
+		// Set request sense error globals
+		requestSenseData[commandDataBlock.targetLUN].errorFlag = true;
+		requestSenseData[commandDataBlock.targetLUN].validAddressFlag = false;
+		requestSenseData[commandDataBlock.targetLUN].errorClass = 0x00; // Class 00 error code
+		requestSenseData[commandDataBlock.targetLUN].errorCode = 0x04; // Drive not ready
+		requestSenseData[commandDataBlock.targetLUN].logicalBlockAddress = 0x00;
+		
+		return SCSI_STATUS;
+	}
 	
 	// Send the data to the host
 	if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: Transferring FAT info buffer to the host...\r\n"));
 	cli();
-	bytesTransferred = hostadapterPerformReadDMA(scsiFatBuffer);
+	bytesTransferred = hostadapterPerformReadDMA(scsiSectorBuffer);
 	sei();
 	
 	// Check for a host reset condition
@@ -2112,7 +2126,7 @@ uint8_t scsiBeebScsiFatInfo(void)
 	if (debugFlag_scsiBlocks)
 	{
 		debugString_P(PSTR("Hex dump for FAT info block:\r\n"));
-		debugSectorBufferHex(scsiFatBuffer, 256);
+		debugSectorBufferHex(scsiSectorBuffer, 256);
 	}
 	
 	// Indicate successful transfer in status and message
@@ -2150,7 +2164,7 @@ uint8_t scsiBeebScsiFatRead(void)
 	
 	// This command does not use the LUN number
 	
-	// Get block offset (should be 0 for this command)
+	// Get block offset
 	blockOffset = (((uint32_t)commandDataBlock.data[1] & 0x1F) << 16) |
 	((uint32_t)commandDataBlock.data[2] << 8) |
 	((uint32_t)commandDataBlock.data[3]);
@@ -2170,28 +2184,30 @@ uint8_t scsiBeebScsiFatRead(void)
 	scsiInformationTransferPhase(ITPHASE_DATAIN);
 	
 	// Transfer the requested blocks from the FAT file to the host
+	if(!filesystemOpenFatForRead(fatFileId, blockOffset + currentBlock))
+	{
+		// Reading from the FAT image failed... try to recover with a little grace...
+		if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: ERROR: Could not read next block from FAT image!\r\n"));
+		commandDataBlock.status = (commandDataBlock.targetLUN << 5) | 0x02; // 0x02 = Bad
+		commandDataBlock.message = 0x00;
+		
+		// Set request sense error globals
+		requestSenseData[commandDataBlock.targetLUN].errorFlag = true;
+		requestSenseData[commandDataBlock.targetLUN].validAddressFlag = false;
+		requestSenseData[commandDataBlock.targetLUN].errorClass = 0x00; // Class 00 error code
+		requestSenseData[commandDataBlock.targetLUN].errorCode = 0x04; // Drive not ready
+		requestSenseData[commandDataBlock.targetLUN].logicalBlockAddress = 0x00;
+		
+		return SCSI_STATUS;
+	}
+	
 	for (currentBlock = 0; currentBlock < numberOfBlocks; currentBlock++)
 	{
-		if(!fatReadBuffer(fatFileId, blockOffset + currentBlock))
-		{
-			// Reading from the FAT image failed... try to recover with a little grace...
-			if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: ERROR: Could not read next block from FAT image!\r\n"));
-			commandDataBlock.status = (commandDataBlock.targetLUN << 5) | 0x02; // 0x02 = Bad
-			commandDataBlock.message = 0x00;
-		
-			// Set request sense error globals
-			requestSenseData[commandDataBlock.targetLUN].errorFlag = true;
-			requestSenseData[commandDataBlock.targetLUN].validAddressFlag = false;
-			requestSenseData[commandDataBlock.targetLUN].errorClass = 0x00; // Class 00 error code
-			requestSenseData[commandDataBlock.targetLUN].errorCode = 0x04; // Drive not ready
-			requestSenseData[commandDataBlock.targetLUN].logicalBlockAddress = 0x00;
-		
-			return SCSI_STATUS;
-		}
+		if(!filesystemReadNextFatBlock(scsiSectorBuffer))
 		
 		// Send the data to the host
 		cli();
-		bytesTransferred = hostadapterPerformReadDMA(scsiFatBuffer);
+		bytesTransferred = hostadapterPerformReadDMA(scsiSectorBuffer);
 		sei();
 		
 		// Check for a host reset condition
@@ -2200,6 +2216,7 @@ uint8_t scsiBeebScsiFatRead(void)
 			sei();
 			if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("SCSI Commands: Read DMA interrupted by host reset at byte #"), bytesTransferred, true);
 			
+			filesystemCloseFatForRead();
 			return SCSI_BUSFREE;
 		}
 		
@@ -2207,7 +2224,7 @@ uint8_t scsiBeebScsiFatRead(void)
 		if (debugFlag_scsiBlocks)
 		{
 			debugStringInt32_P(PSTR("Hex dump for block #"), currentBlock, true);
-			debugSectorBufferHex(scsiFatBuffer, 256);
+			debugSectorBufferHex(scsiSectorBuffer, 256);
 		}
 		else
 		{
@@ -2215,7 +2232,7 @@ uint8_t scsiBeebScsiFatRead(void)
 			if (debugFlag_scsiCommands) debugString_P(PSTR(" "));
 		}
 	}
-	
+	filesystemCloseFatForRead();
 	if (debugFlag_scsiCommands || debugFlag_scsiBlocks) debugString_P(PSTR("\r\n"));
 	
 	// Indicate successful transfer in status and message

@@ -1435,17 +1435,31 @@ bool filesystemCloseLunForWrite(void)
 
 // Functions for FAT Transfer support --------------
 
-// Check that the FAT directory exists (and, if not, create it)
-bool filesystemCheckFatDirectory(void)
+// Read an entry from the FAT directory and place the information about the entry into the buffer
+//
+// The buffer format is as follows:
+// Byte 0: Status of file (0 = does not exist, 1 = file exists, 2 = directory)
+// Byte 1 - 4: Size of file in number of bytes (32-bit)
+// Byte 5 - 126: Reserved (0)
+// Byte 127- 255: File name string terminated with 0x00 (NULL)
+//
+bool filesystemGetFatFileInfo(uint32_t fileNumber, uint8_t *buffer)
 {
+	uint16_t byteCounter;
+	uint32_t fileEntryNumber;
+	char fileName[16];
+	
 	// Is the file system mounted?
 	if (filesystemState.fsMountState == false)
 	{
-		if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemCheckFatDirectory(): ERROR: No file system mounted\r\n"));
+		if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemGetFatFileInfo(): ERROR: No file system mounted\r\n"));
 		return false;
 	}
 	
-	// Does the FAT transfer directory exist? - if not, create it
+	// Clear the buffer
+	for (byteCounter = 0; byteCounter < 256; byteCounter++) buffer[byteCounter] = 0;
+	
+	// Does the FAT transfer directory exist?
 	sprintf(fileName, "/Transfer");
 	
 	filesystemState.fsResult = f_opendir(&filesystemState.dirObject, fileName);
@@ -1536,143 +1550,101 @@ bool filesystemCheckFatDirectory(void)
 		}
 		
 		if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemCheckFatDirectory(): Created FAT transfer directory entry\r\n"));
-		f_closedir(&filesystemState.dirObject);
 	}
 	else
 	{
 		if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemCheckFatDirectory(): FAT transfer directory found\r\n"));
-		f_closedir(&filesystemState.dirObject);
 	}
 	
-	return true;
-}
-
-// Read an entry from the FAT directory and place the information about the entry into the buffer
-//
-// The buffer format is as follows:
-// Byte 0: Status of file (0 = does not exist, 1 = file exists, 2 = directory)
-// Byte 1 - 4: Size of file in number of bytes (32-bit)
-// Byte 5 - 126: Reserved (0)
-// Byte 127- 255: File name string terminated with 0x00 (NULL)
-//
-bool filesystemGetFatFileInfo(uint32_t fileNumber, uint8_t *buffer)
-{
-	// Is the file system mounted?
-	if (filesystemState.fsMountState == false)
+	// Get the requested file entry number object	
+	for (fileEntryNumber = 0; fileEntryNumber <= fileNumber; fileEntryNumber++)
 	{
-		if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemGetFatFileInfo(): ERROR: No file system mounted\r\n"));
-		return false;
+		filesystemState.fsResult = f_readdir(&filesystemState.dirObject, &filesystemState.fsInfo);
+			
+		// Exit on error or end of directory object entries
+		if (filesystemState.fsResult != FR_OK || filesystemState.fsInfo.fname[0] == 0)
+		{
+			// The requested directory entry does not exist
+			if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemGetFatFileInfo(): Requested directory entry does not exist\r\n"));
+			buffer[0] = 0; // file does not exist
+			f_closedir(&filesystemState.dirObject);
+			return true; // This is a valid (successful) return condition
+		}
 	}
-	
-	char fileName[16];
-	
-	// Does the FAT transfer directory exist?
-	sprintf(fileName, "/Transfer");
-	
-	filesystemState.fsResult = f_opendir(&filesystemState.dirObject, fileName);
-	
-	// Check the open directory action's result
-	if (filesystemState.fsResult == FR_OK)
+	if (debugFlag_filesystem) debugStringInt32_P(PSTR("File system: filesystemGetFatFileInfo(): Requested directory entry found for entry number "), fileNumber, true);
+		
+	// Is the entry a file or sub-directory?
+	if (filesystemState.fsInfo.fattrib & AM_DIR)
 	{
-		uint32_t fileEntryNumber;
-		
-		for (fileEntryNumber = 0; fileEntryNumber <= fileNumber; fileEntryNumber++)
-		{
-			filesystemState.fsResult = f_readdir(&filesystemState.dirObject, &filesystemState.fsInfo);
+		// Directory
+		buffer[0] = 2; // directory entry is a directory
+		if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemGetFatFileInfo(): Directory entry is a directory called "));
+		if (debugFlag_filesystem) debugString(filesystemState.fsInfo.fname);
+		if (debugFlag_filesystem) debugString_P(PSTR("\r\n"));
 			
-			// Exit on error or end of directory object entries
-			if (filesystemState.fsResult != FR_OK || filesystemState.fsInfo.fname[0] == 0)
-			{
-				// The requested directory entry does not exist
-				if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemGetFatFileInfo(): Requested directory entry does not exist\r\n"));
-				buffer[0] = 0; // file does not exist
-				f_closedir(&filesystemState.dirObject);
-				return false;
-			}
-		}
-		
-		if (debugFlag_filesystem) debugStringInt32_P(PSTR("File system: filesystemGetFatFileInfo(): Requested directory entry found for entry number "), fileNumber, true);
-		
-		// Is the entry a file or sub-directory?
-		if (filesystemState.fsInfo.fattrib & AM_DIR)
-		{
-			// Directory
-			buffer[0] = 2; // directory entry is a directory
-			if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemGetFatFileInfo(): Directory entry is a directory called "));
-			if (debugFlag_filesystem) debugString(filesystemState.fsInfo.fname);
-			if (debugFlag_filesystem) debugString_P(PSTR("\r\n"));
+		// Directories always have a file size of 0
+		buffer[1] = 0;
+		buffer[2] = 0;
+		buffer[3] = 0;
+		buffer[4] = 0;
 			
-			// Directories always have a file size of 0
-			buffer[1] = 0;
-			buffer[2] = 0;
-			buffer[3] = 0;
-			buffer[4] = 0;
+		// Store the file name of the directory entry in the buffer (limited to 126 characters and NULL (0x00) terminated)
+		if (strlen(filesystemState.fsInfo.fname) > 125) filesystemState.fsInfo.fname[126] = '\0';
 			
-			// Store the file name of the directory entry in the buffer (limited to 126 characters and NULL (0x00) terminated)
-			if (strlen(filesystemState.fsInfo.fname) > 125) filesystemState.fsInfo.fname[126] = '\0';
-			
-			// Copy the string into the buffer - starting from byte 127
-			strcpy((char*)buffer+127, filesystemState.fsInfo.fname);
-		}
-		else
-		{
-			// File
-			buffer[0] = 1; // directory entry is a file
-			if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemGetFatFileInfo(): Directory entry is a file called "));
-			if (debugFlag_filesystem) debugString(filesystemState.fsInfo.fname);
-			if (debugFlag_filesystem) debugString_P(PSTR("\r\n"));
-			
-			// Get the directory entry's file size in bytes (64-bit as we have exFAT configured)
-			uint64_t fileSize = (uint64_t)filesystemState.fsInfo.fsize;
-			
-			// The maximum supported file size in ADFS is 512Mbytes (524,288 Kbytes or 536,870,912)
-			// If the file size is bigger than this, the file must be truncated.
-			if (fileSize > 536870912)
-			{
-				if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemGetFatFileInfo(): Directory entry is > 536870912 bytes... it will be truncated.\r\n"));
-				fileSize = 536870912; // Perhaps this limit should be ~500Mbytes, as file-system overhead will prevent 512Mb files being stored? Should be stress-tested...
-			}
-			else
-			{
-				if (debugFlag_filesystem) debugStringInt32_P(PSTR("File system: filesystemGetFatFileInfo(): Directory entry file size (in bytes) is "), (uint32_t)fileSize, true);
-			}
-			
-			// Convert the file size into a 32 bit number and place it in 4 bytes of the buffer (1-4)
-			buffer[1] = (fileSize & 0xFF000000UL) >> 24;
-			buffer[2] = (fileSize & 0x00FF0000UL) >> 16;
-			buffer[3] = (fileSize & 0x0000FF00UL) >>  8;
-			buffer[4] = (fileSize & 0x000000FFUL);
-			
-			// Store the file name of the directory entry in the buffer (limited to 126 characters and NULL (0x00) terminated)
-			
-			// Truncate the string to 127 bytes
-			if (strlen(filesystemState.fsInfo.fname) > 125) filesystemState.fsInfo.fname[126] = '\0';
-			
-			// Copy the string into the buffer - starting from byte 127
-			strcpy((char*)buffer+127, filesystemState.fsInfo.fname);
-		}
+		// Copy the string into the buffer - starting from byte 127
+		strcpy((char*)buffer+127, filesystemState.fsInfo.fname);
 	}
 	else
 	{
-		// Couldn't open directory object
-		if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemGetFatFileInfo(): Could not open transfer directory!\r\n"));
-		f_closedir(&filesystemState.dirObject);
-		return false;
+		// File
+		buffer[0] = 1; // directory entry is a file
+		if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemGetFatFileInfo(): Directory entry is a file called "));
+		if (debugFlag_filesystem) debugString(filesystemState.fsInfo.fname);
+		if (debugFlag_filesystem) debugString_P(PSTR("\r\n"));
+			
+		// Get the directory entry's file size in bytes (64-bit as we have exFAT configured)
+		uint64_t fileSize = (uint64_t)filesystemState.fsInfo.fsize;
+			
+		// The maximum supported file size in ADFS is 512Mbytes (524,288 Kbytes or 536,870,912)
+		// If the file size is bigger than this, the file must be truncated.
+		if (fileSize > 536870912)
+		{
+			if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemGetFatFileInfo(): Directory entry is > 536870912 bytes... it will be truncated.\r\n"));
+			fileSize = 536870912; // Perhaps this limit should be ~500Mbytes, as file-system overhead will prevent 512Mb files being stored? Should be stress-tested...
+		}
+		else
+		{
+			if (debugFlag_filesystem) debugStringInt32_P(PSTR("File system: filesystemGetFatFileInfo(): Directory entry file size (in bytes) is "), (uint32_t)fileSize, true);
+		}
+			
+		// Convert the file size into a 32 bit number and place it in 4 bytes of the buffer (1-4)
+		buffer[1] = (fileSize & 0xFF000000UL) >> 24;
+		buffer[2] = (fileSize & 0x00FF0000UL) >> 16;
+		buffer[3] = (fileSize & 0x0000FF00UL) >>  8;
+		buffer[4] = (fileSize & 0x000000FFUL);
+			
+		// Store the file name of the directory entry in the buffer (limited to 126 characters and NULL (0x00) terminated)
+			
+		// Truncate the string to 127 bytes
+		if (strlen(filesystemState.fsInfo.fname) > 125) filesystemState.fsInfo.fname[126] = '\0';
+			
+		// Copy the string into the buffer - starting from byte 127
+		strcpy((char*)buffer+127, filesystemState.fsInfo.fname);
 	}
-	
+
 	// Close the directory object
 	f_closedir(&filesystemState.dirObject);
 		
 	return true;
 }
 
-// Read a block of data from a FAT file
-bool filesystemFatFileRead(uint32_t fileNumber, uint32_t blockNumber, uint8_t *buffer)
+// Open a FAT file ready for reading
+bool filesystemOpenFatForRead(uint32_t fileNumber, uint32_t blockNumber)
 {
 	// Is the file system mounted?
 	if (filesystemState.fsMountState == false)
 	{
-		if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemFatFileRead(): ERROR: No file system mounted\r\n"));
+		if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemOpenFatForRead(): ERROR: No file system mounted\r\n"));
 		return false;
 	}
 	
@@ -1696,7 +1668,7 @@ bool filesystemFatFileRead(uint32_t fileNumber, uint32_t blockNumber, uint8_t *b
 			if (filesystemState.fsResult != FR_OK || filesystemState.fsInfo.fname[0] == 0)
 			{
 				// The requested directory entry does not exist
-				if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemFatFileRead(): Requested directory entry does not exist\r\n"));
+				if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemOpenFatForRead(): Requested directory entry does not exist\r\n"));
 				f_closedir(&filesystemState.dirObject);
 				return false;
 			}
@@ -1706,7 +1678,7 @@ bool filesystemFatFileRead(uint32_t fileNumber, uint32_t blockNumber, uint8_t *b
 		if (filesystemState.fsInfo.fattrib & AM_DIR)
 		{
 			// Directory
-			if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemFatFileRead(): Requested directory entry was a directory - can not read!\r\n"));
+			if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemOpenFatForRead(): Requested directory entry was a directory - can not read!\r\n"));
 			f_closedir(&filesystemState.dirObject);
 			return false;
 		}
@@ -1725,75 +1697,75 @@ bool filesystemFatFileRead(uint32_t fileNumber, uint32_t blockNumber, uint8_t *b
 					switch(filesystemState.fsResult)
 					{
 						case FR_DISK_ERR:
-						debugString_P(PSTR("File system: filesystemFatFileRead(): ERROR: f_open on FAT file returned FR_DISK_ERR\r\n"));
+						debugString_P(PSTR("File system: filesystemOpenFatForRead(): ERROR: f_open on FAT file returned FR_DISK_ERR\r\n"));
 						break;
 						
 						case FR_INT_ERR:
-						debugString_P(PSTR("File system: filesystemFatFileRead(): ERROR: f_open on FAT file returned FR_INT_ERR\r\n"));
+						debugString_P(PSTR("File system: filesystemOpenFatForRead(): ERROR: f_open on FAT file returned FR_INT_ERR\r\n"));
 						break;
 						
 						case FR_NOT_READY:
-						debugString_P(PSTR("File system: filesystemFatFileRead(): ERROR: f_open on FAT file returned FR_NOT_READY\r\n"));
+						debugString_P(PSTR("File system: filesystemOpenFatForRead(): ERROR: f_open on FAT file returned FR_NOT_READY\r\n"));
 						break;
 
 						case FR_NO_FILE:
-						debugString_P(PSTR("File system: filesystemFatFileRead(): FAT file not found\r\n"));
+						debugString_P(PSTR("File system: filesystemOpenFatForRead(): FAT file not found\r\n"));
 						break;
 						
 						case FR_NO_PATH:
-						debugString_P(PSTR("File system: filesystemFatFileRead(): ERROR: f_open on FAT file returned FR_NO_PATH\r\n"));
+						debugString_P(PSTR("File system: filesystemOpenFatForRead(): ERROR: f_open on FAT file returned FR_NO_PATH\r\n"));
 						break;
 
 						case FR_INVALID_NAME:
-						debugString_P(PSTR("File system: filesystemFatFileRead(): ERROR: f_open on FAT file returned FR_INVALID_NAME\r\n"));
+						debugString_P(PSTR("File system: filesystemOpenFatForRead(): ERROR: f_open on FAT file returned FR_INVALID_NAME\r\n"));
 						break;
 
 						case FR_DENIED:
-						debugString_P(PSTR("File system: filesystemFatFileRead(): ERROR: f_open on FAT file returned FR_DENIED\r\n"));
+						debugString_P(PSTR("File system: filesystemOpenFatForRead(): ERROR: f_open on FAT file returned FR_DENIED\r\n"));
 						break;
 						
 						case FR_EXIST:
-						debugString_P(PSTR("File system: filesystemFatFileRead(): ERROR: f_open on FAT file returned FR_EXIST\r\n"));
+						debugString_P(PSTR("File system: filesystemOpenFatForRead(): ERROR: f_open on FAT file returned FR_EXIST\r\n"));
 						break;
 						
 						case FR_INVALID_OBJECT:
-						debugString_P(PSTR("File system: filesystemFatFileRead(): ERROR: f_open on FAT file returned FR_INVALID_OBJECT\r\n"));
+						debugString_P(PSTR("File system: filesystemOpenFatForRead(): ERROR: f_open on FAT file returned FR_INVALID_OBJECT\r\n"));
 						break;
 						
 						case FR_WRITE_PROTECTED:
-						debugString_P(PSTR("File system: filesystemFatFileRead(): ERROR: f_open on FAT file returned FR_WRITE_PROTECTED\r\n"));
+						debugString_P(PSTR("File system: filesystemOpenFatForRead(): ERROR: f_open on FAT file returned FR_WRITE_PROTECTED\r\n"));
 						break;
 						
 						case FR_INVALID_DRIVE:
-						debugString_P(PSTR("File system: filesystemFatFileRead(): ERROR: f_open on FAT file returned FR_INVALID_DRIVE\r\n"));
+						debugString_P(PSTR("File system: filesystemOpenFatForRead(): ERROR: f_open on FAT file returned FR_INVALID_DRIVE\r\n"));
 						break;
 						
 						case FR_NOT_ENABLED:
-						debugString_P(PSTR("File system: filesystemFatFileRead(): ERROR: f_open on FAT file returned FR_NOT_ENABLED\r\n"));
+						debugString_P(PSTR("File system: filesystemOpenFatForRead(): ERROR: f_open on FAT file returned FR_NOT_ENABLED\r\n"));
 						break;
 						
 						case FR_NO_FILESYSTEM:
-						debugString_P(PSTR("File system: filesystemFatFileRead(): ERROR: f_open on FAT file returned FR_NO_FILESYSTEM\r\n"));
+						debugString_P(PSTR("File system: filesystemOpenFatForRead(): ERROR: f_open on FAT file returned FR_NO_FILESYSTEM\r\n"));
 						break;
 						
 						case FR_TIMEOUT:
-						debugString_P(PSTR("File system: filesystemFatFileRead(): ERROR: f_open on FAT file returned FR_TIMEOUT\r\n"));
+						debugString_P(PSTR("File system: filesystemOpenFatForRead(): ERROR: f_open on FAT file returned FR_TIMEOUT\r\n"));
 						break;
 						
 						case FR_LOCKED:
-						debugString_P(PSTR("File system: filesystemFatFileRead(): ERROR: f_open on FAT file returned FR_LOCKED\r\n"));
+						debugString_P(PSTR("File system: filesystemOpenFatForRead(): ERROR: f_open on FAT file returned FR_LOCKED\r\n"));
 						break;
 						
 						case FR_NOT_ENOUGH_CORE:
-						debugString_P(PSTR("File system: filesystemFatFileRead(): ERROR: f_open on FAT file returned FR_NOT_ENOUGH_CORE\r\n"));
+						debugString_P(PSTR("File system: filesystemOpenFatForRead(): ERROR: f_open on FAT file returned FR_NOT_ENOUGH_CORE\r\n"));
 						break;
 						
 						case FR_TOO_MANY_OPEN_FILES:
-						debugString_P(PSTR("File system: filesystemFatFileRead(): ERROR: f_open on FAT file returned FR_TOO_MANY_OPEN_FILES\r\n"));
+						debugString_P(PSTR("File system: filesystemOpenFatForRead(): ERROR: f_open on FAT file returned FR_TOO_MANY_OPEN_FILES\r\n"));
 						break;
 						
 						default:
-						debugString_P(PSTR("File system: filesystemFatFileRead(): ERROR: f_open on FAT file returned unknown error\r\n"));
+						debugString_P(PSTR("File system: filesystemOpenFatForRead(): ERROR: f_open on FAT file returned unknown error\r\n"));
 						break;
 					}
 				}
@@ -1806,32 +1778,47 @@ bool filesystemFatFileRead(uint32_t fileNumber, uint32_t blockNumber, uint8_t *b
 			filesystemState.fsResult  = f_lseek(&filesystemState.fileObject, blockNumber * 256);
 			if (filesystemState.fsResult != FR_OK)
 			{
-				if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemFatFileRead(): Could not seek to required block number!\r\n"));
+				if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemOpenFatForRead(): Could not seek to required block number!\r\n"));
 				f_close(&filesystemState.fileObject);
 				return false;
 			}
-			
-			// Read 256 bytes of data into the buffer
-			uint16_t bytesRead = 0;
-			filesystemState.fsResult  = f_read(&filesystemState.fileObject, buffer, 256, &bytesRead);
-			if (filesystemState.fsResult != FR_OK)
-			{
-				if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemFatFileRead(): Could not read data from the target file!\r\n"));
-				f_close(&filesystemState.fileObject);
-				return false;
-			}
-			
-			// Close the file
-			f_close(&filesystemState.fileObject);
 		}
 	}
 	else
 	{
 		// Couldn't open directory object
-		if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemFatFileRead(): Could not open transfer directory!\r\n"));
+		if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemOpenFatForRead(): Could not open transfer directory!\r\n"));
 		f_closedir(&filesystemState.dirObject);
 		return false;
 	}
 	
+	// File opened successfully
+	return true;
+}
+
+// Read the next block from a FAT file
+bool filesystemReadNextFatBlock(uint8_t *buffer)
+{
+	uint16_t byteCounter = 0;
+	
+	// Clear the buffer
+	for (byteCounter = 0; byteCounter < 256; byteCounter++) buffer[byteCounter] = 0;
+	
+	// Read 256 bytes of data into the buffer
+	filesystemState.fsResult  = f_read(&filesystemState.fileObject, buffer, 256, &byteCounter);
+	if (filesystemState.fsResult != FR_OK)
+	{
+		if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemReadNextFatBlock(): Could not read data from the target file!\r\n"));
+		f_close(&filesystemState.fileObject);
+		return false;
+	}
+	
+	return true;
+}
+
+// Close a FAT file previously opened for reading
+bool filesystemCloseFatForRead(void)
+{
+	f_close(&filesystemState.fileObject);
 	return true;
 }
