@@ -115,12 +115,12 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
     EQUB romTypeByte                        ; ROM type (see above for details)
     EQUB copyright MOD 256                  ; Offset pointer to copyright string
     EQUB romVersion                         ; Version number
-    EQUS "BeebSCSI Utilities 1.02", 0       ; Title string (null terminated)
-    EQUS "1.02"                             ; Version string (terminated by 0 before (c))
+    EQUS "BeebSCSI Utilities", 0            ; Title string (null terminated)
+    EQUS "1.03"                             ; Version string (terminated by 0 before (c))
 
     .copyright
         EQUS 0, "(C)"                       ; Mandatory start of title string
-        EQUS "2017 Simon Inns", 0           ; Title string (null terminated)
+        EQUS "2018 Simon Inns", 0           ; Title string (null terminated)
 
 \\ ------------------------------------------------------------------------------------------------
 \\ Function: serviceEntryPoint
@@ -293,9 +293,9 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
 \\ If the command is not ours then preserve A and Y and pass it on
 \\ If the command is accepted clear A and return (LDA#0:RTS)
 .serviceCall04
+    TYA : PHA                           ; Preserve Y (A contained service call number - overwritten)
     LDX #&FF                            ; Set X to &FF so first loop will increment counter to zero
     DEY                                 ; Decrement character pointer by 1
-    TYA : PHA                           ; Preserve Y (A contained service call number - overwritten)
 
     .compareCommandText
         INY
