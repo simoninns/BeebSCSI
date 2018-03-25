@@ -12,6 +12,10 @@ BeebSCSI_CPLD - This is the Xilinx XC9572XL CPLD firmware (written in ISE Verilo
 
 BeebSCSI_Eagle - This folder contains the EagleCAD schematics and PCB designs
 
+BeebSCSI_ROM - This folder contains the 6502 assembly code for the BeebSCSI ROM
+
+BeebSCSI_Utils - This folder contains BBC BASIC utilities for BeebSCSI
+
 
 ## Motivation
 
