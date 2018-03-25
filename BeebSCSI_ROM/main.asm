@@ -1173,12 +1173,12 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
     .displayTextTable
         ; 0 - stringStarHelp
         EQUB &0D
-        EQUS "BeebSCSI Utilities 1.02", &0D
+        EQUS "BeebSCSI Utilities 1.03", &0D
         EQUS "  BeebSCSI", &0D
         EQUB 0
         ; 1 - stringStarHelpExtended
         EQUB &0D
-        EQUS "BeebSCSI Utilities 1.02", &0D
+        EQUS "BeebSCSI Utilities 1.03", &0D
         EQUS "  SCSIDSC", &0D
         EQUS "  SCSISTATUS", &0D
         EQUS "  SCSITRACE  <0-255>", &0D
