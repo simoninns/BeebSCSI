@@ -4,15 +4,17 @@ BeebSCSI_Utils contains the BBC Micro and Master source code ROM for the BeebSCS
 
 ## Motivation
 
-Originally Acorn provided a SCSI solution based on 3 individual parts: The Acorn SCSI host adapter, the Adaptec ACB-4000 SCSI adapter and a physical MFM hard disc (a �Winchester drive�). Later, as part of the Domesday project (in 1986), this was extended to include the AIV SCSI Host Adapter (designed to be connected internally to a BBC Master Turbo) and the Philips VP415 LaserVision laser disc player with SCSI-1 support.
+Originally Acorn provided a SCSI solution based on 3 individual parts: The Acorn SCSI host adapter, the Adaptec ACB-4000 SCSI adapter and a physical MFM hard disc (a 'Winchester drive'). Later, as part of the Domesday project (in 1986), this was extended to include the AIV SCSI Host Adapter (designed to be connected internally to a BBC Master Turbo) and the Philips VP415 LaserVision laser disc player with SCSI-1 support.
 
 BeebSCSI 7 is a credit-card sized board that provides a single-chip implementation of the host adapter board (both original and AIV) using a modern CPLD (Complex Programmable Logic Device). In addition, an AVR Microcontroller provides a complete SCSI-1 emulation including the vendor specific video control commands of the VP415.
 
-Rather than using a physical hard drive, BeebSCSI uses a single Micro SD card to provide up to >64Gbytes of storage with support for either 4 (ADFS) or 8 (VFS) virtual hard drives (or �LUNs�) per card. In addition, in the BBC Master, two BeebSCSI devices can be attached, one internal and one external, providing 12 SCSI LUNs (hard drive images) simultaneously.
+Rather than using a physical hard drive, BeebSCSI uses a single Micro SD card to provide up to >64Gbytes of storage with support for either 4 (ADFS) or 8 (VFS) virtual hard drives (or 'LUNs') per card. In addition, in the BBC Master, two BeebSCSI devices can be attached, one internal and one external, providing 12 SCSI LUNs (hard drive images) simultaneously.
 
 ## Installation
 
 Please see http://www.domesday86.com for detailed documentation on BeebSCSI
+
+The BSTrans application (for FAT file transfer) is also provided as an ADL file here (ADFS L Format image suitable for Flash Floppy Goteks and other ADFS compatible devices)
 
 ## Author
 

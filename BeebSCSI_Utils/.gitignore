@@ -1,2 +1,3 @@
-## Ignore floppy images
-*.adl
+## Ignore DFS floppy images
+*.ssd
+*.dsd
