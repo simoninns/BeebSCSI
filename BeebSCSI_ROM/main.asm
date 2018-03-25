@@ -101,7 +101,7 @@ SPACE = &20                                 ; Parameter parsing SPACE character 
 romTypeByte = &82
 
 \\ ROM version number
-romVersion = &01
+romVersion = &04
 
 \\ Start of the actual code
 ORG &8000                                   ; Assemble at &8000
@@ -116,7 +116,7 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
     EQUB copyright MOD 256                  ; Offset pointer to copyright string
     EQUB romVersion                         ; Version number
     EQUS "BeebSCSI Utilities", 0            ; Title string (null terminated)
-    EQUS "1.03"                             ; Version string (terminated by 0 before (c))
+    EQUS "1.04"                             ; Version string (terminated by 0 before (c))
 
     .copyright
         EQUS 0, "(C)"                       ; Mandatory start of title string
@@ -317,6 +317,7 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
         INX                                 ; Found the end of the address, move to the first character 
                                             ; of the next command
         PLA : PHA : TAY                     ; Retrieve the original Y into A and preserve it again
+        DEY                                 ; Decrement character pointer by 1
         JMP compareCommandText              ; Start the command comparison again for the next command
 
     .commandTable
@@ -1173,12 +1174,12 @@ GUARD &C000                                 ; Do not exceed 16 Kbytes
     .displayTextTable
         ; 0 - stringStarHelp
         EQUB &0D
-        EQUS "BeebSCSI Utilities 1.03", &0D
+        EQUS "BeebSCSI Utilities 1.04", &0D
         EQUS "  BeebSCSI", &0D
         EQUB 0
         ; 1 - stringStarHelpExtended
         EQUB &0D
-        EQUS "BeebSCSI Utilities 1.03", &0D
+        EQUS "BeebSCSI Utilities 1.04", &0D
         EQUS "  SCSIDSC", &0D
         EQUS "  SCSISTATUS", &0D
         EQUS "  SCSITRACE  <0-255>", &0D
