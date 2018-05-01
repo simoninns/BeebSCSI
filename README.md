@@ -21,11 +21,11 @@ BeebSCSI_Utils - This folder contains BBC BASIC utilities for BeebSCSI
 
 ## Motivation
 
-Originally Acorn provided a SCSI solution based on 3 individual parts: The Acorn SCSI host adapter, the Adaptec ACB-4000 SCSI adapter and a physical MFM hard disc (a ‘Winchester drive’). Later, as part of the Domesday project (in 1986), this was extended to include the AIV SCSI Host Adapter (designed to be connected internally to a BBC Master Turbo) and the Philips VP415 LaserVision laser disc player with SCSI-1 support.
+Originally Acorn provided a SCSI solution based on 3 individual parts: The Acorn SCSI host adapter, the Adaptec ACB-4000 SCSI adapter and a physical MFM hard disc (a â€˜Winchester driveâ€™). Later, as part of the Domesday project (in 1986), this was extended to include the AIV SCSI Host Adapter (designed to be connected internally to a BBC Master Turbo) and the Philips VP415 LaserVision laser disc player with SCSI-1 support.
 
 BeebSCSI 7 is a credit-card sized board that provides a single-chip implementation of the host adapter board (both original and AIV) using a modern CPLD (Complex Programmable Logic Device). In addition, an AVR Microcontroller provides a complete SCSI-1 emulation including the vendor specific video control commands of the VP415.
 
-Rather than using a physical hard drive, BeebSCSI uses a single Micro SD card to provide up to >64Gbytes of storage with support for either 4 (ADFS) or 8 (VFS) virtual hard drives (or ‘LUNs’) per card. In addition, in the BBC Master, two BeebSCSI devices can be attached, one internal and one external, providing 12 SCSI LUNs (hard drive images) simultaneously.
+Rather than using a physical hard drive, BeebSCSI uses a single Micro SD card to provide up to >64Gbytes of storage with support for either 4 (ADFS) or 8 (VFS) virtual hard drives (or â€˜LUNsâ€™) per card. In addition, in the BBC Master, two BeebSCSI devices can be attached, one internal and one external, providing 12 SCSI LUNs (hard drive images) simultaneously.
 
 ## Installation
 
@@ -49,3 +49,25 @@ BeebSCSI is written and maintained by Simon Inns.
 
     You should have received a copy of the GNU General Public License
     along with BeebSCSI.  If not, see <http://www.gnu.org/licenses/>.
+    
+## Hardware License (Creative Commons BY-SA 4.0)
+
+Please see the following link for details: https://creativecommons.org/licenses/by-sa/4.0/
+
+You are free to:
+
+Share - copy and redistribute the material in any medium or format
+Adapt - remix, transform, and build upon the material
+for any purpose, even commercially.
+
+This license is acceptable for Free Cultural Works.
+
+The licensor cannot revoke these freedoms as long as you follow the license terms.
+
+Under the following terms:
+
+Attribution - You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
+
+ShareAlike - If you remix, transform, or build upon the material, you must distribute your contributions under the same license as the original.
+
+No additional restrictions - You may not apply legal terms or technological measures that legally restrict others from doing anything the license permits.
