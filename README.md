@@ -35,7 +35,7 @@ Please see http://www.domesday86.com for detailed documentation on BeebSCSI
 
 BeebSCSI is written and maintained by Simon Inns.
 
-## License
+## Software License (GPLv3)
 
     BeebSCSI is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
