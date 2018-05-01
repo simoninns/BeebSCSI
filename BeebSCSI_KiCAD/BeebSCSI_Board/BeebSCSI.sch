@@ -504,4 +504,37 @@ F 3 "" H 6550 7500 50  0001 C CNN
 	1    6550 7500
 	1    0    0    -1  
 $EndComp
+$Comp
+L Mounting_Hole F1
+U 1 1 5AE87BFD
+P 4400 7400
+F 0 "F1" H 4400 7600 50  0000 C CNN
+F 1 "Fiducial" H 4400 7525 50  0000 C CNN
+F 2 "Fiducials:Fiducial_0.5mm_Dia_1mm_Outer" H 4400 7400 50  0001 C CNN
+F 3 "" H 4400 7400 50  0001 C CNN
+	1    4400 7400
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mounting_Hole F2
+U 1 1 5AE88650
+P 4750 7400
+F 0 "F2" H 4750 7600 50  0000 C CNN
+F 1 "Fiducial" H 4750 7525 50  0000 C CNN
+F 2 "Fiducials:Fiducial_0.5mm_Dia_1mm_Outer" H 4750 7400 50  0001 C CNN
+F 3 "" H 4750 7400 50  0001 C CNN
+	1    4750 7400
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mounting_Hole F3
+U 1 1 5AE888B4
+P 5100 7400
+F 0 "F3" H 5100 7600 50  0000 C CNN
+F 1 "Fiducial" H 5100 7525 50  0000 C CNN
+F 2 "Fiducials:Fiducial_0.5mm_Dia_1mm_Outer" H 5100 7400 50  0001 C CNN
+F 3 "" H 5100 7400 50  0001 C CNN
+	1    5100 7400
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC
