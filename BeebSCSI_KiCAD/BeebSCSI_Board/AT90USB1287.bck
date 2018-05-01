@@ -1,0 +1,13 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP AM26LS31
+D AM26LS31
+K Quadruple differential line driver
+$ENDCMP
+#
+$CMP AM26LS32
+D AM26LS33
+K Quadruple differential line receiver
+$ENDCMP
+#
+#End Doc Library
