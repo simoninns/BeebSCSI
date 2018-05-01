@@ -124,7 +124,7 @@ F 3 "" H 2450 2050 50  0001 C CNN
 $EndComp
 Text GLabel 2750 1150 2    60   Input ~ 0
 BBC_~IRQ
-Text GLabel 3350 1250 2    60   Input ~ 0
+Text GLabel 3950 1250 2    60   Input ~ 0
 BBC_~RST
 Text GLabel 2750 1350 2    60   Input ~ 0
 BBC_BD0
@@ -158,8 +158,6 @@ Text GLabel 2750 2750 2    60   Input ~ 0
 BBC_R/~W
 Wire Wire Line
 	2650 1150 2750 1150
-Wire Wire Line
-	2650 1250 3350 1250
 Wire Wire Line
 	3350 1450 2650 1450
 Wire Wire Line
@@ -597,8 +595,8 @@ Wire Wire Line
 Wire Wire Line
 	3100 3100 3100 2850
 Connection ~ 3100 2850
-Text Notes 4150 1450 0    60   ~ 0
-Note: D[0..7] requires 2K2 pull up and pull down\nresistors in order to be at TTL levels.  Since \nBeebSCSI provides terminating resistors, there is\nno need for them here.
+Text Notes 5550 1600 0    60   ~ 0
+Note: D[0..7] requires 2K2 pull up and pull down\nresistors in order to be at TTL levels.  Since \nBeebSCSI provides terminating resistors, there is\nno need for them here.\n\nD1 provides some protection against the board\nbeing inserting in reverse (since -5Vs would be\nconnected to ~RESET~)
 Text Notes 3700 4750 0    60   ~ 0
 Note: Pin 26 (0V) is used by BeebSCSI to detect if\nit is connected to the internal bus, so this board\nprovides a logic level 1 on the pin.  This board\nshould not be used with ANY other 1 Mhz bus\ndevice unless this pin is disconnected.
 $Comp
@@ -634,4 +632,19 @@ F 3 "" H 6700 7200 50  0001 C CNN
 	1    6700 7200
 	1    0    0    -1  
 $EndComp
+$Comp
+L 1N4148 D1
+U 1 1 5AE8881C
+P 3550 1250
+F 0 "D1" H 3550 1350 50  0000 C CNN
+F 1 "1N4148" H 3550 1150 50  0000 C CNN
+F 2 "Diodes_SMD:D_SOD-123F" H 3550 1075 50  0001 C CNN
+F 3 "" H 3550 1250 50  0001 C CNN
+	1    3550 1250
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	2650 1250 3400 1250
+Wire Wire Line
+	3700 1250 3950 1250
 $EndSCHEMATC
