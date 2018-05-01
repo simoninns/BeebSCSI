@@ -31,6 +31,72 @@ LIBS:opto
 LIBS:atmel
 LIBS:contrib
 LIBS:valves
+LIBS:74xgxx
+LIBS:ac-dc
+LIBS:actel
+LIBS:allegro
+LIBS:Altera
+LIBS:analog_devices
+LIBS:battery_management
+LIBS:bbd
+LIBS:bosch
+LIBS:brooktre
+LIBS:cmos_ieee
+LIBS:dc-dc
+LIBS:diode
+LIBS:elec-unifil
+LIBS:ESD_Protection
+LIBS:ftdi
+LIBS:gennum
+LIBS:graphic
+LIBS:graphic_symbols
+LIBS:hc11
+LIBS:infineon
+LIBS:intersil
+LIBS:ir
+LIBS:Lattice
+LIBS:leds
+LIBS:LEM
+LIBS:logic_programmable
+LIBS:logo
+LIBS:maxim
+LIBS:mechanical
+LIBS:microchip_dspic33dsc
+LIBS:microchip_pic10mcu
+LIBS:microchip_pic12mcu
+LIBS:microchip_pic16mcu
+LIBS:microchip_pic18mcu
+LIBS:microchip_pic24mcu
+LIBS:microchip_pic32mcu
+LIBS:modules
+LIBS:motor_drivers
+LIBS:msp430
+LIBS:nordicsemi
+LIBS:nxp
+LIBS:nxp_armmcu
+LIBS:onsemi
+LIBS:Oscillators
+LIBS:Power_Management
+LIBS:powerint
+LIBS:pspice
+LIBS:references
+LIBS:rfcom
+LIBS:RFSolutions
+LIBS:sensors
+LIBS:silabs
+LIBS:stm8
+LIBS:stm32
+LIBS:supertex
+LIBS:transf
+LIBS:triac_thyristor
+LIBS:ttl_ieee
+LIBS:video
+LIBS:wiznet
+LIBS:Worldsemi
+LIBS:Xicor
+LIBS:zetex
+LIBS:Zilog
+LIBS:VFS_Adapter-cache
 EELAYER 25 0
 EELAYER END
 $Descr A4 11693 8268
@@ -417,10 +483,10 @@ Wire Wire Line
 Wire Wire Line
 	3650 6600 4500 6600
 $Comp
-L Polyfuse F1
+L Polyfuse PF1
 U 1 1 5AE848B5
 P 3500 2850
-F 0 "F1" V 3400 2850 50  0000 C CNN
+F 0 "PF1" V 3400 2850 50  0000 C CNN
 F 1 "Polyfuse" V 3600 2850 50  0000 C CNN
 F 2 "Fuse_Holders_and_Fuses:Fuse_SMD1206_HandSoldering" H 3550 2650 50  0001 L CNN
 F 3 "" H 3500 2850 50  0001 C CNN
@@ -535,4 +601,37 @@ Text Notes 4150 1450 0    60   ~ 0
 Note: D[0..7] requires 2K2 pull up and pull down\nresistors in order to be at TTL levels.  Since \nBeebSCSI provides terminating resistors, there is\nno need for them here.
 Text Notes 3700 4750 0    60   ~ 0
 Note: Pin 26 (0V) is used by BeebSCSI to detect if\nit is connected to the internal bus, so this board\nprovides a logic level 1 on the pin.  This board\nshould not be used with ANY other 1 Mhz bus\ndevice unless this pin is disconnected.
+$Comp
+L Mounting_Hole F1
+U 1 1 5AE87DDA
+P 6300 7200
+F 0 "F1" H 6300 7400 50  0000 C CNN
+F 1 "Fiducial" H 6300 7325 50  0000 C CNN
+F 2 "Fiducials:Fiducial_0.5mm_Dia_1mm_Outer" H 6300 7200 50  0001 C CNN
+F 3 "" H 6300 7200 50  0001 C CNN
+	1    6300 7200
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mounting_Hole F2
+U 1 1 5AE87E3C
+P 6300 7550
+F 0 "F2" H 6300 7750 50  0000 C CNN
+F 1 "Fiducial" H 6300 7675 50  0000 C CNN
+F 2 "Fiducials:Fiducial_0.5mm_Dia_1mm_Outer" H 6300 7550 50  0001 C CNN
+F 3 "" H 6300 7550 50  0001 C CNN
+	1    6300 7550
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mounting_Hole F3
+U 1 1 5AE87E72
+P 6700 7200
+F 0 "F3" H 6700 7400 50  0000 C CNN
+F 1 "Fiducial" H 6700 7325 50  0000 C CNN
+F 2 "Fiducials:Fiducial_0.5mm_Dia_1mm_Outer" H 6700 7200 50  0001 C CNN
+F 3 "" H 6700 7200 50  0001 C CNN
+	1    6700 7200
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC
