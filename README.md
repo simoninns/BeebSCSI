@@ -10,9 +10,9 @@ BeebSCSI_AVR - This is the AT90USB1287 microcontroller firmware (written in GCC)
 
 BeebSCSI_CPLD - This is the Xilinx XC9572XL CPLD firmware (written in ISE Verilog)
 
-BeebSCSI_Eagle - This folder contains the EagleCAD schematics and PCB designs (up to V7_4)
+BeebSCSI_Eagle - This folder contains the EagleCAD schematics and PCB designs (up to V7_5)
 
-BeebSCSI_KiCAD - This folder contains the KiCAD schematics and PCB designed (V7_5 and above)
+BeebSCSI_KiCAD - This folder contains the KiCAD schematics and PCB designed (V7_6 and above)
 
 BeebSCSI_ROM - This folder contains the 6502 assembly code for the BeebSCSI ROM
 
