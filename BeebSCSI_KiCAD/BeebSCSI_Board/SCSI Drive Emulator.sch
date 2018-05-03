@@ -301,7 +301,6 @@ Connection ~ 5850 1400
 Wire Wire Line
 	5950 1500 5950 1400
 Connection ~ 5950 1400
-NoConn ~ 4550 3900
 NoConn ~ 4550 3800
 NoConn ~ 4550 3700
 NoConn ~ 4550 3600
@@ -387,10 +386,6 @@ Connection ~ 2600 7350
 Wire Wire Line
 	2900 7250 2900 7350
 Connection ~ 2900 7350
-NoConn ~ 4550 3000
-NoConn ~ 4550 2900
-NoConn ~ 4550 2700
-NoConn ~ 4550 2600
 $Comp
 L R R3
 U 1 1 5AE7DF0F
@@ -409,9 +404,9 @@ Wire Wire Line
 Wire Wire Line
 	4450 1500 4450 1400
 Wire Wire Line
-	4550 3200 4300 3200
+	4300 3200 4550 3200
 Wire Wire Line
-	4300 3200 4300 1400
+	4300 1400 4300 3200
 Connection ~ 4450 1400
 $Comp
 L C C12
@@ -431,9 +426,9 @@ Wire Wire Line
 Wire Wire Line
 	4300 3300 4300 3450
 Wire Wire Line
-	3900 2400 3800 2400
+	3900 2400 3850 2400
 Wire Wire Line
-	3800 2400 3800 3300
+	3850 2400 3850 3300
 Connection ~ 4300 3300
 $Comp
 L GND #PWR025
@@ -495,7 +490,7 @@ Wire Wire Line
 Connection ~ 2700 2400
 Wire Wire Line
 	2700 2900 2700 3300
-Connection ~ 3800 3300
+Connection ~ 3850 3300
 Wire Wire Line
 	3400 2900 3400 3300
 Connection ~ 3400 3300
@@ -563,4 +558,140 @@ Wire Wire Line
 	4300 4200 4550 4200
 Wire Wire Line
 	4300 4300 4550 4300
+$Comp
+L Conn_01x04 J7
+U 1 1 5AEABA5E
+P 2200 3650
+F 0 "J7" H 2200 3850 50  0000 C CNN
+F 1 "USB" H 2200 3350 50  0000 C CNN
+F 2 "Connectors_JST:JST_EH_B04B-EH-A_04x2.50mm_Straight" H 2200 3650 50  0001 C CNN
+F 3 "" H 2200 3650 50  0001 C CNN
+	1    2200 3650
+	-1   0    0    -1  
+$EndComp
+$Comp
+L R R8
+U 1 1 5AEABAD8
+P 2950 3600
+F 0 "R8" V 3030 3600 50  0000 C CNN
+F 1 "22R" V 2950 3600 50  0000 C CNN
+F 2 "Resistors_SMD:R_0805" V 2880 3600 50  0001 C CNN
+F 3 "" H 2950 3600 50  0001 C CNN
+	1    2950 3600
+	0    1    1    0   
+$EndComp
+$Comp
+L R R9
+U 1 1 5AEABB40
+P 2950 3800
+F 0 "R9" V 3030 3800 50  0000 C CNN
+F 1 "22R" V 2950 3800 50  0000 C CNN
+F 2 "Resistors_SMD:R_0805" V 2880 3800 50  0001 C CNN
+F 3 "" H 2950 3800 50  0001 C CNN
+	1    2950 3800
+	0    1    1    0   
+$EndComp
+$Comp
+L C C14
+U 1 1 5AEABC18
+P 4050 3000
+F 0 "C14" H 4075 3100 50  0000 L CNN
+F 1 "1uF" H 4075 2900 50  0000 L CNN
+F 2 "Capacitors_SMD:C_0805" H 4088 2850 50  0001 C CNN
+F 3 "" H 4050 3000 50  0001 C CNN
+	1    4050 3000
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	4550 3000 4200 3000
+Wire Wire Line
+	3900 3000 3850 3000
+Connection ~ 3850 3000
+Wire Wire Line
+	4550 2900 4300 2900
+Connection ~ 4300 2900
+Wire Wire Line
+	4550 2700 3750 2700
+Wire Wire Line
+	3750 2700 3750 3600
+Wire Wire Line
+	3750 3600 3100 3600
+Wire Wire Line
+	4550 2600 3650 2600
+Wire Wire Line
+	3650 2600 3650 3800
+Wire Wire Line
+	3650 3800 3100 3800
+Wire Wire Line
+	2800 3600 2650 3600
+Wire Wire Line
+	2650 3600 2650 3650
+Wire Wire Line
+	2650 3650 2400 3650
+Wire Wire Line
+	2800 3800 2650 3800
+Wire Wire Line
+	2650 3800 2650 3750
+Wire Wire Line
+	2650 3750 2400 3750
+$Comp
+L +5V #PWR027
+U 1 1 5AEAC0E7
+P 2500 3450
+F 0 "#PWR027" H 2500 3300 50  0001 C CNN
+F 1 "+5V" H 2500 3590 50  0000 C CNN
+F 2 "" H 2500 3450 50  0001 C CNN
+F 3 "" H 2500 3450 50  0001 C CNN
+	1    2500 3450
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR028
+U 1 1 5AEAC122
+P 2500 4200
+F 0 "#PWR028" H 2500 3950 50  0001 C CNN
+F 1 "GND" H 2500 4050 50  0000 C CNN
+F 2 "" H 2500 4200 50  0001 C CNN
+F 3 "" H 2500 4200 50  0001 C CNN
+	1    2500 4200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2400 3550 2500 3550
+Wire Wire Line
+	2500 3550 2500 3450
+Wire Wire Line
+	2400 3850 2500 3850
+Wire Wire Line
+	2500 3850 2500 4200
+Text Notes 1900 3600 0    60   ~ 0
+VBus
+Text Notes 1900 3700 0    60   ~ 0
+D-
+Text Notes 1900 3800 0    60   ~ 0
+D+
+Text Notes 1900 3900 0    60   ~ 0
+GND
+$Comp
+L R R10
+U 1 1 5AEAC50C
+P 2950 4000
+F 0 "R10" V 3030 4000 50  0000 C CNN
+F 1 "10K" V 2950 4000 50  0000 C CNN
+F 2 "Resistors_SMD:R_0805" V 2880 4000 50  0001 C CNN
+F 3 "" H 2950 4000 50  0001 C CNN
+	1    2950 4000
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	4550 3900 3200 3900
+Wire Wire Line
+	3200 3900 3200 4000
+Wire Wire Line
+	3200 4000 3100 4000
+Wire Wire Line
+	2800 4000 2500 4000
+Connection ~ 2500 4000
+Text Notes 2150 4700 0    60   ~ 0
+Note: R10 indicates available USB\nhardware to the firmware
 $EndSCHEMATC
