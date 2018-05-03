@@ -232,7 +232,7 @@ U 1 1 5AE7D325
 P 8900 4600
 F 0 "J5" H 8900 4900 50  0000 C CNN
 F 1 "TTL Serial" H 8900 4200 50  0000 C CNN
-F 2 "Pin_Headers:Pin_Header_Angled_1x06_Pitch2.54mm" H 8900 4600 50  0001 C CNN
+F 2 "Pin_Headers:Pin_Header_Straight_1x06_Pitch2.54mm" H 8900 4600 50  0001 C CNN
 F 3 "" H 8900 4600 50  0001 C CNN
 	1    8900 4600
 	1    0    0    -1  
