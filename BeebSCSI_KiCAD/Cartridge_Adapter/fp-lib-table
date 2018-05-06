@@ -1,0 +1,5 @@
+(fp_lib_table
+  (lib (name "Acorn Cartridge edge-connector")(type KiCad)(uri "$(KIPRJMOD)/Acorn Cartridge edge-connector.pretty")(options "")(descr ""))
+  (lib (name "USB Female")(type KiCad)(uri "$(KIPRJMOD)/USB Female.pretty")(options "")(descr ""))
+  (lib (name Graphics)(type KiCad)(uri "$(KIPRJMOD)/Graphics.pretty")(options "")(descr ""))
+)
