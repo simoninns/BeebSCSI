@@ -1,4 +1,5 @@
 EESchema Schematic File Version 2
+LIBS:BeebSCSI-rescue
 LIBS:power
 LIBS:device
 LIBS:switches
@@ -105,8 +106,8 @@ $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 5
 Title "BeebSCSI"
-Date "2018-04-30"
-Rev "7_6"
+Date "2018-05-18"
+Rev "7_7"
 Comp "https://www.domesday86.com"
 Comment1 "(c)2018 Simon Inns"
 Comment2 "License: Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)"

@@ -1,4 +1,5 @@
 EESchema Schematic File Version 2
+LIBS:BeebSCSI-rescue
 LIBS:power
 LIBS:device
 LIBS:switches
@@ -105,8 +106,8 @@ $Descr A4 11693 8268
 encoding utf-8
 Sheet 4 5
 Title "BeebSCSI - SCSI Drive Emulator"
-Date "2018-04-30"
-Rev "7_6"
+Date "2018-05-18"
+Rev "7_7"
 Comp "https://www.domesday86.com"
 Comment1 "(c)2018 Simon Inns"
 Comment2 "License: Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)"
@@ -114,9 +115,11 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L AT90USB1287 IC1
+L AT90USB1287-RESCUE-BeebSCSI IC1
 U 1 1 5AE7CE35
 P 5950 3500
+AR Path="/5AE7CE35" Ref="IC1"  Part="1" 
+AR Path="/5AE695D3/5AE7CE35" Ref="IC1"  Part="1" 
 F 0 "IC1" H 4850 5400 60  0000 C CNN
 F 1 "AT90USB1287" H 5950 3400 60  0000 C CNN
 F 2 "Housings_QFP:TQFP-64_14x14mm_Pitch0.8mm" H 5950 3100 60  0001 C CNN
@@ -142,10 +145,6 @@ Text HLabel 7650 2500 2    60   Input ~ 0
 SCSI_D7
 Wire Wire Line
 	7650 1800 7250 1800
-Wire Wire Line
-	7250 1900 7650 1900
-Wire Wire Line
-	7650 2000 7250 2000
 Wire Wire Line
 	7250 2100 7650 2100
 Wire Wire Line
@@ -694,4 +693,8 @@ Wire Wire Line
 Connection ~ 2500 4000
 Text Notes 2150 4700 0    60   ~ 0
 Note: R10 indicates available USB\nhardware to the firmware
+Wire Wire Line
+	7250 1900 7650 1900
+Wire Wire Line
+	7250 2000 7650 2000
 $EndSCHEMATC
