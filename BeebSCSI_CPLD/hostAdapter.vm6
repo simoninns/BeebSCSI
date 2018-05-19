@@ -4,7 +4,7 @@ NDS_INFO | xc9500xl | 9572XL64 | XC9572XL-7-VQ64
 
 DEVICE | 9572XL | 9572XL64 | 
 
-NETWORK | hostAdapter | 0 | 0 | 16391
+NETWORK | hostAdapter | 0 | 0 | 49159
 
 INPUT_INSTANCE | 0 | 0 | NULL | bbc_ADDRESS_4_IBUF | hostAdapter_COPY_0_COPY_0 | 16 | 1 | 1
 INPUT_NODE_TYPE | 0 | 5 | II_IN

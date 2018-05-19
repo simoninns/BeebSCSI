@@ -3,7 +3,7 @@
  
 cpldfit:  version P.20131013                        Xilinx Inc.
                                   Fitter Report
-Design Name: hostAdapter                         Date: 10- 1-2017, 10:36AM
+Design Name: hostAdapter                         Date:  5-19-2018, 12:26PM
 Device Used: XC9572XL-7-VQ64
 Fitting Status: Successful
 
@@ -835,17 +835,17 @@ No. Name                           No. Name
  14 GND                              46 scsi_nREQ                     
  15 bbc_1MHZE                        47 scsi_nBSY                     
  16 bbc_RnW                          48 scsi_nMSG                     
- 17 KPR                              49 scsi_nRST                     
- 18 KPR                              50 scsi_nCONF                    
- 19 KPR                              51 KPR                           
- 20 KPR                              52 KPR                           
+ 17 PGND                             49 scsi_nRST                     
+ 18 PGND                             50 scsi_nCONF                    
+ 19 PGND                             51 PGND                          
+ 20 PGND                             52 PGND                          
  21 GND                              53 TDO                           
- 22 KPR                              54 GND                           
- 23 KPR                              55 VCC                           
- 24 KPR                              56 KPR                           
- 25 KPR                              57 bbc_ADDRESS<7>                
+ 22 PGND                             54 GND                           
+ 23 PGND                             55 VCC                           
+ 24 PGND                             56 PGND                          
+ 25 PGND                             57 bbc_ADDRESS<7>                
  26 VCC                              58 bbc_ADDRESS<6>                
- 27 KPR                              59 bbc_ADDRESS<5>                
+ 27 PGND                             59 bbc_ADDRESS<5>                
  28 TDI                              60 bbc_ADDRESS<4>                
  29 TMS                              61 bbc_ADDRESS<3>                
  30 TCK                              62 bbc_ADDRESS<2>                
@@ -879,7 +879,7 @@ Exhaustive Fitting                          : OFF
 Keep Unused Inputs                          : OFF
 Slew Rate                                   : FAST
 Power Mode                                  : STD
-Ground on Unused IOs                        : OFF
+Ground on Unused IOs                        : ON
 Set I/O Pin Termination                     : KEEPER
 Global Clock Optimization                   : ON
 Global Set/Reset Optimization               : ON

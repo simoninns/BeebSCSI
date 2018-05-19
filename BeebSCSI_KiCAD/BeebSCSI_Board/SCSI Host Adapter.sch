@@ -1,5 +1,4 @@
 EESchema Schematic File Version 2
-LIBS:BeebSCSI-rescue
 LIBS:power
 LIBS:device
 LIBS:switches
@@ -425,18 +424,6 @@ Wire Wire Line
 	4600 2500 4900 2500
 Wire Wire Line
 	4900 2600 4600 2600
-NoConn ~ 7000 1900
-NoConn ~ 7000 2000
-NoConn ~ 7000 2100
-NoConn ~ 7000 2200
-NoConn ~ 4900 2700
-NoConn ~ 4900 2800
-NoConn ~ 4900 2900
-NoConn ~ 4900 3000
-NoConn ~ 4900 3100
-NoConn ~ 7000 4200
-NoConn ~ 7000 4300
-NoConn ~ 7000 4400
 Text HLabel 4600 4700 0    60   Input ~ 0
 CPLD_JTAG_TDO
 Text HLabel 4600 4800 0    60   Input ~ 0
@@ -453,4 +440,82 @@ Wire Wire Line
 	4600 4900 4900 4900
 Wire Wire Line
 	4600 5000 4900 5000
+$Comp
+L GND #PWR020
+U 1 1 5B0026E8
+P 3650 3300
+F 0 "#PWR020" H 3650 3050 50  0001 C CNN
+F 1 "GND" H 3650 3150 50  0000 C CNN
+F 2 "" H 3650 3300 50  0001 C CNN
+F 3 "" H 3650 3300 50  0001 C CNN
+	1    3650 3300
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4900 3100 3650 3100
+Wire Wire Line
+	3650 3100 3650 3300
+Wire Wire Line
+	4900 2700 4800 2700
+Wire Wire Line
+	4800 2700 4800 3100
+Connection ~ 4800 3100
+Wire Wire Line
+	4900 2800 4800 2800
+Connection ~ 4800 2800
+Wire Wire Line
+	4900 2900 4800 2900
+Connection ~ 4800 2900
+Wire Wire Line
+	4900 3000 4800 3000
+Connection ~ 4800 3000
+Wire Wire Line
+	7000 2200 8100 2200
+Wire Wire Line
+	8100 2200 8100 2350
+Wire Wire Line
+	7000 1900 7100 1900
+Wire Wire Line
+	7100 1900 7100 2200
+Connection ~ 7100 2200
+Wire Wire Line
+	7000 2000 7100 2000
+Connection ~ 7100 2000
+Wire Wire Line
+	7000 2100 7100 2100
+Connection ~ 7100 2100
+Wire Wire Line
+	7000 4400 8100 4400
+Wire Wire Line
+	8100 4400 8100 4550
+Wire Wire Line
+	7000 4200 7100 4200
+Wire Wire Line
+	7100 4200 7100 4400
+Connection ~ 7100 4400
+Wire Wire Line
+	7000 4300 7100 4300
+Connection ~ 7100 4300
+$Comp
+L GND #PWR021
+U 1 1 5B002B90
+P 8100 2350
+F 0 "#PWR021" H 8100 2100 50  0001 C CNN
+F 1 "GND" H 8100 2200 50  0000 C CNN
+F 2 "" H 8100 2350 50  0001 C CNN
+F 3 "" H 8100 2350 50  0001 C CNN
+	1    8100 2350
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR022
+U 1 1 5B002BB4
+P 8100 4550
+F 0 "#PWR022" H 8100 4300 50  0001 C CNN
+F 1 "GND" H 8100 4400 50  0000 C CNN
+F 2 "" H 8100 4550 50  0001 C CNN
+F 3 "" H 8100 4550 50  0001 C CNN
+	1    8100 4550
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC

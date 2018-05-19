@@ -67,7 +67,7 @@
     <property xil_pn:name="Compile for HDL Debugging" xil_pn:value="true" xil_pn:valueState="default"/>
     <property xil_pn:name="Compile uni9000 (Functional) Simulation Library" xil_pn:value="true" xil_pn:valueState="default"/>
     <property xil_pn:name="Create IEEE 1532 Configuration File" xil_pn:value="false" xil_pn:valueState="default"/>
-    <property xil_pn:name="Create Programmable GND Pins on Unused I/O" xil_pn:value="false" xil_pn:valueState="default"/>
+    <property xil_pn:name="Create Programmable GND Pins on Unused I/O" xil_pn:value="true" xil_pn:valueState="non-default"/>
     <property xil_pn:name="Default Powerup Value of Registers" xil_pn:value="Low" xil_pn:valueState="default"/>
     <property xil_pn:name="Delay Values To Be Read from SDF" xil_pn:value="Setup Time" xil_pn:valueState="default"/>
     <property xil_pn:name="Device" xil_pn:value="xc9572xl" xil_pn:valueState="non-default"/>

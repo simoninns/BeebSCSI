@@ -7,6 +7,8 @@ templates
 xlnx_auto*
 _xmsgs
 xst
+webtalk*
+usage_statistics_webtalk
 
 *.bgn
 *.bit
