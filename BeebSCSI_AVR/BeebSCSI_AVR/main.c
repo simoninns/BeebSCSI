@@ -39,6 +39,7 @@
 #include "hostadapter.h"
 #include "statusled.h"
 #include "scsi.h"
+#include "usb.h"
 
 /*
 	BeebSCSI_7
@@ -85,6 +86,9 @@ int main(void)
 	
 	// Initialise the status LED
 	statusledInitialise();
+	
+	// Initialise the USB subsystem
+	usbInitialise();
 	
 	// Initialise the SCSI emulation
 	scsiInitialise();

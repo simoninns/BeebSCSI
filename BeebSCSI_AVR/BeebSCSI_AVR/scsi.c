@@ -37,6 +37,7 @@
 #include "hostadapter.h"
 #include "filesystem.h"
 #include "statusled.h"
+#include "usb.h"
 #include "scsi.h"
 #include "fcode.h"
 
@@ -90,7 +91,7 @@ void scsiInitialise(void)
 	// On a cold-start we always output debug information (ignoring the setting of the
 	// debug flags) - as this is useful for initial board testing
 	
-	debugString_P(PSTR("\r\n\r\nBeebSCSI initialising...\r\n\r\n"));
+	debugString_P(PSTR("\r\n\r\nBeebSCSI - Acorn SCSI-1 Emulation\r\n\r\n"));
 	debugString_P(PSTR("(c)2018 Simon Inns\r\n"));
 	debugString_P(PSTR("https://www.domesday86.com\r\n"));
 	debugString_P(PSTR("Open-source GPLv3 firmware\r\n"));
@@ -98,18 +99,6 @@ void scsiInitialise(void)
 	debugString_P(PSTR("Firmware: "));
 	debugString_P(PSTR(FIRMWARE_STRING));
 	debugString_P(PSTR("\r\n"));
-	
-	if (debugFlag_scsiState) debugString_P(PSTR("SCSI State: Initialising SCSI emulation\r\n"));
-	
-	// Clear the request sense error globals
-	for (lunNumber = 0; lunNumber < 8; lunNumber++)
-	{
-		requestSenseData[lunNumber].errorFlag = false;
-		requestSenseData[lunNumber].validAddressFlag = false;
-		requestSenseData[lunNumber].errorClass = 0x00;
-		requestSenseData[lunNumber].errorCode = 0x00;
-		requestSenseData[lunNumber].logicalBlockAddress = 0x00;
-	}
 	
 	// Determine the emulation mode (fixed or LV-DOS)
 	if (hostadapterConnectedToExternalBus())
@@ -123,7 +112,28 @@ void scsiInitialise(void)
 		debugString_P(PSTR("Emulation mode is Philips VP415 (VFS LaserDisc player)\r\n"));
 	}
 	
+	// Show the USB status
+	if (usbHardwareDetect()) {
+		// USB hardware present
+		debugString_P(PSTR("USB capable board detected\r\n"));
+		} else {
+		// No USB hardware
+		debugString_P(PSTR("USB capable board not detected\r\n"));
+	}
+	
 	debugString_P(PSTR("\r\n"));
+	
+	if (debugFlag_scsiState) debugString_P(PSTR("SCSI State: Initialising SCSI emulation\r\n"));
+	
+	// Clear the request sense error globals
+	for (lunNumber = 0; lunNumber < 8; lunNumber++)
+	{
+		requestSenseData[lunNumber].errorFlag = false;
+		requestSenseData[lunNumber].validAddressFlag = false;
+		requestSenseData[lunNumber].errorClass = 0x00;
+		requestSenseData[lunNumber].errorCode = 0x00;
+		requestSenseData[lunNumber].logicalBlockAddress = 0x00;
+	}
 	
 	// Set the initial SCSI emulation state
 	scsiState = SCSI_BUSFREE;
@@ -275,8 +285,8 @@ void scsiProcessEmulation(void)
 		if (debugFlag_scsiState) debugString_P(PSTR("SCSI State: ERROR: Invalid SCSI state!\r\n"));
 	}
 	
-	// Turn the status LED on whenever we are not in the bus free state
-	if (scsiState == SCSI_BUSFREE) statusledOff(); else statusledOn();
+	// Show activity using the status LED on whenever we are not in the bus free state
+	if (scsiState == SCSI_BUSFREE) statusledActivity(0); else statusledActivity(1);
 }
 
 // SCSI Bus state emulation functions -------------------------------------------------------------

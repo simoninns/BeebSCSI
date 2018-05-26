@@ -37,8 +37,6 @@
 void statusledInitialise(void);
 void statusledReset(void);
 
-void statusledOn(void);
-void statusledOff(void);
-
+void statusledActivity(uint8_t state);
 
 #endif /* STATUSLED_H_ */

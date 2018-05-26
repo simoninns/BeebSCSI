@@ -1,7 +1,7 @@
 /************************************************************************
-	statusled.c
+	usb.h
 
-	BeebSCSI status LED functions
+	BeebSCSI USB functions
     BeebSCSI - BBC Micro SCSI Drive Emulator
     Copyright (C) 2018 Simon Inns
 
@@ -24,35 +24,17 @@
 
 ************************************************************************/
 
-// Global includes
-#include <avr/io.h>
+#ifndef USB_H_
+#define USB_H_
 
-#include <stdbool.h>
-#include <stdio.h>
+// USB hardware indicator (indicates board 7_7 and above)
+#define USBIND_PORT	PORTF
+#define USBIND_PIN	PINF
+#define USBIND_DDR	DDRF
+#define USBIND		(1 << 3)
 
-// Local includes
-#include "uart.h"
-#include "debug.h"
-#include "statusled.h"
+// Function prototypes
+void usbInitialise(void);
+bool usbHardwareDetect(void);
 
-// Initialise status LED (called on a cold-start of the AVR)
-void statusledInitialise(void)
-{
-	// Configure the status LED
-	STATUS_LED_DDR |= STATUS_LED; // Output
-	STATUS_LED_PORT |= STATUS_LED; // Pin = 1 (off)
-}
-
-// Reset the status LED (called when the host signals reset)
-void statusledReset(void)
-{
-	// Turn the activity indication off
-	statusledActivity(0);
-}
-
-// Show activity using the status LED
-void statusledActivity(uint8_t state)
-{
-	if (state == 1) STATUS_LED_PORT &= ~STATUS_LED; // Pin = 0 (on)
-	else STATUS_LED_PORT |= STATUS_LED; // Pin = 1 (off)
-}
+#endif /* USB_H_ */

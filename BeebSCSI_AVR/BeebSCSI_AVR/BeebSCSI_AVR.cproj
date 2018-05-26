@@ -199,6 +199,12 @@
     <Compile Include="uart.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="usb.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="usb.h">
+      <SubType>compile</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="fatfs" />
