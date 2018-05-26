@@ -45,7 +45,7 @@
 	(c)2016 Simon Inns
 	http://www.waitingforfriday.com
 
-	Target PCB version: BeebSCSI 7_3
+	Target PCB version: BeebSCSI 7_7
 	CC Licensed Open Source Hardware
 	GPL Licensed Open Source Software
 

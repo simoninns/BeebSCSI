@@ -43,7 +43,8 @@
 // Define the major and minor firmware version number returned
 // by the BSSENSE command
 #define FIRMWARE_MAJOR		0x02
-#define FIRMWARE_MINOR		0x03
+#define FIRMWARE_MINOR		0x04
+#define FIRMWARE_STRING		"V002.004"
 
 // Global for the emulation mode (fixed or removable drive)
 // Note: The fixed mode emulates SCSI-1 compliant hard drives for the Beeb
@@ -86,6 +87,18 @@ void scsiInitialise(void)
 {
 	uint8_t lunNumber;
 	
+	// On a cold-start we always output debug information (ignoring the setting of the
+	// debug flags) - as this is useful for initial board testing
+	
+	debugString_P(PSTR("\r\n\r\nBeebSCSI initialising...\r\n\r\n"));
+	debugString_P(PSTR("(c)2018 Simon Inns\r\n"));
+	debugString_P(PSTR("https://www.domesday86.com\r\n"));
+	debugString_P(PSTR("Open-source GPLv3 firmware\r\n"));
+	debugString_P(PSTR("\r\n"));
+	debugString_P(PSTR("Firmware: "));
+	debugString_P(PSTR(FIRMWARE_STRING));
+	debugString_P(PSTR("\r\n"));
+	
 	if (debugFlag_scsiState) debugString_P(PSTR("SCSI State: Initialising SCSI emulation\r\n"));
 	
 	// Clear the request sense error globals
@@ -102,13 +115,15 @@ void scsiInitialise(void)
 	if (hostadapterConnectedToExternalBus())
 	{
 		emulationMode = FIXED_EMULATION;
-		if (debugFlag_scsiState) debugString_P(PSTR("SCSI State: Fixed drive SCSI emulation\r\n"));
+		debugString_P(PSTR("Emulation mode is Winchester (ADFS SCSI-1 hard-drive)\r\n"));
 	}
 	else
 	{
 		emulationMode = LVDOS_EMULATION;
-		if (debugFlag_scsiState) debugString_P(PSTR("SCSI State: VP415 Laser Video Disc emulation\r\n"));
+		debugString_P(PSTR("Emulation mode is Philips VP415 (VFS LaserDisc player)\r\n"));
 	}
+	
+	debugString_P(PSTR("\r\n"));
 	
 	// Set the initial SCSI emulation state
 	scsiState = SCSI_BUSFREE;
@@ -119,7 +134,26 @@ void scsiReset(void)
 {
 	uint8_t lunNumber;
 	
-	if (debugFlag_scsiState) debugString_P(PSTR("SCSI State: Resetting SCSI emulation\r\n"));
+	if (debugFlag_scsiState) {
+		debugString_P(PSTR("\r\n\r\nSCSI State: Resetting SCSI emulation\r\n"));
+		debugString_P(PSTR("SCSI State: Firmware: "));
+		debugString_P(PSTR(FIRMWARE_STRING));
+		debugString_P(PSTR("\r\n"));
+		
+		// Determine the emulation mode (fixed or LV-DOS)
+		if (hostadapterConnectedToExternalBus())
+		{
+			emulationMode = FIXED_EMULATION;
+			debugString_P(PSTR("Emulation mode is Winchester (ADFS SCSI-1 hard-drive)\r\n"));
+		}
+		else
+		{
+			emulationMode = LVDOS_EMULATION;
+			debugString_P(PSTR("Emulation mode is Philips VP415 (VFS LaserDisc player)\r\n"));
+		}
+		
+		debugString_P(PSTR("\r\n"));
+	}
 	
 	// Clear the request sense error globals
 	for (lunNumber = 0; lunNumber < 8; lunNumber++)
