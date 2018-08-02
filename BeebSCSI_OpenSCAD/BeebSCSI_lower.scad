@@ -109,7 +109,7 @@ module lowerCase(x, y, z,
                 cube([0.7, pcbWidth + widthClearance - 21, 2], center = false);
             
             // Import the BeebSCSI logo text
-            translate([pcbLength + lengthClearance + 2, 3, 3]) {
+            translate([pcbLength + lengthClearance + 1.65, 3, 3]) {
                 rotate(a = 90, v=[1, 0, 0])
                 rotate(a = 90, v=[0, 1, 0])
                 scale(v = [0.4, 0.4, 1])

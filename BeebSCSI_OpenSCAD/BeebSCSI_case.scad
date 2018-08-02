@@ -35,7 +35,7 @@ include <BeebSCSI_upper.scad>;
 
 // Choose options:
 
-// Include the PCB model as appropriate (based on the render option below)?
+// Include the PCB model?
 includePcb = true;
 
 // 0 = Render the whole case
@@ -55,6 +55,9 @@ includePowerPort = false;
 
 // Include a port for the USB connector?
 includeUsbPort = false;
+
+// Include the BeebSCSI logo on the upper case?
+includeLogo = true;
 
 // Height of the lower case part in mm (minimum is 15mm to clear the IDC connector)
 // Note: the upper case will add 2 mm more height to the lower case
@@ -93,7 +96,8 @@ if (renderOption == 1) {
         pcbWidthClearance, pcbLengthClearance,
         lowerCaseHeight,
         includeSerialPort, includePowerPort, includeUsbPort);
-    upperCase(0, 0, lowerCaseHeight + 50, pcbWidthClearance, pcbLengthClearance, lowerCaseHeight);
+    upperCase(0, 0, lowerCaseHeight + 50, pcbWidthClearance, pcbLengthClearance,
+        lowerCaseHeight, includeLogo);
 }
 
 // 2 = Render the just the lower case part (use this for preparing STL files)
@@ -110,7 +114,8 @@ if (renderOption == 2) {
 if (renderOption == 3) {
     // Render the FR4 PCB (1.6mm board thickness)
     if (includePcb) renderPcb(0, pcbWidthClearance + 2, 4);
-    upperCase(0, 0, 0, pcbWidthClearance, pcbLengthClearance, lowerCaseHeight);
+    upperCase(0, 0, 0, pcbWidthClearance, pcbLengthClearance,
+        lowerCaseHeight, includeLogo);
 }
 
 // 4 = Render the just the upper case part (use this for preparing STL files)
@@ -119,6 +124,7 @@ if (renderOption == 4) {
     // Render the FR4 PCB (1.6mm board thickness)
     if (includePcb) renderPcb(0, pcbWidthClearance + 2, 4);
     rotate(a = 180, v = [1, 0, 0]) translate([0, 0, -2])
-        upperCase(0, 0, 0, pcbWidthClearance, pcbLengthClearance, lowerCaseHeight);
+        upperCase(0, 0, 0, pcbWidthClearance, pcbLengthClearance,
+            lowerCaseHeight, includeLogo);
 }
 

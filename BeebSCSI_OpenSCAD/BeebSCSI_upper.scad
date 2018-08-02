@@ -34,12 +34,14 @@ include <BeebSCSI_logo.scad>;
 // widthClearance = mm of clearance around the sides of the PCB
 // lengthClearance = mm of clearance at the front of the PCB
 // lowerCaseHeight = height of the lower case in mm (minimum is 15mm)
+// includeLogo = true if logo should be included
 
 // Note: Screw holes are designed for M3 6mm counter-sunk head screws
 
 module upperCase(x, y, z,
     widthClearance, lengthClearance,
-    lowerCaseHeight)
+    lowerCaseHeight,
+    includeLogo)
 {
     // Height of the upper case
     height = 4;
@@ -47,6 +49,10 @@ module upperCase(x, y, z,
     // Size of the PCB
     pcbLength = 65.5;
     pcbWidth = 51;
+    
+    // Logo grid and hole sizes
+    logoGrid = 2.5;
+    logoHole = 1.2;
     
     // Calculate total clearance
     widthClearance = widthClearance * 2;
@@ -59,9 +65,11 @@ module upperCase(x, y, z,
                 center = false);
             
             // Add the BeebSCSI logo
-            translate([((pcbLength + lengthClearance) / 2) - ((19 * 1.5) / 2),
-                ((pcbWidth + widthClearance + 4) / 2) - ((17 * 1.5) / 2) + 2, 0])
-                rotate(a = 90, v=[0,0,1]) drawLogo(1.5, 0.7, 0.7, 2);
+            if (includeLogo) {
+                translate([((pcbLength + lengthClearance) / 2) - ((19 * logoGrid) / 2),
+                    ((pcbWidth + widthClearance + 4) / 2) - ((17 * logoGrid) / 2) + 1, 0])
+                    rotate(a = 90, v=[0,0,1]) drawLogo(logoGrid, logoHole, logoHole, 2);
+            }
         }
         
         // Left
@@ -98,4 +106,4 @@ module upperCase(x, y, z,
 }
 
 // Render (for testing)
-//upperCase(0, 0, 0, 6, 6, 15);
+//upperCase(0, 0, 0, 6, 6, 15, true);
