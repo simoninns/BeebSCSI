@@ -1,4 +1,4 @@
-## Synopsis
+﻿## Synopsis
 
 BeebSCSI is a Micro SD Card based SCSI storage emulation for the Acorn 8-bit range of microcomputers including the Acorn BBC Model B (with ADFS) and the BBC Master 128.
 
@@ -11,6 +11,8 @@ BeebSCSI_AVR - This is the AT90USB1287 microcontroller firmware (written in GCC)
 BeebSCSI_CPLD - This is the Xilinx XC9572XL CPLD firmware (written in ISE Verilog)
 
 BeebSCSI_KiCAD - This folder contains the KiCAD schematics and PCB designed (V7_6 and above)
+
+BeebSCSI_OpenSCAD - This folder contains a 3D printable case designed in OpenSCAD
 
 BeebSCSI_ROM - This folder contains the 6502 assembly code for the BeebSCSI ROM
 
