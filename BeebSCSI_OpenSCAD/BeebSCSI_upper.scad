@@ -67,7 +67,7 @@ module upperCase(x, y, z,
             // Add the BeebSCSI logo
             if (includeLogo) {
                 translate([((pcbLength + lengthClearance) / 2) - ((19 * logoGrid) / 2),
-                    ((pcbWidth + widthClearance + 4) / 2) - ((17 * logoGrid) / 2) + 1, 0])
+                    ((pcbWidth + widthClearance + 4) / 2) - ((17 * logoGrid) / 2) + 1.3, 0])
                     rotate(a = 90, v=[0,0,1]) drawLogo(logoGrid, logoHole, logoHole, 2);
             }
         }
