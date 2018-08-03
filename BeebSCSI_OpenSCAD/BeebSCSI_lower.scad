@@ -35,12 +35,13 @@
 // iSerial = include serial port true/false
 // iPower = include power port true/false
 // iUsb = include USB port true/false
+// iVents = include vents in base (reduces printing time)
 
 // Note: Screw holes are designed for M3 6mm counter-sunk head screws
 
 module lowerCase(x, y, z,
     widthClearance, lengthClearance, height,
-    iSerial, iPower, iUsb)
+    iSerial, iPower, iUsb, iVents)
 {
     // Size of the PCB (constants)
     pcbLength = 65.5;
@@ -54,6 +55,23 @@ module lowerCase(x, y, z,
         // Base
         difference() {
             cube([pcbLength + lengthClearance, pcbWidth + widthClearance + 2, 2], center = false);
+            
+            if (iVents) {
+                translate([8, 2 + (widthClearance / 2), 0])
+                    cube([4, pcbWidth, 2], center = false);
+                
+                translate([18, 2 + (widthClearance / 2), 0])
+                    cube([4, pcbWidth, 2], center = false);
+                
+                translate([28, 2 + (widthClearance / 2), 0])
+                    cube([4, pcbWidth, 2], center = false);
+                
+                translate([38, 2 + (widthClearance / 2), 0])
+                    cube([4, pcbWidth, 2], center = false);
+                
+                translate([48, 2 + (widthClearance / 2), 0])
+                    cube([4, pcbWidth, 2], center = false);
+            }
             
             // Draw the front screw holes
             translate([pcbLength, 2 + (widthClearance / 2), 0]) {
@@ -175,5 +193,5 @@ module lowerCase(x, y, z,
 
 // Render for testing
 //lowerCase(0, 0, 0,
-//    6, 8, 15,
-//    true, true, true);
+//    2, 2, 15,
+//    true, true, true, true);

@@ -59,6 +59,9 @@ includeUsbPort = false;
 // Include the BeebSCSI logo on the upper case?
 includeLogo = true;
 
+// Include vents on the lower case?
+includeVents = true;
+
 // Height of the lower case part in mm (minimum is 15mm to clear the IDC connector)
 // Note: the upper case will add 2 mm more height to the lower case
 lowerCaseHeight = 15;
@@ -83,7 +86,7 @@ if (renderOption == 0) {
     lowerCase(0, 0, 0,
         pcbWidthClearance, pcbLengthClearance,
         lowerCaseHeight,
-        includeSerialPort, includePowerPort, includeUsbPort);
+        includeSerialPort, includePowerPort, includeUsbPort, includeVents);
     upperCase(0, 0, lowerCaseHeight, pcbWidthClearance, pcbLengthClearance,
         lowerCaseHeight);
 }
@@ -95,7 +98,7 @@ if (renderOption == 1) {
     lowerCase(0, 0, 0,
         pcbWidthClearance, pcbLengthClearance,
         lowerCaseHeight,
-        includeSerialPort, includePowerPort, includeUsbPort);
+        includeSerialPort, includePowerPort, includeUsbPort, includeVents);
     upperCase(0, 0, lowerCaseHeight + 50, pcbWidthClearance, pcbLengthClearance,
         lowerCaseHeight, includeLogo);
 }
@@ -107,7 +110,7 @@ if (renderOption == 2) {
     lowerCase(0, 0, 0,
         pcbWidthClearance, pcbLengthClearance,
         lowerCaseHeight,
-        includeSerialPort, includePowerPort, includeUsbPort);
+        includeSerialPort, includePowerPort, includeUsbPort, includeVents);
 }
 
 // 3 = Render the just the upper case part
