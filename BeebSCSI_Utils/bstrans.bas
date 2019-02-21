@@ -193,8 +193,7 @@
  1930REPEAT
  1940  REM Read the data from the FAT file
  1950  IF remainingBytes% < transferSize% THEN transferSize% = remainingBytes%
- 1960  reqBlocks% = transferSize% / 256
- 1970  IF reqBlocks% = 0 THEN reqBlocks% = 1 : REM Ensure at least 1 block
+                                                                                                   1960  reqBlocks% = (transferSize% / 256) + 1
  1980  PRINT TAB(0,11);"Reading from FAT"
  1990  PROCgetFatData(fileId%, currentBlock%, reqBlocks%)
  2000  currentBlock% = currentBlock% + reqBlocks%
