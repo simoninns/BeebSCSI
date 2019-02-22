@@ -192,20 +192,17 @@
  1920PRINT TAB(0,12); "Bytes remaining: "; remainingBytes%
  1930REPEAT
  1940  REM Read the data from the FAT file
- 1950  IF remainingBytes% < transferSize% THEN transferSize% = remainingBytes%
- 1960  reqBlocks% = transferSize% / 256
- 1970  IF reqBlocks% = 0 THEN reqBlocks% = 1 : REM Ensure at least 1 block
+ 1950  IF remainingBytes% < transferSize% THEN reqBlocks% = (remainingBytes% / 256)+1 ELSE reqBlocks% = (transferSize% / 256)
  1980  PRINT TAB(0,11);"Reading from FAT"
  1990  PROCgetFatData(fileId%, currentBlock%, reqBlocks%)
  2000  currentBlock% = currentBlock% + reqBlocks%
  2010  :
  2020  REM Write the data to the ADFS file
- 2030  IF remainingBytes% > transferSize% THEN bytesToWrite% = transferSize% ELSE bytesToWrite% = remainingBytes%
+ 2030  IF remainingBytes% < transferSize% THEN bytesToWrite% = remainingBytes% ELSE bytesToWrite% = transferSize% 
  2040  PRINT TAB(0,11);"Writing to ADFS "
  2050  PROCwriteDataToAdfs(fileHandle%, bytesToWrite%)
  2060  :
- 2070  remainingBytes% = remainingBytes% - (reqBlocks% * 256)
- 2080  IF remainingBytes% < 0 THEN remainingBytes% = 0
+ 2070  remainingBytes% = remainingBytes% - bytesToWrite%
  2090  PRINT TAB(0,12); "Bytes remaining: "; remainingBytes%; "           ";
  2100  :
  2110UNTIL remainingBytes% = 0
