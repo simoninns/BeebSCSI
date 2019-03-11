@@ -28,6 +28,7 @@
 #include <avr/pgmspace.h>
 #include <avr/interrupt.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -50,26 +51,42 @@ struct filesystemStateStruct
 	bool fsMountState;		// File system mount state (true = mounted, false = dismounted)
 	
 	uint8_t lunDirectory;	// Current LUN directory ID
+	uint8_t lunNumber;	// Current LUN number
 	bool fsLunStatus[8];	// LUN image availability flags for the currently selected LUN directory (true = started, false = stopped)
 	uint8_t fsLunUserCode[8][5];	// LUN 5-byte User code (used for F-Code interactions - only present for laser disc images)
 	
 } filesystemState;
 
-char fileName[255];			// String for storing LFN filename
-char fatDirectory[255];		// String for storing FAT directory (for FAT transfer operations)
+static char fileName[255];			// String for storing LFN filename
+static char fatDirectory[255];		// String for storing FAT directory (for FAT transfer operations)
 
-uint8_t sectorBuffer[SECTOR_BUFFER_SIZE];	// Buffer for reading sectors
-bool lunOpenFlag = false; // Flag to track when a LUN is open for read/write (to prevent multiple file opens)
+static uint8_t sectorBuffer[SECTOR_BUFFER_SIZE];	// Buffer for reading sectors
+static bool lunOpenFlag = false; // Flag to track when a LUN is open for read/write (to prevent multiple file opens)
 
 // Globals for multi-sector reading
-uint32_t sectorsInBuffer = 0;
-uint32_t currentBufferSector = 0;
-uint32_t sectorsRemaining = 0;
+static uint32_t sectorsInBuffer = 0;
+static uint32_t currentBufferSector = 0;
+static uint32_t sectorsRemaining = 0;
+
+#define SZ_TBL 64 // support upto 63 fragments
+uint32_t clmt[SZ_TBL];
 
 // Service FAT FS 100Hz system timer
 ISR(TIMER0_COMPA_vect)
 {
 	mmc_disk_timerproc();
+}
+
+static void filesystemFlush( void)
+{
+   // If a Lun is open close it
+   if (lunOpenFlag)
+   {
+      //Close the open file object
+      f_close(&filesystemState.fileObject);
+      lunOpenFlag = false;
+      if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemFlush(): Completed\r\n"));
+   }
 }
 
 // Function to initialise the file system control functions (called on a cold-start of the AVR)
@@ -87,6 +104,9 @@ void filesystemInitialise(void)
 	
 	// Enable interrupts globally
 	sei();
+	
+	// store table size at in the cluster array.
+	clmt[0] = SZ_TBL;
 	
 	// Mount the file system
 	filesystemMount();
@@ -145,6 +165,7 @@ void filesystemReset(void)
 // Function to mount the file system
 bool filesystemMount(void)
 {
+	filesystemFlush();
 	if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemMount(): Mounting file system\r\n"));
 	
 	// Is the file system already mounted?
@@ -214,6 +235,7 @@ bool filesystemMount(void)
 // Function to dismount the file system
 bool filesystemDismount(void)
 {
+	filesystemFlush();
 	if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemDismount(): Dismounting file system\r\n"));
 	
 	// Is the file system mounted?
@@ -514,6 +536,8 @@ bool filesystemCheckLunImage(uint8_t lunNumber)
 	uint32_t lunFileSize;
 	uint32_t lunDscSize;
 
+	filesystemFlush();
+	
 	// Attempt to open the LUN image
 	sprintf(fileName, "/BeebSCSI%d/scsi%d.dat", filesystemState.lunDirectory, lunNumber);
 	if (debugFlag_filesystem) debugStringInt16_P(PSTR("File system: filesystemCheckLunImage(): Checking for (.dat) LUN image "), (uint16_t)lunNumber, 1);
@@ -706,6 +730,8 @@ uint32_t filesystemGetLunSizeFromDsc(uint8_t lunDirectory, uint8_t lunNumber)
 	uint32_t cylinderCount;
 	uint32_t dataHeadCount;
 	
+	filesystemFlush();
+	
 	// Assemble the DSC file name
 	sprintf(fileName, "/BeebSCSI%d/scsi%d.dsc", lunDirectory, lunNumber);
 		
@@ -758,6 +784,8 @@ bool filesystemCreateDscFromLunImage(uint8_t lunDirectory, uint8_t lunNumber, ui
 	uint32_t heads;
 	uint16_t fsCounter;
 	
+	filesystemFlush();
+	
 	// Calculate the LUN file size in tracks (33 sectors per track, 256 bytes per sector)
 	
 	// Check that the LUN file size is actually a size which ADFS can support (the number of sectors is limited to a 21 bit number)
@@ -781,9 +809,11 @@ bool filesystemCreateDscFromLunImage(uint8_t lunDirectory, uint8_t lunNumber, ui
 	while ((lunFileSize % heads != 0) && heads != 1) heads--;
 	cylinders = lunFileSize / heads;
 	
-	if (debugFlag_filesystem) debugStringInt32_P(PSTR("File system: filesystemCreateDscFromLunImage(): LUN size in tracks (33 * 256 bytes) = "), lunFileSize, true);
-	if (debugFlag_filesystem) debugStringInt32_P(PSTR("File system: filesystemCreateDscFromLunImage(): Number of heads = "), heads, true);
-	if (debugFlag_filesystem) debugStringInt32_P(PSTR("File system: filesystemCreateDscFromLunImage(): Number of cylinders = "), cylinders, true);
+	if (debugFlag_filesystem) {
+		debugStringInt32_P(PSTR("File system: filesystemCreateDscFromLunImage(): LUN size in tracks (33 * 256 bytes) = "), lunFileSize, true);
+		debugStringInt32_P(PSTR("File system: filesystemCreateDscFromLunImage(): Number of heads = "), heads, true);
+		debugStringInt32_P(PSTR("File system: filesystemCreateDscFromLunImage(): Number of cylinders = "), cylinders, true);
+	}
 	
 	// The first 4 bytes are the Mode Select Parameter List (ACB-4000 manual figure 5-18)
 	sectorBuffer[ 0] = 0;		// Reserved (0)
@@ -827,10 +857,10 @@ bool filesystemCreateDscFromLunImage(uint8_t lunDirectory, uint8_t lunNumber, ui
 		if (filesystemState.fsResult != FR_OK  && fsCounter == 22)
 		{
 			// Something went wrong
-			if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemCreateDscFromLunImage(): ERROR: .dsc create failed\r\n"));
-			
 			if (debugFlag_filesystem)
 			{
+				debugString_P(PSTR("File system: filesystemCreateDscFromLunImage(): ERROR: .dsc create failed\r\n"));
+			
 				switch(filesystemState.fsResult)
 				{
 					case FR_DISK_ERR:
@@ -960,6 +990,7 @@ void filesystemGetUserCodeFromUcd(uint8_t lunDirectoryNumber, uint8_t lunNumber)
 {
 	uint16_t fsCounter;
 	
+	filesystemFlush();
 	// Assemble the UCD file name
 	sprintf(fileName, "/BeebSCSI%d/scsi%d.ucd", lunDirectoryNumber, lunNumber);
 	
@@ -1019,6 +1050,8 @@ uint8_t filesystemGetLunDirectory(void)
 // Function to create a new LUN image (makes an empty .dat file)
 bool filesystemCreateLunImage(uint8_t lunNumber)
 {
+	filesystemFlush();
+	
 	// Assemble the .dat file name
 	sprintf(fileName, "/BeebSCSI%d/scsi%d.dat", filesystemState.lunDirectory, lunNumber);
 	
@@ -1050,6 +1083,8 @@ bool filesystemCreateLunImage(uint8_t lunNumber)
 // Function to create a new LUN descriptor (makes an empty .dsc file)
 bool filesystemCreateLunDescriptor(uint8_t lunNumber)
 {
+	filesystemFlush();
+	
 	// Assemble the .dsc file name
 	sprintf(fileName, "/BeebSCSI%d/scsi%d.dsc", filesystemState.lunDirectory, lunNumber);
 	
@@ -1081,6 +1116,8 @@ bool filesystemCreateLunDescriptor(uint8_t lunNumber)
 // Function to read a LUN descriptor
 bool filesystemReadLunDescriptor(uint8_t lunNumber, uint8_t buffer[])
 {
+	filesystemFlush();
+	
 	// Assemble the .dsc file name
 	sprintf(fileName, "/BeebSCSI%d/scsi%d.dsc", filesystemState.lunDirectory, lunNumber);
 	
@@ -1116,6 +1153,7 @@ bool filesystemReadLunDescriptor(uint8_t lunNumber, uint8_t buffer[])
 // Function to write a LUN descriptor
 bool filesystemWriteLunDescriptor(uint8_t lunNumber, uint8_t buffer[])
 {
+	filesystemFlush();
 	
 	// Assemble the .dsc file name
 	sprintf(fileName, "/BeebSCSI%d/scsi%d.dsc", filesystemState.lunDirectory, lunNumber);
@@ -1153,6 +1191,8 @@ bool filesystemWriteLunDescriptor(uint8_t lunNumber, uint8_t buffer[])
 bool filesystemFormatLun(uint8_t lunNumber, uint8_t dataPattern)
 {
 	uint32_t requiredNumberOfSectors = 0;
+	
+	filesystemFlush();
 	
 	if (debugFlag_filesystem) debugStringInt16_P(PSTR("File system: filesystemFormatLun(): Formatting LUN image "), lunNumber, true);
 	
@@ -1234,33 +1274,42 @@ bool filesystemOpenLunForRead(uint8_t lunNumber, uint32_t startSector, uint32_t 
 {
 	uint32_t sectorsToRead = 0;
 	
-	// Ensure there isn't already a LUN image open
-	if (lunOpenFlag)
-	{
-		if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemOpenLunForRead(): ERROR: LUN image already open!\r\n"));
-		return false;	
-	}
-	
-	// Assemble the .dat file name
-	sprintf(fileName, "/BeebSCSI%d/scsi%d.dat", filesystemState.lunDirectory, lunNumber);
+	if (lunOpenFlag) 
+   	{
+      		// check that it is the same LUN
+      		if (filesystemState.lunNumber != lunNumber)
+         	filesystemFlush();
+   	}
 
-	// Open the DAT file
-	filesystemState.fsResult = f_open(&filesystemState.fileObject, fileName, FA_READ);
-	if (filesystemState.fsResult == FR_OK)
+   	if (!lunOpenFlag )
 	{
-		// Move to the correct point in the DAT file
-		// This is * 256 as each block is 256 bytes
-		filesystemState.fsResult = f_lseek(&filesystemState.fileObject, startSector * 256);
+		// Assemble the .dat file name
+		sprintf(fileName, "/BeebSCSI%d/scsi%d.dat", filesystemState.lunDirectory, lunNumber);
 
-		// Check that the file seek was OK
-		if (filesystemState.fsResult != FR_OK)
+		// Open the DAT file
+		filesystemState.fsResult = f_open(&filesystemState.fileObject, fileName, FA_READ | FA_WRITE);
+		if (filesystemState.fsResult == FR_OK)
 		{
-			// Something went wrong with seeking, do not retry
-			if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemOpenLunForRead(): ERROR: Unable to seek to required sector in LUN image file!\r\n"));
-			f_close(&filesystemState.fileObject);
-			return false;
+#if FF_USE_FASTSEEK
+     			((FIL*)(&filesystemState.fileObject))->cltbl = clmt;
+         		filesystemState.fsResult  = f_lseek(&filesystemState.fileObject, CREATE_LINKMAP);
+#endif
+			// Move to the correct point in the DAT file
+			// This is * 256 as each block is 256 bytes
+			filesystemState.fsResult = f_lseek(&filesystemState.fileObject, startSector * 256);
+			filesystemState.lunNumber = lunNumber;
+			// Check that the file seek was OK
+			if (filesystemState.fsResult != FR_OK)
+			{
+				// Something went wrong with seeking, do not retry
+				if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemOpenLunForRead(): ERROR: Unable to seek to required sector in LUN image file!\r\n"));
+				f_close(&filesystemState.fileObject);
+				return false;
+			}
 		}
-	}
+	} else
+	      filesystemState.fsResult = f_lseek(&filesystemState.fileObject, startSector * 256);
+
 	
 	// Fill the file system sector buffer
 	sectorsToRead = requiredNumberOfSectors;
@@ -1349,13 +1398,7 @@ bool filesystemCloseLunForRead(void)
 	if (!lunOpenFlag)
 	{
 		if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemCloseLunForRead(): ERROR: No LUN image open!\r\n"));
-		return false;
 	}
-	
-	// Close the open file object
-	f_close(&filesystemState.fileObject);
-	lunOpenFlag = false;
-	if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemCloseLunForRead(): Completed\r\n"));
 	return false;
 }
 
@@ -1365,30 +1408,40 @@ bool filesystemOpenLunForWrite(uint8_t lunNumber, uint32_t startSector, uint32_t
 	// Ensure there isn't already a LUN image open
 	if (lunOpenFlag)
 	{
-		if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemOpenLunForWrite(): ERROR: LUN image already open!\r\n"));
-		return false;
+		// check that it is the same LUN Number 
+      		if (filesystemState.lunNumber != lunNumber)
+         		filesystemFlush();
 	}
 	
-	// Assemble the .dat file name
-	sprintf(fileName, "/BeebSCSI%d/scsi%d.dat", filesystemState.lunDirectory, lunNumber);
+	if (!lunOpenFlag )
+   	{
+		// Assemble the .dat file name
+		sprintf(fileName, "/BeebSCSI%d/scsi%d.dat", filesystemState.lunDirectory, lunNumber);
 
-	// Open the DAT file
-	filesystemState.fsResult = f_open(&filesystemState.fileObject, fileName,  FA_READ | FA_WRITE);
-	if (filesystemState.fsResult == FR_OK)
-	{
-		// Move to the correct point in the DAT file
-		// This is * 256 as each block is 256 bytes
-		filesystemState.fsResult = f_lseek(&filesystemState.fileObject, startSector * 256);
-
-		// Check that the file seek was OK
-		if (filesystemState.fsResult != FR_OK)
+		// Open the DAT file
+		filesystemState.fsResult = f_open(&filesystemState.fileObject, fileName,  FA_READ | FA_WRITE);
+		if (filesystemState.fsResult == FR_OK)
 		{
-			// Something went wrong with seeking, do not retry
-			if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemOpenLunForWrite(): ERROR: Unable to seek to required sector in LUN image file!\r\n"));
-			f_close(&filesystemState.fileObject);
-			return false;
+#if FF_USE_FASTSEEK
+         		((FIL*)(&filesystemState.fileObject))->cltbl = clmt;
+         		filesystemState.fsResult  = f_lseek(&filesystemState.fileObject, CREATE_LINKMAP);
+#endif
+			// Move to the correct point in the DAT file
+			// This is * 256 as each block is 256 bytes
+			filesystemState.fsResult = f_lseek(&filesystemState.fileObject, startSector * 256);
+			filesystemState.lunNumber = lunNumber;
+			// Check that the file seek was OK
+			if (filesystemState.fsResult != FR_OK)
+			{
+				// Something went wrong with seeking, do not retry
+				if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemOpenLunForWrite(): ERROR: Unable to seek to required sector in LUN image file!\r\n"));
+				f_close(&filesystemState.fileObject);
+				return false;
+			}
 		}
-	}
+	} else
+      		filesystemState.fsResult = f_lseek(&filesystemState.fileObject, startSector * 256);
+ 
 
 	// Exit with success
 	lunOpenFlag = true;
@@ -1429,13 +1482,7 @@ bool filesystemCloseLunForWrite(void)
 	if (!lunOpenFlag)
 	{
 		if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemCloseLunForWrite(): ERROR: No LUN image open!\r\n"));
-		return false;
 	}
-	
-	// Close the open file object
-	f_close(&filesystemState.fileObject);
-	lunOpenFlag = false;
-	if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemCloseLunForWrite(): Completed\r\n"));
 	return false;
 }
 
@@ -1446,10 +1493,12 @@ bool filesystemCloseLunForWrite(void)
 bool filesystemSetFatDirectory(uint8_t *buffer)
 {
 	sprintf(fatDirectory, "%s", buffer);
-	if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemSetFatDirectory(): FAT transfer directory changed to: "));
-	if (debugFlag_filesystem) debugString(fatDirectory);
-	if (debugFlag_filesystem) debugString_P(PSTR("\r\n"));
-	
+	if (debugFlag_filesystem) 
+	{
+		debugString_P(PSTR("File system: filesystemSetFatDirectory(): FAT transfer directory changed to: "));
+		debugString(fatDirectory);
+		debugString_P(PSTR("\r\n"));
+	}
 	return true;
 }
 
@@ -1466,6 +1515,8 @@ bool filesystemGetFatFileInfo(uint32_t fileNumber, uint8_t *buffer)
 {
 	uint16_t byteCounter;
 	uint32_t fileEntryNumber;
+	
+	filesystemFlush();
 	
 	// Is the file system mounted?
 	if (filesystemState.fsMountState == false)
@@ -1594,9 +1645,12 @@ bool filesystemGetFatFileInfo(uint32_t fileNumber, uint8_t *buffer)
 	{
 		// Directory
 		buffer[0] = 2; // directory entry is a directory
-		if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemGetFatFileInfo(): Directory entry is a directory called "));
-		if (debugFlag_filesystem) debugString(filesystemState.fsInfo.fname);
-		if (debugFlag_filesystem) debugString_P(PSTR("\r\n"));
+		if (debugFlag_filesystem)
+		{
+			debugString_P(PSTR("File system: filesystemGetFatFileInfo(): Directory entry is a directory called "));
+			debugString(filesystemState.fsInfo.fname);
+		 	debugString_P(PSTR("\r\n"));
+		}
 			
 		// Directories always have a file size of 0
 		buffer[1] = 0;
@@ -1614,9 +1668,12 @@ bool filesystemGetFatFileInfo(uint32_t fileNumber, uint8_t *buffer)
 	{
 		// File
 		buffer[0] = 1; // directory entry is a file
-		if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemGetFatFileInfo(): Directory entry is a file called "));
-		if (debugFlag_filesystem) debugString(filesystemState.fsInfo.fname);
-		if (debugFlag_filesystem) debugString_P(PSTR("\r\n"));
+		if (debugFlag_filesystem)
+		{
+			debugString_P(PSTR("File system: filesystemGetFatFileInfo(): Directory entry is a file called "));
+			debugString(filesystemState.fsInfo.fname);
+			debugString_P(PSTR("\r\n"));
+		}
 			
 		// Get the directory entry's file size in bytes (64-bit as we have exFAT configured)
 		uint64_t fileSize = (uint64_t)filesystemState.fsInfo.fsize;
@@ -1657,7 +1714,9 @@ bool filesystemGetFatFileInfo(uint32_t fileNumber, uint8_t *buffer)
 // Open a FAT file ready for reading
 bool filesystemOpenFatForRead(uint32_t fileNumber, uint32_t blockNumber)
 {
-	char fileName[512];
+	char tempfileName[512];
+	
+	filesystemFlush();
 	
 	// Is the file system mounted?
 	if (filesystemState.fsMountState == false)
@@ -1699,11 +1758,11 @@ bool filesystemOpenFatForRead(uint32_t fileNumber, uint32_t blockNumber)
 		else
 		{
 			// Assemble the full path name and file name for the requested file
-			sprintf(fileName, "%s/%s", fatDirectory, filesystemState.fsInfo.fname);
+			sprintf(tempfileName, "%s/%s", fatDirectory, filesystemState.fsInfo.fname);
 			f_closedir(&filesystemState.dirObject);
 
 			// Open the requested file for reading
-			filesystemState.fsResult = f_open(&filesystemState.fileObject, fileName, FA_READ);
+			filesystemState.fsResult = f_open(&filesystemState.fileObject, tempfileName, FA_READ);
 			if (filesystemState.fsResult != FR_OK)
 			{
 				if (debugFlag_filesystem)
