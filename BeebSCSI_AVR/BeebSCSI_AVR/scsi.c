@@ -101,13 +101,10 @@ void scsiInitialise(void)
 	debugString_P(PSTR("\r\n"));
 	
 	// Determine the emulation mode (fixed or LV-DOS)
-	if (hostadapterConnectedToExternalBus())
-	{
+	if (hostadapterConnectedToExternalBus()) {
 		emulationMode = FIXED_EMULATION;
 		debugString_P(PSTR("Emulation mode is Winchester (ADFS SCSI-1 hard-drive)\r\n"));
-	}
-	else
-	{
+	} else {
 		emulationMode = LVDOS_EMULATION;
 		debugString_P(PSTR("Emulation mode is Philips VP415 (VFS LaserDisc player)\r\n"));
 	}
@@ -116,7 +113,7 @@ void scsiInitialise(void)
 	if (usbHardwareDetect()) {
 		// USB hardware present
 		debugString_P(PSTR("USB capable board detected\r\n"));
-		} else {
+	} else {
 		// No USB hardware
 		debugString_P(PSTR("USB capable board not detected\r\n"));
 	}
@@ -126,8 +123,7 @@ void scsiInitialise(void)
 	if (debugFlag_scsiState) debugString_P(PSTR("SCSI State: Initialising SCSI emulation\r\n"));
 	
 	// Clear the request sense error globals
-	for (lunNumber = 0; lunNumber < 8; lunNumber++)
-	{
+	for (lunNumber = 0; lunNumber < 8; lunNumber++) {
 		requestSenseData[lunNumber].errorFlag = false;
 		requestSenseData[lunNumber].validAddressFlag = false;
 		requestSenseData[lunNumber].errorClass = 0x00;
@@ -151,13 +147,10 @@ void scsiReset(void)
 		debugString_P(PSTR("\r\n"));
 		
 		// Determine the emulation mode (fixed or LV-DOS)
-		if (hostadapterConnectedToExternalBus())
-		{
+		if (hostadapterConnectedToExternalBus()) {
 			emulationMode = FIXED_EMULATION;
 			debugString_P(PSTR("Emulation mode is Winchester (ADFS SCSI-1 hard-drive)\r\n"));
-		}
-		else
-		{
+		} else {
 			emulationMode = LVDOS_EMULATION;
 			debugString_P(PSTR("Emulation mode is Philips VP415 (VFS LaserDisc player)\r\n"));
 		}
@@ -166,8 +159,7 @@ void scsiReset(void)
 	}
 	
 	// Clear the request sense error globals
-	for (lunNumber = 0; lunNumber < 8; lunNumber++)
-	{
+	for (lunNumber = 0; lunNumber < 8; lunNumber++) {
 		requestSenseData[lunNumber].errorFlag = false;
 		requestSenseData[lunNumber].validAddressFlag = false;
 		requestSenseData[lunNumber].errorClass = 0x00;
@@ -183,8 +175,7 @@ void scsiReset(void)
 void scsiProcessEmulation(void)
 {
 	// Process SCSI emulation state
-	switch (scsiState)
-	{
+	switch (scsiState) {
 		// Handle SCSI bus states:
 		case SCSI_BUSFREE:
 		scsiState = scsiEmulationBusFree();
@@ -306,8 +297,7 @@ void scsiInformationTransferPhase(uint8_t transferPhase)
 	// 1	1	0	Message out phase
 	// 1	1	1	Message in phase
 	
-	switch(transferPhase)
-	{
+	switch(transferPhase) {
 		case ITPHASE_DATAOUT:
 		hostadapterWriteDataPhaseFlags(false, false, false); // MSG, CD, IO
 		if (debugFlag_scsiState) debugString_P(PSTR("SCSI State: Information transfer phase: Data out\r\n"));
@@ -394,8 +384,7 @@ uint8_t scsiEmulationCommand(void)
 	commandDataBlock.opCode = (commandDataBlock.data[0] & 0x1F);
 	
 	// Set the length of the CDB based on the command group
-	switch (commandDataBlock.group)
-	{
+	switch (commandDataBlock.group) {
 		case 0:
 		commandDataBlock.length = 6;
 		break;
@@ -414,8 +403,7 @@ uint8_t scsiEmulationCommand(void)
 	}
 	
 	// Show CDB byte 0 decode
-	if (debugFlag_scsiCommands) 
-	{
+	if (debugFlag_scsiCommands) {
 		debugString_P(PSTR("SCSI Commands: CDB byte 0 decode: "));
 		debugStringInt16_P(PSTR("Command group "), commandDataBlock.group, false);
 		debugStringInt16_P(PSTR(" ("), commandDataBlock.length, false);
@@ -423,8 +411,7 @@ uint8_t scsiEmulationCommand(void)
 	}
 
 	// Show received byte value
-	if (debugFlag_scsiCommands)
-	{
+	if (debugFlag_scsiCommands) {
 		debugString_P(PSTR("SCSI Commands: Received command operand bytes:"));
 		debugStringInt16_P(PSTR(" "), commandDataBlock.data[commandDataBlockPointer], false);
 	}
@@ -433,8 +420,7 @@ uint8_t scsiEmulationCommand(void)
 	commandDataBlockPointer++;
 	
 	// Get the remainder of the CDB bytes;
-	while (commandDataBlockPointer < commandDataBlock.length)
-	{
+	while (commandDataBlockPointer < commandDataBlock.length) {
 		commandDataBlock.data[commandDataBlockPointer] = hostadapterReadByte();
 		
 		// Show received byte value
@@ -448,11 +434,9 @@ uint8_t scsiEmulationCommand(void)
 	commandDataBlock.targetLUN = (commandDataBlock.data[1] & 0xE0) >> 5;
 	
 	// Transition to command based on received opCode (group 0 commands)
-	if (commandDataBlock.group == 0)
-	{
+	if (commandDataBlock.group == 0) {
 		// Select group 0 command type
-		switch (commandDataBlock.opCode)
-		{
+		switch (commandDataBlock.opCode) {
 			case 0x00:
 			return SCSI_TESTUNITREADY;
 			break;
@@ -500,11 +484,9 @@ uint8_t scsiEmulationCommand(void)
 	}
 	
 	// Transition to command based on received opCode (group 1 commands)
-	if (commandDataBlock.group == 1)
-	{
+	if (commandDataBlock.group == 1) {
 		// Select group 1 command type
-		switch (commandDataBlock.opCode)
-		{
+		switch (commandDataBlock.opCode) {
 			case 0x0F:
 			return SCSI_VERIFY;
 			break;
@@ -512,11 +494,9 @@ uint8_t scsiEmulationCommand(void)
 	}
 	
 	// Transition to command based on received opCode (group 6 LV-DOS commands)
-	if (commandDataBlock.group == 6 && emulationMode == LVDOS_EMULATION)
-	{
+	if (commandDataBlock.group == 6 && emulationMode == LVDOS_EMULATION) {
 		// Select group 6 command type
-		switch (commandDataBlock.opCode)
-		{
+		switch (commandDataBlock.opCode) {
 			case 0x0A:
 			return SCSI_WRITE_FCODE;
 			break;
@@ -528,11 +508,9 @@ uint8_t scsiEmulationCommand(void)
 	}
 	
 	// Transition to command based on received opCode (group 6 BeebSCSI commands)
-	if (commandDataBlock.group == 6)
-	{
+	if (commandDataBlock.group == 6) {
 		// Select group 6 command type
-		switch (commandDataBlock.opCode)
-		{
+		switch (commandDataBlock.opCode) {
 			case 0x10:
 			return SCSI_BEEBSCSI_SENSE;
 			break;
@@ -602,21 +580,17 @@ uint8_t scsiEmulationMessage(void)
 // checked.
 uint8_t scsiCommandTestUnitReady(void)
 {
-	if (debugFlag_scsiCommands)
-	{
+	if (debugFlag_scsiCommands) {
 		debugString_P(PSTR("SCSI Commands: TESTUNITREADY command (0x00) received\r\n"));
 		debugStringInt16_P(PSTR("SCSI Commands: Target LUN = "), commandDataBlock.targetLUN, true);
 	}
 	
 	// Check to see if the requested LUN is started
-	if (filesystemReadLunStatus(commandDataBlock.targetLUN))
-	{
+	if (filesystemReadLunStatus(commandDataBlock.targetLUN)) {
 		// Indicate successful command in status and message
 		commandDataBlock.status = 0x00; // 0x00 = Good
 		commandDataBlock.message = 0x00;
-	}
-	else
-	{
+	} else {
 		// Indicate unsuccessful command in status and message
 		if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("SCSI Commands: Unavailable LUN #"), commandDataBlock.targetLUN, true);
 		commandDataBlock.status = (commandDataBlock.targetLUN << 5) | 0x02; // 0x02 = Failed
@@ -645,21 +619,17 @@ uint8_t scsiCommandTestUnitReady(void)
 // returned is 0x00; otherwise the status returned is 0x02.
 uint8_t scsiCommandRezeroUnit(void)
 {
-	if (debugFlag_scsiCommands)
-	{
+	if (debugFlag_scsiCommands) {
 		debugString_P(PSTR("SCSI Commands: REZEROUNIT command (0x01) received\r\n"));
 		debugStringInt16_P(PSTR("SCSI Commands: Target LUN = "), commandDataBlock.targetLUN, true);
 	}
 	
 	// Check to see if the requested LUN is started
-	if (filesystemReadLunStatus(commandDataBlock.targetLUN))
-	{
+	if (filesystemReadLunStatus(commandDataBlock.targetLUN)) {
 		// Indicate successful command in status and message
 		commandDataBlock.status = 0x00; // 0x00 = Good
 		commandDataBlock.message = 0x00;
-	}
-	else
-	{
+	} else {
 		// Indicate unsuccessful command in status and message
 		if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("SCSI Commands: Unavailable LUN #"), commandDataBlock.targetLUN, true);
 		commandDataBlock.status = (commandDataBlock.targetLUN << 5) | 0x02; // 0x02 = Failed
@@ -696,8 +666,7 @@ uint8_t scsiCommandRequestSense(void)
 	uint8_t numberOfSenseBytes;
 	uint8_t responseByte = 0;
 
-	if (debugFlag_scsiCommands)
-	{
+	if (debugFlag_scsiCommands) {
 		debugString_P(PSTR("SCSI Commands: REQUESTSENSE command (0x03) received\r\n"));
 		debugStringInt16_P(PSTR("SCSI Commands: Target LUN = "), commandDataBlock.targetLUN, true);
 	}
@@ -721,16 +690,13 @@ uint8_t scsiCommandRequestSense(void)
 	scsiInformationTransferPhase(ITPHASE_DATAIN);
 	
 	// Is there an error waiting to be reported?
-	if (requestSenseData[commandDataBlock.targetLUN].errorFlag == false)
-	{
+	if (requestSenseData[commandDataBlock.targetLUN].errorFlag == false) {
 		if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: No error flagged\r\n"));
 		hostadapterWriteByte(0x00);
 		hostadapterWriteByte(0x00);
 		hostadapterWriteByte(0x00);
 		hostadapterWriteByte(0x00);
-	}
-	else
-	{
+	} else {
 		// Assemble request sense error response
 		if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: Error flagged - sending to host\r\n"));
 		if (requestSenseData[commandDataBlock.targetLUN].validAddressFlag == true) responseByte = 128; // set address valid flag
@@ -784,19 +750,16 @@ uint8_t scsiCommandFormat(void)
 	uint16_t defectListLength = 0;
 	uint16_t defectListRecords = 0;
 	
-	if (debugFlag_scsiCommands)
-	{
+	if (debugFlag_scsiCommands) {
 		debugString_P(PSTR("SCSI Commands: FORMAT command (0x04) received\r\n"));
 		debugStringInt16_P(PSTR("SCSI Commands: Target LUN = "), commandDataBlock.targetLUN, true);
 	}
 	
 	// Make sure the target LUN is started
-	if (!filesystemReadLunStatus(commandDataBlock.targetLUN))
-	{
+	if (!filesystemReadLunStatus(commandDataBlock.targetLUN)) {
 		// If the LUN is unavailable we need to create the LUN image on the file system
 		// before formatting it.
-		if (!filesystemCreateLunImage(commandDataBlock.targetLUN))
-		{
+		if (!filesystemCreateLunImage(commandDataBlock.targetLUN)) {
 			// Could not create LUN image... return with error status
 			if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("SCSI Commands: ERROR: Could not create new LUN image for LUN #"), commandDataBlock.targetLUN, true);
 			commandDataBlock.status = (commandDataBlock.targetLUN << 5) | 0x02; // 0x02 = Bad
@@ -846,8 +809,7 @@ uint8_t scsiCommandFormat(void)
 	// to the emulated file system; this code is included for debug completion.
 	
 	// If specified (by the options) read the defect list (ACB-4000 figure 5-6)
-	if (formatOptions == 28 || formatOptions == 30)
-	{
+	if (formatOptions == 28 || formatOptions == 30) {
 		// Read the defect list
 		if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: Reading the defect list:\r\n"));
 		
@@ -863,8 +825,7 @@ uint8_t scsiCommandFormat(void)
 		if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("SCSI Commands:   Length = "), defectListLength,true);
 		
 		// Read the defect records
-		for (defectListRecords = 0; defectListRecords < defectListLength; defectListRecords++)
-		{
+		for (defectListRecords = 0; defectListRecords < defectListLength; defectListRecords++) {
 			// Read the defect data
 			for (byteCounter = 0; byteCounter < 8; byteCounter++)
 			scsiSectorBuffer[byteCounter] = hostadapterReadByte();
@@ -884,8 +845,7 @@ uint8_t scsiCommandFormat(void)
 	
 	// Create/recreate the LUN data file according to the drive descriptor and fill
 	// with the required data pattern byte:
-	if (!filesystemFormatLun(commandDataBlock.targetLUN, dataPattern))
-	{
+	if (!filesystemFormatLun(commandDataBlock.targetLUN, dataPattern)) {
 		// Formatting failed...
 		if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: Format failed\r\n"));
 		
@@ -944,15 +904,13 @@ uint8_t scsiCommandRead6(void)
 	
 	uint16_t bytesTransferred = 0;
 	
-	if (debugFlag_scsiCommands)
-	{
+	if (debugFlag_scsiCommands) {
 		debugString_P(PSTR("SCSI Commands: READ command (0x08) received\r\n"));
 		debugStringInt16_P(PSTR("SCSI Commands: Target LUN = "), commandDataBlock.targetLUN, false);
 	}
 	
 	// Make sure the target LUN is started
-	if (!filesystemReadLunStatus(commandDataBlock.targetLUN))
-	{
+	if (!filesystemReadLunStatus(commandDataBlock.targetLUN)) {
 		// Target LUN is not started.  If the LUN is present, then start it, otherwise
 		// return an error.  Note: The original Adaptec SCSI host adapter would always
 		// auto-start a LUN if it was present, so we duplicate that behavior here even 
@@ -962,8 +920,7 @@ uint8_t scsiCommandRead6(void)
 		if (debugFlag_scsiCommands) debugString_P(PSTR("\r\nSCSI Commands: Attempting to Auto-Start LUN (as it is currently STOPped)\r\n"));
 		
 		// Auto-start the LUN
-		if (!filesystemSetLunStatus(commandDataBlock.targetLUN, true))
-		{
+		if (!filesystemSetLunStatus(commandDataBlock.targetLUN, true)) {
 			// Could not start LUN... return with error status
 			if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("SCSI Commands: Could not auto-start LUN #"), commandDataBlock.targetLUN,true);
 			commandDataBlock.status = (commandDataBlock.targetLUN << 5) | 0x02; // 0x02 = Bad
@@ -999,8 +956,7 @@ uint8_t scsiCommandRead6(void)
 	scsiInformationTransferPhase(ITPHASE_DATAIN);
 	
 	// Open the required LUN image for reading
-	if(!filesystemOpenLunForRead(commandDataBlock.targetLUN, logicalBlockAddress, numberOfBlocks))
-	{
+	if(!filesystemOpenLunForRead(commandDataBlock.targetLUN, logicalBlockAddress, numberOfBlocks)) {
 		// Opening the LUN image failed... try to recover with a little grace...
 		if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: ERROR: Open LUN image failed!\r\n"));
 		commandDataBlock.status = (commandDataBlock.targetLUN << 5) | 0x02; // 0x02 = Bad
@@ -1022,12 +978,10 @@ uint8_t scsiCommandRead6(void)
 
 	// Transfer the requested blocks from the LUN image to the host
 	if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: Transferring requested blocks to the host...\r\n"));
-	for (currentBlock = 0; currentBlock < numberOfBlocks; currentBlock++)
-	{
+	for (currentBlock = 0; currentBlock < numberOfBlocks; currentBlock++) {
 
 		// Read the requested block from the LUN image
-		if(!filesystemReadNextSector(scsiSectorBuffer))
-		{
+		if(!filesystemReadNextSector(scsiSectorBuffer)) {
 			// Reading from the LUN image failed... try to recover with a little grace...
 			if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: ERROR: Could not read next sector from LUN image!\r\n"));
 			commandDataBlock.status = (commandDataBlock.targetLUN << 5) | 0x02; // 0x02 = Bad
@@ -1053,8 +1007,7 @@ uint8_t scsiCommandRead6(void)
 		sei();
 		
 		// Check for a host reset condition
-		if (hostadapterReadResetFlag())
-		{
+		if (hostadapterReadResetFlag()) {
 			sei();
 			if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("SCSI Commands: Read DMA interrupted by host reset at byte #"), bytesTransferred, true);
 			
@@ -1065,15 +1018,11 @@ uint8_t scsiCommandRead6(void)
 		}
 		
 		// Show debug
-		if (!debugFlag_scsiBlocks)
-		{
+		if (!debugFlag_scsiBlocks) {
 			if (debugFlag_scsiCommands) debugStringInt32_P(PSTR(""), currentBlock, false);
 			if (debugFlag_scsiCommands) debugString_P(PSTR(" "));
-		}
-		else
-		{
-			if (debugFlag_scsiBlocks)
-			{
+		} else {
+			if (debugFlag_scsiBlocks) {
 				debugStringInt32_P(PSTR("Hex dump for block #"), currentBlock, true);
 				debugSectorBufferHex(scsiSectorBuffer, 256);
 			}
@@ -1115,15 +1064,13 @@ uint8_t scsiCommandWrite6(void)
 	
 	uint16_t bytesTransferred = 0;
 	
-	if (debugFlag_scsiCommands)
-	{
+	if (debugFlag_scsiCommands) {
 		debugString_P(PSTR("SCSI Commands: WRITE command (0x0A) received\r\n"));
 		debugStringInt16_P(PSTR("SCSI Commands: Target LUN = "), commandDataBlock.targetLUN, false);
 	}
 	
 	// Make sure the target LUN is started
-	if (!filesystemReadLunStatus(commandDataBlock.targetLUN))
-	{
+	if (!filesystemReadLunStatus(commandDataBlock.targetLUN)) {
 		// Target LUN is not started.  If the LUN is present, then start it, otherwise
 		// return an error.  Note: The original Adaptec SCSI host adapter would always
 		// auto-start a LUN if it was present, so we duplicate that behavior here even
@@ -1133,8 +1080,7 @@ uint8_t scsiCommandWrite6(void)
 		if (debugFlag_scsiCommands) debugString_P(PSTR("\r\nSCSI Commands: Attempting to Auto-Start LUN (as it is currently STOPped)\r\n"));
 		
 		// Auto-start the LUN
-		if (!filesystemSetLunStatus(commandDataBlock.targetLUN, true))
-		{
+		if (!filesystemSetLunStatus(commandDataBlock.targetLUN, true)) {
 			// Could not start LUN... return with error status
 			if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("SCSI Commands: Could not auto-start LUN #"), commandDataBlock.targetLUN,true);
 			commandDataBlock.status = (commandDataBlock.targetLUN << 5) | 0x02; // 0x02 = Bad
@@ -1163,8 +1109,7 @@ uint8_t scsiCommandWrite6(void)
 	if (numberOfBlocks == 0) numberOfBlocks = 256; // 0 = 256 blocks according to the SCSI specification
 	
 	// Show the command debug information
-	if (debugFlag_scsiCommands)
-	{
+	if (debugFlag_scsiCommands) {
 		debugStringInt32_P(PSTR(", LBA = "), logicalBlockAddress, false);
 		debugStringInt32_P(PSTR(", Blocks = "), numberOfBlocks, true);	
 	}
@@ -1173,8 +1118,7 @@ uint8_t scsiCommandWrite6(void)
 	scsiInformationTransferPhase(ITPHASE_DATAOUT);
 	
 	// Open the required LUN image for writing
-	if(!filesystemOpenLunForWrite(commandDataBlock.targetLUN, logicalBlockAddress, numberOfBlocks))
-	{
+	if(!filesystemOpenLunForWrite(commandDataBlock.targetLUN, logicalBlockAddress, numberOfBlocks)) {
 		// Opening the LUN image failed... try to recover with a little grace...
 		if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Command: ERROR: Could not open LUN image for writing!\r\n"));
 		commandDataBlock.status = (commandDataBlock.targetLUN << 5) | 0x02; // 0x02 = Bad
@@ -1196,16 +1140,14 @@ uint8_t scsiCommandWrite6(void)
 	
 	// Transfer the requested blocks from the host to the LUN image
 	if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: Transferring requested blocks from the host...\r\n"));
-	for (currentBlock = 0; currentBlock < numberOfBlocks; currentBlock++)
-	{
+	for (currentBlock = 0; currentBlock < numberOfBlocks; currentBlock++) {
 		// Get the data from the host
 		cli();
 		bytesTransferred = hostadapterPerformWriteDMA(scsiSectorBuffer);
 		sei();
 		
 		// Check for a host reset condition
-		if (hostadapterReadResetFlag())
-		{
+		if (hostadapterReadResetFlag()) {
 			if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("SCSI Commands: Write DMA interrupted by host reset at byte #"), bytesTransferred, true);
 			
 			// Close the currently open LUN image
@@ -1215,8 +1157,7 @@ uint8_t scsiCommandWrite6(void)
 		}
 		
 		// Write the requested block to the LUN image
-		if(!filesystemWriteNextSector(scsiSectorBuffer))
-		{
+		if(!filesystemWriteNextSector(scsiSectorBuffer)) {
 			// Writing to the LUN image failed... try to recover with a little grace...
 			if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: ERROR: Writing to LUN image failed!\r\n"));
 			commandDataBlock.status = (commandDataBlock.targetLUN << 5) | 0x02; // 0x02 = Bad
@@ -1237,15 +1178,11 @@ uint8_t scsiCommandWrite6(void)
 		}
 		
 		// Show debug
-		if (!debugFlag_scsiBlocks)
-		{
+		if (!debugFlag_scsiBlocks) {
 			if (debugFlag_scsiCommands) debugStringInt32_P(PSTR(""), currentBlock, false);
 			if (debugFlag_scsiCommands) debugString_P(PSTR(" "));
-		}
-		else
-		{
-			if (debugFlag_scsiBlocks)
-			{
+		} else {
+			if (debugFlag_scsiBlocks) {
 				debugStringInt32_P(PSTR("Hex dump for block #"), currentBlock, true);
 				debugSectorBufferHex(scsiSectorBuffer, 256);
 			}
@@ -1272,21 +1209,17 @@ uint8_t scsiCommandWrite6(void)
 // completeness.  It simply returns successfully if the specified LUN is available.
 uint8_t scsiCommandSeek(void)
 {
-	if (debugFlag_scsiCommands)
-	{
+	if (debugFlag_scsiCommands) {
 		debugString_P(PSTR("SCSI Commands: SEEK command (0x0B) received\r\n"));
 		debugStringInt16_P(PSTR("SCSI Commands: Target LUN = "), commandDataBlock.targetLUN, true);
 	}
 	
 	// Check to see if the requested LUN is started
-	if (filesystemReadLunStatus(commandDataBlock.targetLUN))
-	{
+	if (filesystemReadLunStatus(commandDataBlock.targetLUN)) {
 		// Indicate successful command in status and message
 		commandDataBlock.status = 0x00; // 0x00 = Good
 		commandDataBlock.message = 0x00;
-	}
-	else
-	{
+	} else {
 		// Indicate unsuccessful command in status and message
 		if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("SCSI Commands: Unavailable LUN #"), commandDataBlock.targetLUN, true);
 		commandDataBlock.status = (commandDataBlock.targetLUN << 5) | 0x02; // 0x02 = Failed
@@ -1325,15 +1258,13 @@ uint8_t scsiCommandTranslate(void)
 	uint32_t logicalBlockAddress;
 	uint32_t headsPerCylinder;
 	
-	if (debugFlag_scsiCommands)
-	{
+	if (debugFlag_scsiCommands) {
 		debugString_P(PSTR("SCSI Commands: TRANSLATE command (0x0F) received\r\n"));
 		debugStringInt16_P(PSTR("SCSI Commands: Target LUN = "), commandDataBlock.targetLUN, true);
 	}
 	
 	// Make sure the target LUN is started
-	if (!filesystemReadLunStatus(commandDataBlock.targetLUN))
-	{
+	if (!filesystemReadLunStatus(commandDataBlock.targetLUN)) {
 		// LUN unavailable... return with error status
 		if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("SCSI Commands: Unavailable LUN #"), commandDataBlock.targetLUN, true);
 		commandDataBlock.status = (commandDataBlock.targetLUN << 5) | 0x02; // 0x02 = Bad
@@ -1388,8 +1319,7 @@ uint8_t scsiCommandTranslate(void)
 	// Note: The 'bytes from index' is the number of bytes from the start of the track (to the defect)
 	
 	// Read the geometry description for the LUN into the sector buffer
-	if (!filesystemReadLunDescriptor(commandDataBlock.targetLUN, scsiSectorBuffer))
-	{
+	if (!filesystemReadLunDescriptor(commandDataBlock.targetLUN, scsiSectorBuffer)) {
 		// Unable to read drive descriptor! Exit with error status
 		commandDataBlock.status = (commandDataBlock.targetLUN << 5) | 0x02; // 0x02 = Bad
 		commandDataBlock.message = 0x00;
@@ -1415,8 +1345,7 @@ uint8_t scsiCommandTranslate(void)
 	headNumber = (logicalBlockAddress / 33) % headsPerCylinder;
 	bytesFromIndex = ((logicalBlockAddress % 33) + 1) * 256; // Sector number * block size (256)
 	
-	if (debugFlag_scsiCommands) 
-	{
+	if (debugFlag_scsiCommands) {
 		debugStringInt32_P(PSTR("SCSI Commands:   LBA = "), logicalBlockAddress,true);
 		debugStringInt32_P(PSTR("SCSI Commands:   Heads/Cyl = "), headsPerCylinder,true);
 		debugStringInt32_P(PSTR("SCSI Commands:   Cylinder = "), cylinderNumber,true);
@@ -1465,19 +1394,16 @@ uint8_t scsiCommandModeSelect(void)
 {
 	uint8_t byteCounter;
 
-	if (debugFlag_scsiCommands)
-	{
+	if (debugFlag_scsiCommands) {
 		debugString_P(PSTR("SCSI Commands: MODESELECT command (0x15) received\r\n"));
 		debugStringInt16_P(PSTR("SCSI Commands: Target LUN = "), commandDataBlock.targetLUN, true);
 	}
 	
 	// Make sure the target LUN is started
-	if (!filesystemReadLunStatus(commandDataBlock.targetLUN))
-	{
+	if (!filesystemReadLunStatus(commandDataBlock.targetLUN)) {
 		// If the target LUN is unavailable then the host is probably attempting to MODESELECT
 		// a LUN for which no descriptor exists.  So here we create the LUN descriptor
-		if(!filesystemCreateLunDescriptor(commandDataBlock.targetLUN))
-		{
+		if(!filesystemCreateLunDescriptor(commandDataBlock.targetLUN)) {
 			// LUN descriptor is unavailable and cannot be created... return with error status
 			if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("SCSI Commands: Create descriptor failed LUN #"), commandDataBlock.targetLUN,true);
 			commandDataBlock.status = (commandDataBlock.targetLUN << 5) | 0x02; // 0x02 = Bad
@@ -1497,8 +1423,7 @@ uint8_t scsiCommandModeSelect(void)
 		if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("SCSI Commands: Created descriptor for LUN #"), commandDataBlock.targetLUN,true);
 	}
 	
-	if (commandDataBlock.data[4] != 22)
-	{
+	if (commandDataBlock.data[4] != 22) {
 		if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: Bad Argument error\r\n"));
 		// Indicate unsuccessful command in status and message
 		commandDataBlock.status = (commandDataBlock.targetLUN << 5) | 0x02; // 0x02 = Bad
@@ -1525,8 +1450,7 @@ uint8_t scsiCommandModeSelect(void)
 	// TODO!
 	
 	// Write the descriptor information to the file system
-	if(!filesystemWriteLunDescriptor(commandDataBlock.targetLUN, scsiSectorBuffer))
-	{
+	if(!filesystemWriteLunDescriptor(commandDataBlock.targetLUN, scsiSectorBuffer)) {
 		// Write failed! - Indicate unsuccessful command in status and message
 		if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: Writing LUN descriptor failed!\r\n"));
 		commandDataBlock.status = (commandDataBlock.targetLUN << 5) | 0x02; // 0x02 = Error
@@ -1562,8 +1486,7 @@ uint8_t scsiCommandModeSense(void)
 {
 	uint8_t byteCounter;
 	
-	if (debugFlag_scsiCommands)
-	{
+	if (debugFlag_scsiCommands) {
 		debugString_P(PSTR("SCSI Commands: MODESENSE command (0x1A) received\r\n"));
 		debugStringInt16_P(PSTR("SCSI Commands: Target LUN = "), commandDataBlock.targetLUN, true);
 	}
@@ -1573,8 +1496,7 @@ uint8_t scsiCommandModeSense(void)
 	
 	// We emulate soft-sectored hard drives only, so the drive parameter list must be 22 bytes
 	if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("SCSI Commands: List length = "), commandDataBlock.data[4],true);
-	if (commandDataBlock.data[4] != 22)
-	{
+	if (commandDataBlock.data[4] != 22) {
 		if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: Bad Argument error\r\n"));
 		// Indicate unsuccessful command in status and message
 		commandDataBlock.status = (commandDataBlock.targetLUN << 5) | 0x02; // 0x02 = Bad
@@ -1591,8 +1513,7 @@ uint8_t scsiCommandModeSense(void)
 	}
 	
 	// Read the drive descriptor
-	if (filesystemReadLunDescriptor(commandDataBlock.targetLUN, scsiSectorBuffer))
-	{
+	if (filesystemReadLunDescriptor(commandDataBlock.targetLUN, scsiSectorBuffer)) {
 		// DSC read OK - Transfer the DSC contents to the host
 		
 		// Set up the control signals ready for the data in phase
@@ -1602,9 +1523,7 @@ uint8_t scsiCommandModeSense(void)
 		if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: Sending LUN descriptor to host\r\n"));
 		for (byteCounter = 0; byteCounter < 22; byteCounter++)
 		hostadapterWriteByte(scsiSectorBuffer[byteCounter]);
-	}
-	else
-	{
+	} else {
 		// DSC not OK
 		if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: Descriptor read error\r\n"));
 		
@@ -1643,27 +1562,22 @@ uint8_t scsiCommandModeSense(void)
 // landing zone value.
 uint8_t scsiCommandStartStop(void)
 {
-	if (debugFlag_scsiCommands)
-	{
+	if (debugFlag_scsiCommands) {
 		debugString_P(PSTR("SCSI Commands: STARTSTOP command (0x1B) received\r\n"));
 		debugStringInt16_P(PSTR("SCSI Commands: Target LUN = "), commandDataBlock.targetLUN, true);
 	}
 	
 	// Is this a START or STOP command?
-	if (commandDataBlock.data[4] == 0)
-	{
+	if (commandDataBlock.data[4] == 0) {
 		if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: Stopping LUN\r\n"));
 		
 		// Make the target LUN unavailable
 		filesystemSetLunStatus(commandDataBlock.targetLUN, false);
-	}
-	else
-	{
+	} else {
 		if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: Starting LUN\r\n"));
 		
 		// Start the LUN
-		if (!filesystemSetLunStatus(commandDataBlock.targetLUN, true))
-		{
+		if (!filesystemSetLunStatus(commandDataBlock.targetLUN, true)) {
 			// Could not start LUN... return with error status
 			if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("SCSI Commands: Could not start LUN #"), commandDataBlock.targetLUN,true);
 			commandDataBlock.status = (commandDataBlock.targetLUN << 5) | 0x02; // 0x02 = Bad
@@ -1709,15 +1623,13 @@ uint8_t scsiCommandVerify(void)
 	uint32_t lunSizeInSectors = 0;
 	uint32_t numberOfBlocks = 0;
 	
-	if (debugFlag_scsiCommands)
-	{
+	if (debugFlag_scsiCommands) {
 		debugString_P(PSTR("SCSI Commands: VERIFY command (0x2F) received\r\n"));
 		debugStringInt16_P(PSTR("SCSI Commands: Target LUN = "), commandDataBlock.targetLUN, false);
 	}
 	
 	// Make sure the target LUN is started
-	if (!filesystemReadLunStatus(commandDataBlock.targetLUN))
-	{
+	if (!filesystemReadLunStatus(commandDataBlock.targetLUN)) {
 		// LUN unavailable... return with error status
 		if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("\r\nSCSI Commands: Unavailable LUN #"), commandDataBlock.targetLUN,true);
 		commandDataBlock.status = (commandDataBlock.targetLUN << 5) | 0x02; // 0x02 = Bad
@@ -1748,17 +1660,14 @@ uint8_t scsiCommandVerify(void)
 	if (debugFlag_scsiCommands) debugStringInt32_P(PSTR(", number of blocks = "), numberOfBlocks, true);
 	
 	// Read the drive descriptor
-	if (filesystemReadLunDescriptor(commandDataBlock.targetLUN, scsiSectorBuffer))
-	{
+	if (filesystemReadLunDescriptor(commandDataBlock.targetLUN, scsiSectorBuffer)) {
 		// Get the LUN size (as number of available sectors)
 		// The drive size (actual data storage) is calculated by the following formula:
 		//
 		// tracks = heads * cylinders
 		// sectors = tracks * 33 (33 tracks per sector)
 		lunSizeInSectors = ((uint32_t)scsiSectorBuffer[15] * (((uint32_t)scsiSectorBuffer[13] << 8) + (uint32_t)scsiSectorBuffer[14])) * 33;
-	}
-	else
-	{
+	} else {
 		// DSC not OK
 		if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: DSC read error\r\n"));
 		// Indicate unsuccessful command in status and message
@@ -1776,8 +1685,7 @@ uint8_t scsiCommandVerify(void)
 	}
 	
 	// Check that the LBA is within range of the LUN size
-	if (logicalBlockAddress >= lunSizeInSectors)
-	{
+	if (logicalBlockAddress >= lunSizeInSectors) {
 		// Out of range
 		if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: ERROR: Requested LBA is out-of-range for the LUN size - Verify failed\r\n"));
 		
@@ -1793,9 +1701,7 @@ uint8_t scsiCommandVerify(void)
 		requestSenseData[commandDataBlock.targetLUN].logicalBlockAddress = logicalBlockAddress;
 		
 		return SCSI_STATUS;
-	}
-	else
-	{
+	} else {
 		// In range
 		
 		// Indicate successful command in status and message
@@ -1819,15 +1725,13 @@ uint8_t scsiWriteFCode(void)
 {
 	uint16_t bytesTransferred = 0;
 	
-	if (debugFlag_scsiCommands)
-	{
+	if (debugFlag_scsiCommands) {
 		debugString_P(PSTR("SCSI Commands: WRITE F-Code command (G6 0x0A) received\r\n"));
 		debugStringInt16_P(PSTR("SCSI Commands: Target LUN = "), commandDataBlock.targetLUN, true);
 	}
 	
 	// Make sure the target LUN is started
-	if (!filesystemReadLunStatus(commandDataBlock.targetLUN))
-	{
+	if (!filesystemReadLunStatus(commandDataBlock.targetLUN)) {
 		// LUN unavailable... return with error status
 		if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("\r\nSCSI Commands: Unavailable LUN #"), commandDataBlock.targetLUN, true);
 		commandDataBlock.status = (commandDataBlock.targetLUN << 5) | 0x02; // 0x02 = Bad
@@ -1853,8 +1757,7 @@ uint8_t scsiWriteFCode(void)
 	bytesTransferred = hostadapterPerformWriteDMA(scsiFcodeBuffer);
 		
 	// Check for a host reset condition
-	if (hostadapterReadResetFlag())
-	{
+	if (hostadapterReadResetFlag()) {
 		if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("SCSI Commands: Write DMA interrupted by host reset at byte #"), bytesTransferred, true);
 		return SCSI_BUSFREE;
 	}
@@ -1884,15 +1787,13 @@ uint8_t scsiReadFCode(void)
 {
 	uint16_t bytesTransferred = 0;
 	
-	if (debugFlag_scsiCommands)
-	{
+	if (debugFlag_scsiCommands) {
 		debugString_P(PSTR("SCSI Commands: READ F-Code command (G6 0x08) received\r\n"));
 		debugStringInt16_P(PSTR("SCSI Commands: Target LUN = "), commandDataBlock.targetLUN, true);
 	}
 	
 	// Make sure the target LUN is started
-	if (!filesystemReadLunStatus(commandDataBlock.targetLUN))
-	{
+	if (!filesystemReadLunStatus(commandDataBlock.targetLUN)) {
 		// LUN unavailable... return with error status
 		if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("\r\nSCSI Commands: Unavailable LUN #"), commandDataBlock.targetLUN,true);
 		commandDataBlock.status = (commandDataBlock.targetLUN << 5) | 0x02; // 0x02 = Bad
@@ -1921,8 +1822,7 @@ uint8_t scsiReadFCode(void)
 	bytesTransferred = hostadapterPerformReadDMA(scsiFcodeBuffer);
 		
 	// Check for a host reset condition
-	if (hostadapterReadResetFlag())
-	{
+	if (hostadapterReadResetFlag()) {
 		sei();
 		if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("SCSI Commands: Read DMA interrupted by host reset at byte #"), bytesTransferred, true);
 		
@@ -1947,8 +1847,7 @@ uint8_t scsiBeebScsiSense(void)
 {
 	uint8_t lunStatus = 0;
 	
-	if (debugFlag_scsiCommands)
-	{
+	if (debugFlag_scsiCommands) {
 		debugString_P(PSTR("SCSI Commands: BSSENSE command (G6 0x10) received\r\n"));
 		debugStringInt16_P(PSTR("SCSI Commands: Target LUN = "), commandDataBlock.targetLUN, true);
 	}
@@ -1957,8 +1856,7 @@ uint8_t scsiBeebScsiSense(void)
 	
 	// The parameter list must be 8 bytes
 	if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("SCSI Commands: List length = "), commandDataBlock.data[4],true);
-	if (commandDataBlock.data[4] != 8)
-	{
+	if (commandDataBlock.data[4] != 8) {
 		if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: Bad Argument error\r\n"));
 		// Indicate unsuccessful command in status and message
 		commandDataBlock.status = (commandDataBlock.targetLUN << 5) | 0x02; // 0x02 = Bad
@@ -1999,13 +1897,10 @@ uint8_t scsiBeebScsiSense(void)
 	if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("SCSI Commands: LUN directory number = "), filesystemGetLunDirectory(), true);
 	
 	// Byte 2 shows if we are in fixed (0) or VP415 emulation mode (1)
-	if (emulationMode == FIXED_EMULATION)
-	{
+	if (emulationMode == FIXED_EMULATION) {
 		hostadapterWriteByte(0x00);
 		if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: Emulation mode fixed (0x00)\r\n"));
-	}
-	else
-	{
+	} else {
 		hostadapterWriteByte(0x01);
 		if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: Emulation mode LV-DOS (0x01)\r\n"));
 	}
@@ -2034,15 +1929,13 @@ uint8_t scsiBeebScsiSelect(void)
 	uint8_t byteCounter;
 	uint8_t availableLUNs = 0;
 
-	if (debugFlag_scsiCommands)
-	{
+	if (debugFlag_scsiCommands) {
 		debugString_P(PSTR("SCSI Commands: BSSELECT command (G6 0x11) received\r\n"));
 		debugStringInt16_P(PSTR("SCSI Commands: Target LUN = "), commandDataBlock.targetLUN, true);
 	}
 	
 	// Expect 8 bytes of data	
-	if (commandDataBlock.data[4] != 8)
-	{
+	if (commandDataBlock.data[4] != 8) {
 		if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: Bad Argument error\r\n"));
 		// Indicate unsuccessful command in status and message
 		commandDataBlock.status = (commandDataBlock.targetLUN << 5) | 0x02; // 0x02 = Bad
@@ -2062,11 +1955,9 @@ uint8_t scsiBeebScsiSelect(void)
 	scsiInformationTransferPhase(ITPHASE_DATAOUT);
 	
 	// Read the 8 bytes from the host
-	for (byteCounter = 0; byteCounter < commandDataBlock.data[4]; byteCounter++)
-	{
+	for (byteCounter = 0; byteCounter < commandDataBlock.data[4]; byteCounter++) {
 		scsiSectorBuffer[byteCounter] = hostadapterReadByte();
-		if (debugFlag_scsiCommands) 
-		{
+		if (debugFlag_scsiCommands) {
 			debugStringInt16_P(PSTR("SCSI Commands: Received byte "), (uint16_t)byteCounter, false);
 			debugStringInt16_P(PSTR(" = "), (uint16_t)scsiSectorBuffer[byteCounter], true);
 		}
@@ -2077,15 +1968,12 @@ uint8_t scsiBeebScsiSelect(void)
 		if (filesystemReadLunStatus(byteCounter)) availableLUNs++;
 		
 	// Only jukebox if no LUNs are in the started state
-	if (availableLUNs == 0)
-	{
+	if (availableLUNs == 0) {
 		// Perform jukeboxing
 		filesystemSetLunDirectory(scsiSectorBuffer[0]);
 		
 		if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("SCSI Commands: Jukeboxing successful - LUN directory set to "), scsiSectorBuffer[0], true);
-	}
-	else
-	{
+	} else {
 		// One or more LUNs are started... cannot perform jukeboxing
 		if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: Error - cannot jukebox if LUNs are started\r\n"));
 		commandDataBlock.status = (commandDataBlock.targetLUN << 5) | 0x02; // 0x02 = Bad
@@ -2120,8 +2008,7 @@ uint8_t scsiBeebScsiFatPath(void)
 {
 	uint16_t bytesTransferred = 0;
 
-	if (debugFlag_scsiCommands)
-	{
+	if (debugFlag_scsiCommands) {
 		debugString_P(PSTR("SCSI Commands: BSFATPATH command (G6 0x12) received\r\n"));
 		debugStringInt16_P(PSTR("SCSI Commands: Target LUN = "), commandDataBlock.targetLUN, true);
 	}
@@ -2140,8 +2027,7 @@ uint8_t scsiBeebScsiFatPath(void)
 	sei();
 	
 	// Check for a host reset condition
-	if (hostadapterReadResetFlag())
-	{
+	if (hostadapterReadResetFlag()) {
 		sei();
 		if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("SCSI Commands: Write DMA interrupted by host reset at byte #"), bytesTransferred, true);
 		return SCSI_BUSFREE;
@@ -2151,8 +2037,7 @@ uint8_t scsiBeebScsiFatPath(void)
 	filesystemSetFatDirectory(scsiSectorBuffer);
 
 	// Show debug
-	if (debugFlag_scsiBlocks)
-	{
+	if (debugFlag_scsiBlocks) {
 		debugString_P(PSTR("Hex dump for FAT path block:\r\n"));
 		debugSectorBufferHex(scsiSectorBuffer, 256);
 	}
@@ -2183,8 +2068,7 @@ uint8_t scsiBeebScsiFatInfo(void)
 	uint32_t fatFileId = 0;
 	uint16_t bytesTransferred = 0;
 	
-	if (debugFlag_scsiCommands)
-	{
+	if (debugFlag_scsiCommands) {
 		debugString_P(PSTR("SCSI Commands: BSFATINFO command (G6 0x13) received\r\n"));
 		debugStringInt16_P(PSTR("SCSI Commands: Target LUN = "), commandDataBlock.targetLUN, true);
 	}
@@ -2199,8 +2083,7 @@ uint8_t scsiBeebScsiFatInfo(void)
 	scsiInformationTransferPhase(ITPHASE_DATAIN);
 	
 	// Get the FAT file information into the buffer for the host to read
-	if(!filesystemGetFatFileInfo(fatFileId, scsiSectorBuffer))
-	{
+	if(!filesystemGetFatFileInfo(fatFileId, scsiSectorBuffer)) {
 		// Reading from the FAT image failed... try to recover with a little grace...
 		if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: ERROR: Could not read FAT file information!\r\n"));
 		commandDataBlock.status = (commandDataBlock.targetLUN << 5) | 0x02; // 0x02 = Bad
@@ -2223,8 +2106,7 @@ uint8_t scsiBeebScsiFatInfo(void)
 	sei();
 	
 	// Check for a host reset condition
-	if (hostadapterReadResetFlag())
-	{
+	if (hostadapterReadResetFlag()) {
 		sei();
 		if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("SCSI Commands: Read DMA interrupted by host reset at byte #"), bytesTransferred, true);
 		
@@ -2232,8 +2114,7 @@ uint8_t scsiBeebScsiFatInfo(void)
 	}
 	
 	// Show debug
-	if (debugFlag_scsiBlocks)
-	{
+	if (debugFlag_scsiBlocks) {
 		debugString_P(PSTR("Hex dump for FAT info block:\r\n"));
 		debugSectorBufferHex(scsiSectorBuffer, 256);
 	}
@@ -2265,8 +2146,7 @@ uint8_t scsiBeebScsiFatRead(void)
 	
 	uint16_t bytesTransferred = 0;
 	
-	if (debugFlag_scsiCommands)
-	{
+	if (debugFlag_scsiCommands) {
 		debugString_P(PSTR("SCSI Commands: BSFATREAD command (G6 0x14) received\r\n"));
 		debugStringInt16_P(PSTR("SCSI Commands: Target LUN = "), commandDataBlock.targetLUN, true);
 	}
@@ -2293,8 +2173,7 @@ uint8_t scsiBeebScsiFatRead(void)
 	scsiInformationTransferPhase(ITPHASE_DATAIN);
 	
 	// Transfer the requested blocks from the FAT file to the host
-	if(!filesystemOpenFatForRead(fatFileId, blockOffset + currentBlock))
-	{
+	if(!filesystemOpenFatForRead(fatFileId, blockOffset + currentBlock)) {
 		// Reading from the FAT image failed... try to recover with a little grace...
 		if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: ERROR: Could not read next block from FAT image!\r\n"));
 		commandDataBlock.status = (commandDataBlock.targetLUN << 5) | 0x02; // 0x02 = Bad
@@ -2310,8 +2189,7 @@ uint8_t scsiBeebScsiFatRead(void)
 		return SCSI_STATUS;
 	}
 	
-	for (currentBlock = 0; currentBlock < numberOfBlocks; currentBlock++)
-	{
+	for (currentBlock = 0; currentBlock < numberOfBlocks; currentBlock++) {
 		if(!filesystemReadNextFatBlock(scsiSectorBuffer))
 		
 		// Send the data to the host
@@ -2320,8 +2198,7 @@ uint8_t scsiBeebScsiFatRead(void)
 		sei();
 		
 		// Check for a host reset condition
-		if (hostadapterReadResetFlag())
-		{
+		if (hostadapterReadResetFlag()) {
 			sei();
 			if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("SCSI Commands: Read DMA interrupted by host reset at byte #"), bytesTransferred, true);
 			
@@ -2330,13 +2207,10 @@ uint8_t scsiBeebScsiFatRead(void)
 		}
 		
 		// Show debug
-		if (debugFlag_scsiBlocks)
-		{
+		if (debugFlag_scsiBlocks) {
 			debugStringInt32_P(PSTR("Hex dump for block #"), currentBlock, true);
 			debugSectorBufferHex(scsiSectorBuffer, 256);
-		}
-		else
-		{
+		} else {
 			if (debugFlag_scsiCommands) debugStringInt32_P(PSTR(""), currentBlock, false);
 			if (debugFlag_scsiCommands) debugString_P(PSTR(" "));
 		}

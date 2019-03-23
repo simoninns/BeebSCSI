@@ -94,14 +94,12 @@ int main(void)
 	scsiInitialise();
 	
 	// Main processing loop
-    while (1) 
-    {
+    while (1) {
 		// Process the SCSI emulation
 		scsiProcessEmulation();
 		
 		// Did the host reset?
-		if (hostadapterReadResetFlag())
-		{
+		if (hostadapterReadResetFlag()) {
 			// Reset the host adapter
 			hostadapterReset();
 			

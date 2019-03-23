@@ -56,11 +56,9 @@ ISR(TIMER2_COMPA_vect)
 	// Perform fading control
 	if (ledTargetBrightness >= ledActualBrightness)
 	ledActualBrightness = ledTargetBrightness;
-	else
-	{
+	else {
 		fadeCounter++;
-		if (fadeCounter == 12)
-		{
+		if (fadeCounter == 12) {
 			ledActualBrightness--;
 			fadeCounter = 0;
 		}
