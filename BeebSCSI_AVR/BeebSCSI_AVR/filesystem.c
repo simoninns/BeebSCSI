@@ -3,7 +3,7 @@
 
 	BeebSCSI filing system functions
     BeebSCSI - BBC Micro SCSI Drive Emulator
-    Copyright (C) 2018 Simon Inns
+    Copyright (C) 2018-2019 Simon Inns
 
 	This file is part of BeebSCSI.
 
@@ -77,11 +77,10 @@ ISR(TIMER0_COMPA_vect)
 	mmc_disk_timerproc();
 }
 
-static void filesystemFlush( void)
+static void filesystemFlush(void)
 {
-   // If a Lun is open close it
-   if (lunOpenFlag)
-   {
+   // If a LUN is open close it
+   if (lunOpenFlag) {
       //Close the open file object
       f_close(&filesystemState.fileObject);
       lunOpenFlag = false;
@@ -165,7 +164,6 @@ void filesystemReset(void)
 // Function to mount the file system
 bool filesystemMount(void)
 {
-	filesystemFlush();
 	if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemMount(): Mounting file system\r\n"));
 	
 	// Is the file system already mounted?
@@ -174,6 +172,8 @@ bool filesystemMount(void)
 		if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemMount(): ERROR: File system is already mounted\r\n"));
 		return false;
 	}
+
+	filesystemFlush();
 	
 	// Set all LUNs to stopped
 	filesystemSetLunStatus(0, false);
@@ -235,7 +235,6 @@ bool filesystemMount(void)
 // Function to dismount the file system
 bool filesystemDismount(void)
 {
-	filesystemFlush();
 	if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemDismount(): Dismounting file system\r\n"));
 	
 	// Is the file system mounted?
@@ -245,6 +244,8 @@ bool filesystemDismount(void)
 		debugString_P(PSTR("File system: filesystemDismount(): No file system to dismount\r\n"));
 		return false;
 	}
+
+	filesystemFlush();
 	
 	// Set all LUNs to stopped
 	filesystemSetLunStatus(0, false);
@@ -426,6 +427,8 @@ bool filesystemCheckLunDirectory(uint8_t lunDirectory)
 		if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemCheckLunDirectory(): ERROR: No file system mounted\r\n"));
 		return false;
 	}
+	
+	filesystemFlush();
 	
 	// Does a directory exist for the currently selected LUN directory - if not, create it
 	sprintf(fileName, "/BeebSCSI%d", lunDirectory);
@@ -1516,14 +1519,14 @@ bool filesystemGetFatFileInfo(uint32_t fileNumber, uint8_t *buffer)
 	uint16_t byteCounter;
 	uint32_t fileEntryNumber;
 	
-	filesystemFlush();
-	
 	// Is the file system mounted?
 	if (filesystemState.fsMountState == false)
 	{
 		if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemGetFatFileInfo(): ERROR: No file system mounted\r\n"));
 		return false;
 	}
+	
+	filesystemFlush();
 	
 	// Clear the buffer
 	for (byteCounter = 0; byteCounter < 256; byteCounter++) buffer[byteCounter] = 0;
@@ -1716,14 +1719,14 @@ bool filesystemOpenFatForRead(uint32_t fileNumber, uint32_t blockNumber)
 {
 	char tempfileName[512];
 	
-	filesystemFlush();
-	
 	// Is the file system mounted?
 	if (filesystemState.fsMountState == false)
 	{
 		if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemOpenFatForRead(): ERROR: No file system mounted\r\n"));
 		return false;
 	}
+	
+	filesystemFlush();
 	
 	// Open the FAT transfer directory
 	filesystemState.fsResult = f_opendir(&filesystemState.dirObject, fatDirectory);
