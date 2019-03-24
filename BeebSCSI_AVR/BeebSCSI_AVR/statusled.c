@@ -3,7 +3,7 @@
 
 	BeebSCSI status LED functions
     BeebSCSI - BBC Micro SCSI Drive Emulator
-    Copyright (C) 2018 Simon Inns
+    Copyright (C) 2018-2019 Simon Inns
 
 	This file is part of BeebSCSI.
 
@@ -56,11 +56,9 @@ ISR(TIMER2_COMPA_vect)
 	// Perform fading control
 	if (ledTargetBrightness >= ledActualBrightness)
 	ledActualBrightness = ledTargetBrightness;
-	else
-	{
+	else {
 		fadeCounter++;
-		if (fadeCounter == 12)
-		{
+		if (fadeCounter == 12) {
 			ledActualBrightness--;
 			fadeCounter = 0;
 		}

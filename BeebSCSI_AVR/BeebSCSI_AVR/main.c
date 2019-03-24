@@ -3,7 +3,7 @@
 
 	Main BeebSCSI functions
     BeebSCSI - BBC Micro SCSI Drive Emulator
-    Copyright (C) 2018 Simon Inns
+    Copyright (C) 2018-2019 Simon Inns
 
 	This file is part of BeebSCSI.
 
@@ -94,14 +94,12 @@ int main(void)
 	scsiInitialise();
 	
 	// Main processing loop
-    while (1) 
-    {
+    while (1) {
 		// Process the SCSI emulation
 		scsiProcessEmulation();
 		
 		// Did the host reset?
-		if (hostadapterReadResetFlag())
-		{
+		if (hostadapterReadResetFlag()) {
 			// Reset the host adapter
 			hostadapterReset();
 			

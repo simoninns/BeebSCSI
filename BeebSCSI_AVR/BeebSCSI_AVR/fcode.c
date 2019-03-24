@@ -3,7 +3,7 @@
 
 	BeebSCSI F-Code emulation functions
     BeebSCSI - BBC Micro SCSI Drive Emulator
-    Copyright (C) 2018 Simon Inns
+    Copyright (C) 2018-2019 Simon Inns
 
 	This file is part of BeebSCSI.
 
@@ -53,8 +53,7 @@ void fcodeWriteBuffer(uint8_t lunNumber)
 	if (debugFlag_scsiFcodes) debugString_P(PSTR("F-Code: Received bytes:"));
 
 	// Write out the buffer until a CR character is found
-	for (byteCounter = 0; byteCounter < 256; byteCounter++)
-	{
+	for (byteCounter = 0; byteCounter < 256; byteCounter++) {
 		if (debugFlag_scsiFcodes) debugStringInt8Hex_P(PSTR(" "), scsiFcodeBuffer[byteCounter], false);
 		if (scsiFcodeBuffer[byteCounter] == 0x0D) break;
 		fcodeLength++;
@@ -63,14 +62,12 @@ void fcodeWriteBuffer(uint8_t lunNumber)
 
 	
 	// F-Code decoding for debug output
-	if (debugFlag_scsiFcodes)
-	{
+	if (debugFlag_scsiFcodes) {
 		// Display the F-Code command value
 		debugStringInt8Hex_P(PSTR("F-Code: Received F-Code "), scsiFcodeBuffer[0], false);
 		
 		// Display the F-Code command function
-		switch(scsiFcodeBuffer[0])
-		{
+		switch(scsiFcodeBuffer[0]) {
 			case 0x21: // !xy
 			debugString_P(PSTR(" = Sound insert (beep)\r\n"));
 			break;
@@ -80,8 +77,7 @@ void fcodeWriteBuffer(uint8_t lunNumber)
 			break;
 		
 			case 0x24: // $0, $1
-			switch(scsiFcodeBuffer[1])
-			{
+			switch(scsiFcodeBuffer[1]) {
 				case '0':
 				debugString_P(PSTR(" = Replay switch disable\r\n"));
 				break;
@@ -101,8 +97,7 @@ void fcodeWriteBuffer(uint8_t lunNumber)
 			break;
 		
 			case 0x29: // )0, )1
-			switch(scsiFcodeBuffer[1])
-			{
+			switch(scsiFcodeBuffer[1]) {
 				case '0':
 				debugString_P(PSTR(" = Transmission delay off\r\n"));
 				break;
@@ -118,8 +113,7 @@ void fcodeWriteBuffer(uint8_t lunNumber)
 			break;
 		
 			case 0x2A: // *
-			switch(scsiFcodeBuffer[1])
-			{
+			switch(scsiFcodeBuffer[1]) {
 				case 0x0D:
 				// No parameter, assume default
 				debugString_P(PSTR(" = Halt (still mode)\r\n"));
@@ -136,8 +130,7 @@ void fcodeWriteBuffer(uint8_t lunNumber)
 			break;
 		
 			case 0x2C: // ,
-			switch(scsiFcodeBuffer[1])
-			{
+			switch(scsiFcodeBuffer[1]) {
 				case '0':
 				debugString_P(PSTR(" = Standby (unload)\r\n"));
 				break;
@@ -165,8 +158,7 @@ void fcodeWriteBuffer(uint8_t lunNumber)
 			break;
 		
 			case 0x3F: // ?
-			switch(scsiFcodeBuffer[1])
-			{
+			switch(scsiFcodeBuffer[1]) {
 				case 'F':
 				debugString_P(PSTR(" = Picture number request\r\n"));
 				break;
@@ -198,8 +190,7 @@ void fcodeWriteBuffer(uint8_t lunNumber)
 			break;
 		
 			case 0x41: // A0, A1
-			switch(scsiFcodeBuffer[1])
-			{
+			switch(scsiFcodeBuffer[1]) {
 				case '0':
 				debugString_P(PSTR(" = Audio-1 off\r\n"));
 				break;
@@ -215,8 +206,7 @@ void fcodeWriteBuffer(uint8_t lunNumber)
 			break;
 		
 			case 0x42: // B0, B1
-			switch(scsiFcodeBuffer[1])
-			{
+			switch(scsiFcodeBuffer[1]) {
 				case '0':
 				debugString_P(PSTR(" = Audio-2 off\r\n"));
 				break;
@@ -232,8 +222,7 @@ void fcodeWriteBuffer(uint8_t lunNumber)
 			break;
 		
 			case 0x43: // C0, C1
-			switch(scsiFcodeBuffer[1])
-			{
+			switch(scsiFcodeBuffer[1]) {
 				case '0':
 				debugString_P(PSTR(" = Chapter number display off\r\n"));
 				break;
@@ -249,8 +238,7 @@ void fcodeWriteBuffer(uint8_t lunNumber)
 			break;
 		
 			case 0x44: // D0, D1
-			switch(scsiFcodeBuffer[1])
-			{
+			switch(scsiFcodeBuffer[1]) {
 				case '0':
 				debugString_P(PSTR(" = Picture number/time code display off\r\n"));
 				break;
@@ -266,8 +254,7 @@ void fcodeWriteBuffer(uint8_t lunNumber)
 			break;
 		
 			case 0x45: // E
-			switch(scsiFcodeBuffer[1])
-			{
+			switch(scsiFcodeBuffer[1]) {
 				case '0':
 				debugString_P(PSTR(" = Video off\r\n"));
 				break;
@@ -287,8 +274,7 @@ void fcodeWriteBuffer(uint8_t lunNumber)
 			break;
 		
 			case 0x48: // H
-			switch(scsiFcodeBuffer[1])
-			{
+			switch(scsiFcodeBuffer[1]) {
 				case '0':
 				debugString_P(PSTR(" = Remote control not routed to computer\r\n"));
 				break;
@@ -304,8 +290,7 @@ void fcodeWriteBuffer(uint8_t lunNumber)
 			break;
 		
 			case 0x49: // I
-			switch(scsiFcodeBuffer[1])
-			{
+			switch(scsiFcodeBuffer[1]) {
 				case '0':
 				debugString_P(PSTR(" = Local front panel buttons disabled\r\n"));
 				break;
@@ -321,8 +306,7 @@ void fcodeWriteBuffer(uint8_t lunNumber)
 			break;
 		
 			case 0x4A: // J
-			switch(scsiFcodeBuffer[1])
-			{
+			switch(scsiFcodeBuffer[1]) {
 				case '0':
 				debugString_P(PSTR(" = Remote control disabled for player control\r\n"));
 				break;
@@ -374,11 +358,9 @@ void fcodeWriteBuffer(uint8_t lunNumber)
 			break;
 		
 			case 0x56: // V, VP
-			switch(scsiFcodeBuffer[1])
-			{
+			switch(scsiFcodeBuffer[1]) {
 				case 'P':
-				switch(scsiFcodeBuffer[2])
-				{
+				switch(scsiFcodeBuffer[2]) {
 					case '1':
 					debugString_P(PSTR(" = Video overlay mode 1 (LaserVision video only)\r\n"));
 					break;
@@ -432,8 +414,7 @@ void fcodeWriteBuffer(uint8_t lunNumber)
 			break;
 		
 			case 0x5B: // [0, [1
-			switch(scsiFcodeBuffer[1])
-			{
+			switch(scsiFcodeBuffer[1]) {
 				case '0':
 				debugString_P(PSTR(" = Audio-1 from internal\r\n"));
 				break;
@@ -449,8 +430,7 @@ void fcodeWriteBuffer(uint8_t lunNumber)
 			break;
 		
 			case 0x5C: // '\'
-			switch(scsiFcodeBuffer[1])
-			{
+			switch(scsiFcodeBuffer[1]) {
 				case '0':
 				debugString_P(PSTR(" = Video from internal\r\n"));
 				break;
@@ -466,8 +446,7 @@ void fcodeWriteBuffer(uint8_t lunNumber)
 			break;
 		
 			case 0x5D: // ]0, ]1
-			switch(scsiFcodeBuffer[1])
-			{
+			switch(scsiFcodeBuffer[1]) {
 				case '0':
 				debugString_P(PSTR(" = Audio-2 from internal\r\n"));
 				break;
@@ -483,8 +462,7 @@ void fcodeWriteBuffer(uint8_t lunNumber)
 			break;
 		
 			case 0x5F: // _0, _1
-			switch(scsiFcodeBuffer[1])
-			{
+			switch(scsiFcodeBuffer[1]) {
 				case '0':
 				debugString_P(PSTR(" = Teletext from disc off\r\n"));
 				break;
@@ -508,8 +486,7 @@ void fcodeWriteBuffer(uint8_t lunNumber)
 	// If the F-Code is a user code request (?U), we need to send the user-code via
 	// the UART (as this is the only way the external F-Code emulation can know
 	// the right code to send back
-	if (scsiFcodeBuffer[0] == 0x3F && scsiFcodeBuffer[1] == 0x55)
-	{
+	if (scsiFcodeBuffer[0] == 0x3F && scsiFcodeBuffer[1] == 0x55) {
 		// Get the user code for the target LUN
 		filesystemReadLunUserCode(lunNumber, userCode);
 		
@@ -542,13 +519,11 @@ void fcodeReadBuffer(void)
 	
 	// Ensure we have a full F-code response terminated with
 	// 0x0D (CR) before we send it to the host
-	if (uartPeekForString())
-	{
+	if (uartPeekForString()) {
 		if (debugFlag_scsiFcodes) debugString_P(PSTR("F-Code: Transmitting F-Code bytes: "));
 		
 		// Copy the UART Rx buffer to the F-Code buffer
-		for (byteCounter = 0; byteCounter < availableBytes; byteCounter++)
-		{
+		for (byteCounter = 0; byteCounter < availableBytes; byteCounter++) {
 			scsiFcodeBuffer[byteCounter] = (char)(uartRead() & 0xFF);
 			if (debugFlag_scsiFcodes) debugStringInt8Hex_P(PSTR(" "), scsiFcodeBuffer[byteCounter], false);
 		}
@@ -556,8 +531,7 @@ void fcodeReadBuffer(void)
 	}
 	// If there is nothing to send we should reply with only a CR according
 	// to page 40 of the VP415 operating instructions (C8H Read F-code reply)
-	else
-	{
+	else {
 		if (debugFlag_scsiFcodes) debugString_P(PSTR("F-Code: No response from host; sending empty CR terminated response.\r\n"));
 		scsiFcodeBuffer[0] = 0x0D; 
 	}

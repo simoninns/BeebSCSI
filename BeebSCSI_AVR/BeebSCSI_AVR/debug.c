@@ -3,7 +3,7 @@
 
 	BeebSCSI serial debug functions
     BeebSCSI - BBC Micro SCSI Drive Emulator
-    Copyright (C) 2018 Simon Inns
+    Copyright (C) 2018-2019 Simon Inns
 
 	This file is part of BeebSCSI.
 
@@ -132,8 +132,7 @@ void debugSectorBufferHex(uint8_t *buffer, uint16_t numberOfBytes)
 
 	for (uint16_t byteNumber = 0; byteNumber < numberOfBytes; byteNumber += 16)
 	{
-		for (i = 0; i < index; i++)
-		{
+		for (i = 0; i < index; i++) {
 			printf("%02x ", buffer[i + byteNumber]);
 		}
 		for (uint16_t spacer = index; spacer < width; spacer++)
@@ -141,8 +140,7 @@ void debugSectorBufferHex(uint8_t *buffer, uint16_t numberOfBytes)
 		
 		printf(": ");
 		
-		for (i=0; i < index; i++)
-		{
+		for (i=0; i < index; i++) {
 			if (buffer[i + byteNumber] < 32 || buffer[i + byteNumber] >126) printf(".");
 			else printf("%c",buffer[i + byteNumber]);
 		}

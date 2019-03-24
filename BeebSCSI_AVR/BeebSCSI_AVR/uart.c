@@ -3,7 +3,7 @@
 
 	UART serial functions (with Tx and Rx ring-buffers)
     BeebSCSI - BBC Micro SCSI Drive Emulator
-    Copyright (C) 2018 Simon Inns
+    Copyright (C) 2018-2019 Simon Inns
 
 	This file is part of BeebSCSI.
 
@@ -65,13 +65,10 @@ ISR(USART1_RX_vect)
 	// Calculate the buffer index
 	tmpHead = (uartRxHead + 1) & UART_RX_BUFFER_MASK;
 	    
-	if (tmpHead == uartRxTail)
-	{
+	if (tmpHead == uartRxTail) {
 		// Error: receive buffer overflow
 		lastRxError = UART_BUFFER_OVERFLOW >> 8;
-	}
-	else
-	{
+	} else {
 		// Store the new index
 		uartRxHead = tmpHead;
 		
@@ -88,17 +85,14 @@ ISR(USART1_UDRE_vect)
 {
 	uint16_t tmpTail;
 
-	if ( uartTxHead != uartTxTail)
-	{
+	if ( uartTxHead != uartTxTail) {
 		// Calculate and store the new buffer index
 		tmpTail = (uartTxTail + 1) & UART_TX_BUFFER_MASK;
 		uartTxTail = tmpTail;
 		
 		// Get a byte from the Tx buffer and write it to the UART
 		UDR1 = uartTxBuffer[tmpTail];
-	}
-	else
-	{
+	} else {
 		// The Tx buffer is empty; disable the UDRE interrupt
 		UCSR1B &= ~(1 << UDRIE1);
 	}
@@ -138,8 +132,7 @@ void uartWrite(uint8_t data)
 	tmpHead  = (uartTxHead + 1) & UART_TX_BUFFER_MASK;
 
 	// If transmit buffer is full, wait for there to be space
-	while (tmpHead == uartTxTail)
-	{
+	while (tmpHead == uartTxTail) {
 		// wait for free space in buffer
 	}
 
@@ -158,8 +151,7 @@ uint16_t uartRead(void)
 	uint16_t tmpTail;
 	uint8_t data;
 
-	if ( uartRxHead == uartRxTail )
-	{
+	if (uartRxHead == uartRxTail) {
 		// Buffer is empty
 		return UART_NO_DATA;
 	}
@@ -183,8 +175,7 @@ uint16_t uartPeek(void)
 	uint16_t tmpTail;
 	uint8_t data;
 
-	if ( uartRxHead == uartRxTail )
-	{
+	if (uartRxHead == uartRxTail) {
 		// Buffer is empty
 		return UART_NO_DATA;
 	}
@@ -212,11 +203,9 @@ bool uartPeekForString(void)
 	tmpRxTail = uartRxTail;
 	
 	// Are there any bytes available in the buffer?
-	if (bytesAvailable != 0)
-	{
+	if (bytesAvailable != 0) {
 		// Look through the available bytes
-		for (byteCounter = 0; byteCounter < bytesAvailable; byteCounter++)
-		{
+		for (byteCounter = 0; byteCounter < bytesAvailable; byteCounter++) {
 			// Calculate Rx buffer index
 			tmpTail = (tmpRxTail + 1) & UART_RX_BUFFER_MASK;
 			tmpRxTail = tmpTail;

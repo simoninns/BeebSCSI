@@ -1,6 +1,6 @@
 ## Synopsis
 
-BeebSCSI_Utils contains the BBC Micro and Master source code ROM for the BeebSCSI project utilities.
+BeebSCSI_Utils contains the BBC Micro and Master BASIC source code for the BeebSCSI FAT transfer utility.
 
 ## Motivation
 

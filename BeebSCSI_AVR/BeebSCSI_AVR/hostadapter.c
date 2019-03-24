@@ -3,7 +3,7 @@
 
 	BeebSCSI Acorn host adapter functions
     BeebSCSI - BBC Micro SCSI Drive Emulator
-    Copyright (C) 2018 Simon Inns
+    Copyright (C) 2018-2019 Simon Inns
 
 	This file is part of BeebSCSI.
 
@@ -67,8 +67,7 @@ ISR(NCONF_INT_VECT)
 	else databusValue = PINA;
 	
 	// All debug off (Command 0)
-	if (databusValue == 0)
-	{
+	if (databusValue == 0) {
 		debugFlag_filesystem = false;
 		debugFlag_scsiCommands = false;
 		debugFlag_scsiBlocks = false;
@@ -78,8 +77,7 @@ ISR(NCONF_INT_VECT)
 	}
 	
 	// All debug on (Command 1)
-	if (databusValue == 1)
-	{
+	if (databusValue == 1) {
 		debugFlag_filesystem = true;
 		debugFlag_scsiCommands = true;
 		debugFlag_scsiBlocks = false;
@@ -260,8 +258,7 @@ uint16_t hostadapterPerformReadDMA(uint8_t *dataBuffer)
 	uint32_t timeoutCounter = 0;
 
 	// Loop to write bytes (unless a reset condition is detected)
-	while(currentByte < 256 && timeoutCounter != TOC_MAX)
-	{
+	while(currentByte < 256 && timeoutCounter != TOC_MAX) {
 		// Write the current byte to the databus and point to the next byte
 		PORTA = ~dataBuffer[currentByte++];
 
@@ -271,10 +268,8 @@ uint16_t hostadapterPerformReadDMA(uint8_t *dataBuffer)
 		// Wait for ACKnowledge
 		timeoutCounter = 0; // Reset timeout counter
 		
-		while((NACK_PIN & NACK) != 0)
-		{
-			if (++timeoutCounter == TOC_MAX)
-			{
+		while((NACK_PIN & NACK) != 0) {
+			if (++timeoutCounter == TOC_MAX) {
 				// Set the host reset flag and quit
 				nrstFlag = true;
 				return currentByte - 1;
@@ -296,18 +291,15 @@ uint16_t hostadapterPerformWriteDMA(uint8_t *dataBuffer)
 	uint32_t timeoutCounter = 0;
 
 	// Loop to read bytes (unless a reset condition is detected)
-	while(currentByte < 256 && timeoutCounter != TOC_MAX)
-	{
+	while(currentByte < 256 && timeoutCounter != TOC_MAX) {
 		// Set the REQuest signal
 		STATUS_NREQ_PORT &= ~STATUS_NREQ; // REQ = 0 (active)
 		
 		// Wait for ACKnowledge
 		timeoutCounter = 0; // Reset timeout counter
 		
-		while((NACK_PIN & NACK) != 0)
-		{
-			if (++timeoutCounter == TOC_MAX)
-			{
+		while((NACK_PIN & NACK) != 0) {
+			if (++timeoutCounter == TOC_MAX) {
 				// Set the host reset flag and quit
 				nrstFlag = true;
 				return currentByte;
@@ -357,13 +349,10 @@ void hostadapterWriteDataPhaseFlags(bool message, bool commandNotData, bool inpu
 	if (commandNotData) STATUS_CND_PORT &= ~STATUS_CND; //  CD = active
 	else STATUS_CND_PORT |= STATUS_CND; //  CD = inactive
 	
-	if (inputNotOutput)
-	{
+	if (inputNotOutput) {
 		STATUS_INO_PORT &= ~STATUS_INO; //  IO = active
 		hostadapterDatabusOutput();
-	}
-	else
-	{
+	} else {
 		STATUS_INO_PORT |= STATUS_INO; //  IO = inactive
 		hostadapterDatabusInput();
 	}
