@@ -81,7 +81,7 @@ static void filesystemFlush(void)
 {
    // If a LUN is open close it
    if (lunOpenFlag) {
-      //Close the open file object
+      // Close the open file object
       f_close(&filesystemState.fileObject);
       lunOpenFlag = false;
       if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemFlush(): Completed\r\n"));
@@ -934,6 +934,7 @@ void filesystemGetUserCodeFromUcd(uint8_t lunDirectoryNumber, uint8_t lunNumber)
 	uint16_t fsCounter;
 	
 	filesystemFlush();
+	
 	// Assemble the UCD file name
 	sprintf(fileName, "/BeebSCSI%d/scsi%d.ucd", lunDirectoryNumber, lunNumber);
 	
@@ -1197,13 +1198,13 @@ bool filesystemOpenLunForRead(uint8_t lunNumber, uint32_t startSector, uint32_t 
 {
 	uint32_t sectorsToRead = 0;
 	
+	// Is a LUN already open?
 	if (lunOpenFlag) {
-      		// check that it is the same LUN
-      		if (filesystemState.lunNumber != lunNumber)
-         	filesystemFlush();
-   	}
-
-   	if (!lunOpenFlag) {
+      	// Flush the file system if the requested LUN differs from the existing LUN
+      	if (filesystemState.lunNumber != lunNumber) filesystemFlush();
+			  
+		filesystemState.fsResult = f_lseek(&filesystemState.fileObject, startSector * 256);
+   	} else {
 		// Assemble the .dat file name
 		sprintf(fileName, "/BeebSCSI%d/scsi%d.dat", filesystemState.lunDirectory, lunNumber);
 
@@ -1226,7 +1227,7 @@ bool filesystemOpenLunForRead(uint8_t lunNumber, uint32_t startSector, uint32_t 
 				return false;
 			}
 		}
-	} else filesystemState.fsResult = f_lseek(&filesystemState.fileObject, startSector * 256);
+	}
 	
 	// Fill the file system sector buffer
 	sectorsToRead = requiredNumberOfSectors;
@@ -1256,7 +1257,6 @@ bool filesystemOpenLunForRead(uint8_t lunNumber, uint32_t startSector, uint32_t 
 // Function to read next sector from a LUN
 bool filesystemReadNextSector(uint8_t buffer[])
 {
-	//uint16_t byteCounter;
 	uint32_t sectorsToRead = 0;
 	
 	// Ensure there is a LUN image open
