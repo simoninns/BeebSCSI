@@ -1,11 +1,11 @@
    10REM ** BeebSCSI FAT file transfer utility
-   20REM ** Copyright (C) 2018 Simon Inns
+   20REM ** Copyright (C) 2018-2019 Simon Inns
    30REM **
    40REM ** GPLv3 Open-source
    50REM ** See http://www.gnu.org/licenses
    60REM **
-   70REM ** Application Version 1.0
-   80REM ** BeebSCSI Firmware Version 002.003
+   70REM ** Application Version 1.1
+   80REM ** BeebSCSI Firmware Version 002.005
    90:
   100REM Determine the best screen mode to use based
   110REM on the available RAM/Shadow-RAM
@@ -39,7 +39,7 @@
   390REPEAT
   400  CLS
   410  PRINTTAB(0,0); "BeebSCSI FAT transfer utility";
-  420  PRINTTAB(0,1); "(c)2018 Simon Inns - GPLv3"
+  420  PRINTTAB(0,1); "(c)2018-2019 Simon Inns - GPLv3"
   430  PRINTTAB(0,3); "BeebSCSI FAT Files:"
   440  PRINT
   450  :
@@ -311,7 +311,7 @@
  3140:
  3150REM Check the firmware version
  3160IF dataBuf%?3 < 2 THEN PROCerrFw(dataBuf%?3, dataBuf%?4)
- 3170IF dataBuf%?4 < 3 THEN PROCerrFw(dataBuf%?3, dataBuf%?4)
+ 3170IF dataBuf%?4 < 5 THEN PROCerrFw(dataBuf%?3, dataBuf%?4)
  3180ENDPROC
  3190:
  3200REM ** Function to display firmware revision error
@@ -320,11 +320,11 @@
  3230PRINT "BeebSCSI reports firmware version "; major%; "."; minor%
  3240PRINT
  3250PRINT "This application is designed for"
- 3260PRINT "version 2.3. If your firmware is"
- 3270PRINT "<2.3 please upgrade your BeebSCSI"
+ 3260PRINT "version 2.5. If your firmware is"
+ 3270PRINT "<2.5 please upgrade your BeebSCSI"
  3280PRINT "firmware."
  3290PRINT
- 3300PRINT "If your firmware is >2.3 please"
+ 3300PRINT "If your firmware is >2.5 please"
  3310PRINT "upgrade this application."
  3320END
  3330ENDPROC
