@@ -2190,7 +2190,14 @@ uint8_t scsiBeebScsiFatRead(void)
 	}
 	
 	for (currentBlock = 0; currentBlock < numberOfBlocks; currentBlock++) {
-		if(!filesystemReadNextFatBlock(scsiSectorBuffer))
+		if(!filesystemReadNextFatBlock(scsiSectorBuffer)) {
+			// Could not read block from FAT file system!
+			sei();
+			if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("SCSI Commands: Failed to read new FAT block at byte #"), bytesTransferred, true);
+			
+			filesystemCloseFatForRead();
+			return SCSI_BUSFREE;
+		}
 		
 		// Send the data to the host
 		cli();
