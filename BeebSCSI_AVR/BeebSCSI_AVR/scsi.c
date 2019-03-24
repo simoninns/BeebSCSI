@@ -937,6 +937,9 @@ uint8_t scsiCommandRead6(void)
 		}
 		
 		if (debugFlag_scsiCommands) debugString_P(PSTR("SCSI Commands: Requested LUN has been auto-started\r\n"));
+		
+		// Output the initial debug again (as the command debug information is appended to it)
+		if (debugFlag_scsiCommands) debugStringInt16_P(PSTR("SCSI Commands: Target LUN = "), commandDataBlock.targetLUN, false);
 	}
 	
 	// Get the starting logical block address from the CDB

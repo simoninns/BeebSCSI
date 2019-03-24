@@ -166,6 +166,7 @@ bool filesystemMount(void)
 		return false;
 	}
 
+	if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemMount(): Flushing the file system\r\n"));
 	filesystemFlush();
 	
 	// Set all LUNs to stopped
@@ -234,6 +235,7 @@ bool filesystemDismount(void)
 		return false;
 	}
 
+	if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemDismount(): Flushing the file system\r\n"));
 	filesystemFlush();
 	
 	// Set all LUNs to stopped
@@ -400,6 +402,7 @@ bool filesystemCheckLunDirectory(uint8_t lunDirectory)
 		return false;
 	}
 	
+	if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemCheckLunDirectory(): Flushing the file system\r\n"));
 	filesystemFlush();
 	
 	// Does a directory exist for the currently selected LUN directory - if not, create it
@@ -505,6 +508,7 @@ bool filesystemCheckLunImage(uint8_t lunNumber)
 	uint32_t lunFileSize;
 	uint32_t lunDscSize;
 
+	if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemCheckLunImage(): Flushing the file system\r\n"));
 	filesystemFlush();
 	
 	// Attempt to open the LUN image
@@ -685,6 +689,7 @@ uint32_t filesystemGetLunSizeFromDsc(uint8_t lunDirectory, uint8_t lunNumber)
 	uint32_t cylinderCount;
 	uint32_t dataHeadCount;
 	
+	if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemGetLunSizeFromDsc(): Flushing the file system\r\n"));
 	filesystemFlush();
 	
 	// Assemble the DSC file name
@@ -737,6 +742,7 @@ bool filesystemCreateDscFromLunImage(uint8_t lunDirectory, uint8_t lunNumber, ui
 	uint32_t heads;
 	uint16_t fsCounter;
 	
+	if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemCreateDscFromLunImage(): Flushing the file system\r\n"));
 	filesystemFlush();
 	
 	// Calculate the LUN file size in tracks (33 sectors per track, 256 bytes per sector)
@@ -933,6 +939,7 @@ void filesystemGetUserCodeFromUcd(uint8_t lunDirectoryNumber, uint8_t lunNumber)
 {
 	uint16_t fsCounter;
 	
+	if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemGetUserCodeFromUcd(): Flushing the file system\r\n"));
 	filesystemFlush();
 	
 	// Assemble the UCD file name
@@ -991,6 +998,7 @@ uint8_t filesystemGetLunDirectory(void)
 // Function to create a new LUN image (makes an empty .dat file)
 bool filesystemCreateLunImage(uint8_t lunNumber)
 {
+	if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemCreateLunImage(): Flushing the file system\r\n"));
 	filesystemFlush();
 	
 	// Assemble the .dat file name
@@ -1022,6 +1030,7 @@ bool filesystemCreateLunImage(uint8_t lunNumber)
 // Function to create a new LUN descriptor (makes an empty .dsc file)
 bool filesystemCreateLunDescriptor(uint8_t lunNumber)
 {
+	if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemCreateLunDescriptor(): Flushing the file system\r\n"));
 	filesystemFlush();
 	
 	// Assemble the .dsc file name
@@ -1053,6 +1062,7 @@ bool filesystemCreateLunDescriptor(uint8_t lunNumber)
 // Function to read a LUN descriptor
 bool filesystemReadLunDescriptor(uint8_t lunNumber, uint8_t buffer[])
 {
+	if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemReadLunDescriptor(): Flushing the file system\r\n"));
 	filesystemFlush();
 	
 	// Assemble the .dsc file name
@@ -1086,6 +1096,7 @@ bool filesystemReadLunDescriptor(uint8_t lunNumber, uint8_t buffer[])
 // Function to write a LUN descriptor
 bool filesystemWriteLunDescriptor(uint8_t lunNumber, uint8_t buffer[])
 {
+	if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemWriteLunDescriptor(): Flushing the file system\r\n"));
 	filesystemFlush();
 	
 	// Assemble the .dsc file name
@@ -1121,6 +1132,7 @@ bool filesystemFormatLun(uint8_t lunNumber, uint8_t dataPattern)
 {
 	uint32_t requiredNumberOfSectors = 0;
 	
+	if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemFormatLun(): Flushing the file system\r\n"));
 	filesystemFlush();
 	
 	if (debugFlag_filesystem) debugStringInt16_P(PSTR("File system: filesystemFormatLun(): Formatting LUN image "), lunNumber, true);
@@ -1198,13 +1210,16 @@ bool filesystemOpenLunForRead(uint8_t lunNumber, uint32_t startSector, uint32_t 
 {
 	uint32_t sectorsToRead = 0;
 	
-	// Is a LUN already open?
-	if (lunOpenFlag) {
-      	// Flush the file system if the requested LUN differs from the existing LUN
-      	if (filesystemState.lunNumber != lunNumber) filesystemFlush();
-			  
+	// Is the correct LUN already open?
+	if (lunOpenFlag && (filesystemState.lunNumber == lunNumber)) {
+		// Move to the correct point in the DAT file
+		// This is * 256 as each block is 256 bytes
 		filesystemState.fsResult = f_lseek(&filesystemState.fileObject, startSector * 256);
-   	} else {
+	} else {
+		// Required LUN is not open, so open it
+		if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemOpenLunForRead(): Flushing the file system\r\n"));
+		filesystemFlush();
+		
 		// Assemble the .dat file name
 		sprintf(fileName, "/BeebSCSI%d/scsi%d.dat", filesystemState.lunDirectory, lunNumber);
 
@@ -1212,8 +1227,8 @@ bool filesystemOpenLunForRead(uint8_t lunNumber, uint32_t startSector, uint32_t 
 		filesystemState.fsResult = f_open(&filesystemState.fileObject, fileName, FA_READ | FA_WRITE);
 		if (filesystemState.fsResult == FR_OK) {
 #if FF_USE_FASTSEEK
-     			((FIL*)(&filesystemState.fileObject))->cltbl = clmt;
-         		filesystemState.fsResult  = f_lseek(&filesystemState.fileObject, CREATE_LINKMAP);
+			((FIL*)(&filesystemState.fileObject))->cltbl = clmt;
+			filesystemState.fsResult  = f_lseek(&filesystemState.fileObject, CREATE_LINKMAP);
 #endif
 			// Move to the correct point in the DAT file
 			// This is * 256 as each block is 256 bytes
@@ -1320,6 +1335,7 @@ bool filesystemOpenLunForWrite(uint8_t lunNumber, uint32_t startSector, uint32_t
 	if (lunOpenFlag) {
 		// check that it is the same LUN Number 
       	if (filesystemState.lunNumber != lunNumber)
+			if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemOpenLunForWrite(): Flushing the file system\r\n"));
          	filesystemFlush();
 	}
 	
@@ -1423,6 +1439,7 @@ bool filesystemGetFatFileInfo(uint32_t fileNumber, uint8_t *buffer)
 		return false;
 	}
 	
+	if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemGetFatFileInfo(): Flushing the file system\r\n"));
 	filesystemFlush();
 	
 	// Clear the buffer
@@ -1606,6 +1623,7 @@ bool filesystemOpenFatForRead(uint32_t fileNumber, uint32_t blockNumber)
 		return false;
 	}
 	
+	if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemOpenFatForRead(): Flushing the file system\r\n"));
 	filesystemFlush();
 	
 	// Open the FAT transfer directory
