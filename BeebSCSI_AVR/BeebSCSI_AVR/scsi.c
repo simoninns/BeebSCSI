@@ -3,7 +3,7 @@
 
 	BeebSCSI SCSI emulation functions
     BeebSCSI - BBC Micro SCSI Drive Emulator
-    Copyright (C) 2018-2019 Simon Inns
+    Copyright (C) 2018-2020 Simon Inns
 
 	This file is part of BeebSCSI.
 
@@ -44,8 +44,8 @@
 // Define the major and minor firmware version number returned
 // by the BSSENSE command
 #define FIRMWARE_MAJOR		0x02
-#define FIRMWARE_MINOR		0x05
-#define FIRMWARE_STRING		"V002.005"
+#define FIRMWARE_MINOR		0x06
+#define FIRMWARE_STRING		"V002.006"
 
 // Global for the emulation mode (fixed or removable drive)
 // Note: The fixed mode emulates SCSI-1 compliant hard drives for the Beeb

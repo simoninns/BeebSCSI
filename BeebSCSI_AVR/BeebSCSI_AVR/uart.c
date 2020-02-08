@@ -3,7 +3,7 @@
 
 	UART serial functions (with Tx and Rx ring-buffers)
     BeebSCSI - BBC Micro SCSI Drive Emulator
-    Copyright (C) 2018-2019 Simon Inns
+    Copyright (C) 2018-2020 Simon Inns
 
 	This file is part of BeebSCSI.
 

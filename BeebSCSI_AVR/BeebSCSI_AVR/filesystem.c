@@ -3,7 +3,7 @@
 
 	BeebSCSI filing system functions
     BeebSCSI - BBC Micro SCSI Drive Emulator
-    Copyright (C) 2018-2019 Simon Inns
+    Copyright (C) 2018-2020 Simon Inns
 
 	This file is part of BeebSCSI.
 
@@ -1226,7 +1226,7 @@ bool filesystemOpenLunForRead(uint8_t lunNumber, uint32_t startSector, uint32_t 
 		// Open the DAT file
 		filesystemState.fsResult = f_open(&filesystemState.fileObject, fileName, FA_READ | FA_WRITE);
 		if (filesystemState.fsResult == FR_OK) {
-#if FF_USE_FASTSEEK
+#if _USE_FASTSEEK
 			((FIL*)(&filesystemState.fileObject))->cltbl = clmt;
 			filesystemState.fsResult  = f_lseek(&filesystemState.fileObject, CREATE_LINKMAP);
 #endif
@@ -1334,9 +1334,10 @@ bool filesystemOpenLunForWrite(uint8_t lunNumber, uint32_t startSector, uint32_t
 	// Ensure there isn't already a LUN image open
 	if (lunOpenFlag) {
 		// check that it is the same LUN Number 
-      	if (filesystemState.lunNumber != lunNumber)
+      	if (filesystemState.lunNumber != lunNumber) {
 			if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemOpenLunForWrite(): Flushing the file system\r\n"));
          	filesystemFlush();
+		}
 	}
 	
 	if (!lunOpenFlag) {
@@ -1346,7 +1347,7 @@ bool filesystemOpenLunForWrite(uint8_t lunNumber, uint32_t startSector, uint32_t
 		// Open the DAT file
 		filesystemState.fsResult = f_open(&filesystemState.fileObject, fileName,  FA_READ | FA_WRITE);
 		if (filesystemState.fsResult == FR_OK) {
-#if FF_USE_FASTSEEK
+#if _USE_FASTSEEK
          		((FIL*)(&filesystemState.fileObject))->cltbl = clmt;
          		filesystemState.fsResult  = f_lseek(&filesystemState.fileObject, CREATE_LINKMAP);
 #endif
