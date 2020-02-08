@@ -92,7 +92,7 @@ void scsiInitialise(void)
 	// debug flags) - as this is useful for initial board testing
 	
 	debugString_P(PSTR("\r\n\r\nBeebSCSI - Acorn SCSI-1 Emulation\r\n\r\n"));
-	debugString_P(PSTR("(c)2018-2019 Simon Inns\r\n"));
+	debugString_P(PSTR("(c)2018-2020 Simon Inns\r\n"));
 	debugString_P(PSTR("https://www.domesday86.com\r\n"));
 	debugString_P(PSTR("Open-source GPLv3 firmware\r\n"));
 	debugString_P(PSTR("\r\n"));

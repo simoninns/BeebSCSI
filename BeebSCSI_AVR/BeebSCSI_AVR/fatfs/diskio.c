@@ -7,9 +7,7 @@
 /* storage control modules to the FatFs module with a defined API.       */
 /*-----------------------------------------------------------------------*/
 
-/* Definitions of physical drive number for each drive */
-#define DRV_MMC		0	/* Example: Map MMC/SD card to physical drive 0 (default) */
-
+#include "ff.h"			/* Obtains integer types for FatFs */
 #include "diskio.h"		/* FatFs lower layer API */
 #ifdef DRV_CFC
 #include "cfc_avr.h"	/* Header file of existing CF control module */
@@ -28,7 +26,10 @@ DSTATUS disk_status (
 )
 {
 	switch (pdrv) {
-
+#ifdef DRV_CFC
+	case DRV_CFC :
+		return cf_disk_status();
+#endif
 #ifdef DRV_MMC
 	case DRV_MMC :
 		return mmc_disk_status();
@@ -44,11 +45,14 @@ DSTATUS disk_status (
 /*-----------------------------------------------------------------------*/
 
 DSTATUS disk_initialize (
-	BYTE pdrv				/* Physical drive number to identify the drive */
+	BYTE pdrv				/* Physical drive nmuber to identify the drive */
 )
 {
 	switch (pdrv) {
-
+#ifdef DRV_CFC
+	case DRV_CFC :
+		return cf_disk_initialize();
+#endif
 #ifdef DRV_MMC
 	case DRV_MMC :
 		return mmc_disk_initialize();
@@ -66,12 +70,15 @@ DSTATUS disk_initialize (
 DRESULT disk_read (
 	BYTE pdrv,		/* Physical drive nmuber to identify the drive */
 	BYTE *buff,		/* Data buffer to store read data */
-	DWORD sector,	/* Sector address in LBA */
+	LBA_t sector,	/* Sector address in LBA */
 	UINT count		/* Number of sectors to read */
 )
 {
 	switch (pdrv) {
-
+#ifdef DRV_CFC
+	case DRV_CFC :
+		return cf_disk_read(buff, sector, count);
+#endif
 #ifdef DRV_MMC
 	case DRV_MMC :
 		return mmc_disk_read(buff, sector, count);
@@ -86,16 +93,19 @@ DRESULT disk_read (
 /* Write Sector(s)                                                       */
 /*-----------------------------------------------------------------------*/
 
-#if _USE_WRITE
+#if !FF_FS_READONLY
 DRESULT disk_write (
 	BYTE pdrv,			/* Physical drive nmuber to identify the drive */
 	const BYTE *buff,	/* Data to be written */
-	DWORD sector,		/* Sector address in LBA */
+	LBA_t sector,		/* Sector address in LBA */
 	UINT count			/* Number of sectors to write */
 )
 {
 	switch (pdrv) {
-
+#ifdef DRV_CFC
+	case DRV_CFC :
+		return cf_disk_write(buff, sector, count);
+#endif
 #ifdef DRV_MMC
 	case DRV_MMC :
 		return mmc_disk_write(buff, sector, count);
@@ -118,7 +128,10 @@ DRESULT disk_ioctl (
 )
 {
 	switch (pdrv) {
-
+#ifdef DRV_CFC
+	case DRV_CFC :
+		return cf_disk_ioctl(cmd, buff);
+#endif
 #ifdef DRV_MMC
 	case DRV_MMC :
 		return mmc_disk_ioctl(cmd, buff);
@@ -136,7 +149,9 @@ DRESULT disk_ioctl (
 
 void disk_timerproc (void)
 {
-
+#ifdef DRV_CFC
+	cf_disk_timerproc();
+#endif
 #ifdef DRV_MMC
 	mmc_disk_timerproc();
 #endif

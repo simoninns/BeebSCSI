@@ -195,7 +195,7 @@ bool filesystemMount(void)
 				break;
 				
 				case FR_NOT_READY:
-				debugString_P(PSTR("File system: filesystemMount(): ERROR: FR_NOT_READY - No SD Card reports not ready!\r\n"));
+				debugString_P(PSTR("File system: filesystemMount(): ERROR: FR_NOT_READY - File system not ready - missing SD Card?\r\n"));
 				break;
 				
 				case FR_NO_FILESYSTEM:
@@ -1209,16 +1209,23 @@ bool filesystemFormatLun(uint8_t lunNumber, uint8_t dataPattern)
 bool filesystemOpenLunForRead(uint8_t lunNumber, uint32_t startSector, uint32_t requiredNumberOfSectors)
 {
 	uint32_t sectorsToRead = 0;
+	bool fastSeeking = false;
 	
 	// Is the correct LUN already open?
 	if (lunOpenFlag && (filesystemState.lunNumber == lunNumber)) {
 		// Move to the correct point in the DAT file
 		// This is * 256 as each block is 256 bytes
 		filesystemState.fsResult = f_lseek(&filesystemState.fileObject, startSector * 256);
+		if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemOpenLunForRead(): Using existing open LUN image\r\n"));
+#if FF_USE_FASTSEEK
+		fastSeeking = true;
+#endif
 	} else {
 		// Required LUN is not open, so open it
-		if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemOpenLunForRead(): Flushing the file system\r\n"));
+		if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemOpenLunForRead(): Requested LUN not open.  Flushing current LUN\r\n"));
 		filesystemFlush();
+		
+		if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemOpenLunForRead(): Opening requested LUN\r\n"));
 		
 		// Assemble the .dat file name
 		sprintf(fileName, "/BeebSCSI%d/scsi%d.dat", filesystemState.lunDirectory, lunNumber);
@@ -1226,9 +1233,10 @@ bool filesystemOpenLunForRead(uint8_t lunNumber, uint32_t startSector, uint32_t 
 		// Open the DAT file
 		filesystemState.fsResult = f_open(&filesystemState.fileObject, fileName, FA_READ | FA_WRITE);
 		if (filesystemState.fsResult == FR_OK) {
-#if _USE_FASTSEEK
+#if FF_USE_FASTSEEK
 			((FIL*)(&filesystemState.fileObject))->cltbl = clmt;
 			filesystemState.fsResult  = f_lseek(&filesystemState.fileObject, CREATE_LINKMAP);
+			fastSeeking = true;
 #endif
 			// Move to the correct point in the DAT file
 			// This is * 256 as each block is 256 bytes
@@ -1237,7 +1245,8 @@ bool filesystemOpenLunForRead(uint8_t lunNumber, uint32_t startSector, uint32_t 
 			// Check that the file seek was OK
 			if (filesystemState.fsResult != FR_OK) {
 				// Something went wrong with seeking, do not retry
-				if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemOpenLunForRead(): ERROR: Unable to seek to required sector in LUN image file!\r\n"));
+				if (debugFlag_filesystem && !fastSeeking) debugString_P(PSTR("File system: filesystemOpenLunForRead(): ERROR: Unable to slow seek to required sector in LUN image file!\r\n"));
+				if (debugFlag_filesystem && fastSeeking) debugString_P(PSTR("File system: filesystemOpenLunForRead(): ERROR: Unable to fast seek to required sector in LUN image file!\r\n"));
 				f_close(&filesystemState.fileObject);
 				return false;
 			}
@@ -1265,7 +1274,8 @@ bool filesystemOpenLunForRead(uint8_t lunNumber, uint32_t startSector, uint32_t 
 
 	// Exit with success
 	lunOpenFlag = true;
-	if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemOpenLunForRead(): Successful\r\n"));
+	if (debugFlag_filesystem && fastSeeking) debugString_P(PSTR("File system: filesystemOpenLunForRead(): Successful (with fast seeking)\r\n"));
+	if (debugFlag_filesystem && !fastSeeking) debugString_P(PSTR("File system: filesystemOpenLunForRead(): Successful (with slow seeking)\r\n"));
 	return true;
 }
 
@@ -1331,25 +1341,34 @@ bool filesystemCloseLunForRead(void)
 // Function to open a LUN ready for writing
 bool filesystemOpenLunForWrite(uint8_t lunNumber, uint32_t startSector, uint32_t requiredNumberOfSectors)
 {
+	bool fastSeeking = false;
+	
 	// Ensure there isn't already a LUN image open
 	if (lunOpenFlag) {
 		// check that it is the same LUN Number 
       	if (filesystemState.lunNumber != lunNumber) {
-			if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemOpenLunForWrite(): Flushing the file system\r\n"));
+			if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemOpenLunForWrite(): Requested LUN not open.  Flushing current LUN\r\n"));
          	filesystemFlush();
+		} else {
+			if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemOpenLunForWrite(): Using existing open LUN image\r\n"));
+#if FF_USE_FASTSEEK
+			fastSeeking = true;
+#endif
 		}
 	}
 	
 	if (!lunOpenFlag) {
+		if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemOpenLunForWrite(): Opening requested LUN\r\n"));
 		// Assemble the .dat file name
 		sprintf(fileName, "/BeebSCSI%d/scsi%d.dat", filesystemState.lunDirectory, lunNumber);
 
 		// Open the DAT file
 		filesystemState.fsResult = f_open(&filesystemState.fileObject, fileName,  FA_READ | FA_WRITE);
 		if (filesystemState.fsResult == FR_OK) {
-#if _USE_FASTSEEK
+#if FF_USE_FASTSEEK
          		((FIL*)(&filesystemState.fileObject))->cltbl = clmt;
          		filesystemState.fsResult  = f_lseek(&filesystemState.fileObject, CREATE_LINKMAP);
+				fastSeeking = true;
 #endif
 			// Move to the correct point in the DAT file
 			// This is * 256 as each block is 256 bytes
@@ -1367,7 +1386,8 @@ bool filesystemOpenLunForWrite(uint8_t lunNumber, uint32_t startSector, uint32_t
 
 	// Exit with success
 	lunOpenFlag = true;
-	if (debugFlag_filesystem) debugString_P(PSTR("File system: filesystemOpenLunForWrite(): Successful\r\n"));
+	if (debugFlag_filesystem && fastSeeking) debugString_P(PSTR("File system: filesystemOpenLunForWrite(): Successful (with fast seeking)\r\n"));
+	if (debugFlag_filesystem && !fastSeeking) debugString_P(PSTR("File system: filesystemOpenLunForWrite(): Successful (with slow seeking)\r\n"));
 	return true;
 }
 
