@@ -3,7 +3,7 @@
 
 	Main BeebSCSI functions
     BeebSCSI - BBC Micro SCSI Drive Emulator
-    Copyright (C) 2018-2019 Simon Inns
+    Copyright (C) 2018-2020 Simon Inns
 
 	This file is part of BeebSCSI.
 
@@ -43,7 +43,7 @@
 
 /*
 	BeebSCSI_7
-	(c)2016 Simon Inns
+	(c)2016-2020 Simon Inns
 	http://www.waitingforfriday.com
 
 	Target PCB version: BeebSCSI 7_7
