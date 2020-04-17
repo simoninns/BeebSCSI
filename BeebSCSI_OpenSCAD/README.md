@@ -7,7 +7,7 @@ The case design contains multiple materials however you can easily remix the des
 
 The case is designed for BeebSCSI boards fitted with a right-angle 1 MHz bus connector.  The power connector must be straight (rather than angled) and the power cable runs along-side the 1 MHz bus connector from the rear of the case.
 
-<img src="/images/multi_material_withpcb.png" width="800">
+<img src="/BeebSCSI_OpenSCAD/images/multi_material_withpcb.png" width="800">
 
 # Printing instructions
 
