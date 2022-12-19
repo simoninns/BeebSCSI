@@ -2,7 +2,7 @@
 
 BeebSCSI is a Micro SD Card based SCSI storage emulation for the Acorn 8-bit range of microcomputers including the Acorn BBC Model B (with ADFS) and the BBC Master 128.
 
-Please see http://www.domesday86.com for detailed documentation on BeebSCSI
+Please see [the project wiki](https://github.com/simoninns/BeebSCSI/wiki) for detailed documentation on BeebSCSI
 
 The project is divided into several sections:
 
